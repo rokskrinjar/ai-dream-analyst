@@ -1,11 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Brain, Sparkles, ArrowRight, TrendingUp } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import modernDreamHero from "@/assets/modern-dream-hero.jpg";
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const features = [
     {
@@ -46,7 +56,7 @@ const Index = () => {
                   <Button 
                     size="lg" 
                     className="font-semibold px-8 py-3"
-                    onClick={() => setIsLoading(true)}
+                    onClick={() => navigate('/auth')}
                   >
                     Začni beležiti sanje
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -56,6 +66,11 @@ const Index = () => {
                     variant="outline" 
                     size="lg"
                     className="font-semibold px-8 py-3"
+                    onClick={() => {
+                      document.getElementById('features')?.scrollIntoView({ 
+                        behavior: 'smooth' 
+                      });
+                    }}
                   >
                     <Sparkles className="mr-2 h-5 w-5" />
                     Razišči funkcije
@@ -75,7 +90,7 @@ const Index = () => {
         </section>
 
         {/* Features Section */}
-        <section className="container mx-auto px-4 py-16 bg-muted/30">
+        <section id="features" className="container mx-auto px-4 py-16 bg-muted/30">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Napredne funkcije za analizo sanj
@@ -125,7 +140,7 @@ const Index = () => {
               <Button 
                 size="lg"
                 className="font-semibold px-12 py-4 text-lg"
-                onClick={() => setIsLoading(true)}
+                onClick={() => navigate('/auth')}
               >
                 <Brain className="mr-2 h-6 w-6" />
                 Registriraj se brezplačno
