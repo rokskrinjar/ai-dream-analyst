@@ -90,7 +90,7 @@ Prosim, analiziraj sanje in vrni JSON z naslednjimi ključi:
 - "symbols": seznam simbolov in njihovih možnih pomenov (največ 5)
 - "analysis_text": podroben opis analize (2-3 odstavki)
 
-Odgovori SAMO z JSON objektom, brez dodatnega besedila.`;
+POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json in brez \`\`\`, brez dodatnega besedila.`;
 
     console.log('Sending request to OpenAI...');
 
@@ -137,7 +137,22 @@ Odgovori SAMO z JSON objektom, brez dodatnega besedila.`;
     // Parse the JSON response from OpenAI
     let parsedAnalysis;
     try {
-      parsedAnalysis = JSON.parse(analysisContent);
+      // Strip markdown code blocks if present
+      let cleanContent = analysisContent.trim();
+      if (cleanContent.startsWith('```json')) {
+        cleanContent = cleanContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      } else if (cleanContent.startsWith('```')) {
+        cleanContent = cleanContent.replace(/^```\s*/, '').replace(/\s*```$/, '');
+      }
+      
+      console.log('Cleaned content for parsing:', cleanContent);
+      parsedAnalysis = JSON.parse(cleanContent);
+      
+      // Validate required fields
+      if (!parsedAnalysis.themes || !parsedAnalysis.emotions || !parsedAnalysis.symbols || !parsedAnalysis.analysis_text) {
+        throw new Error('Missing required fields in analysis');
+      }
+      
     } catch (parseError) {
       console.error('Error parsing OpenAI JSON response:', parseError);
       console.error('Raw content:', analysisContent);
