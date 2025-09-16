@@ -6,8 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Brain, TrendingUp, Calendar, Heart, Eye, Loader2 } from 'lucide-react';
+import { ArrowLeft, Brain, TrendingUp, Calendar, Heart, Eye, Loader2, RefreshCw } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 
 interface Dream {
@@ -107,16 +108,24 @@ const Analytics = () => {
     }
   };
 
-  const generatePatternAnalysis = async (dreams: Dream[], analyses: DreamAnalysis[]) => {
+  const generatePatternAnalysis = async (dreams: Dream[], analyses: DreamAnalysis[], forceRefresh = false) => {
     try {
       setIsAnalyzing(true);
       
       const { data, error } = await supabase.functions.invoke('analyze-dream-patterns', {
-        body: { dreams, analyses }
+        body: { dreams, analyses, forceRefresh }
       });
 
       if (error) throw error;
-      setPatternAnalysis(data.analysis);
+      
+      if (data?.analysis) {
+        setPatternAnalysis(data.analysis);
+        if (data.cached && !forceRefresh) {
+          console.log('Loaded cached pattern analysis');
+        } else {
+          console.log('Generated fresh pattern analysis');
+        }
+      }
       
     } catch (error: any) {
       console.error('Error generating pattern analysis:', error);
@@ -245,10 +254,21 @@ const Analytics = () => {
             {/* Overall Insights */}
             <Card className="mb-8">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Brain className="h-5 w-5 text-primary" />
-                  <span>AI Pregled vzorcev</span>
-                </CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center space-x-2">
+                    <Brain className="h-5 w-5 text-primary" />
+                    <span>AI Pregled vzorcev</span>
+                  </CardTitle>
+                  <Button 
+                    onClick={() => generatePatternAnalysis(dreams, analyses, true)}
+                    disabled={isAnalyzing}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <RefreshCw className={cn("h-4 w-4 mr-2", isAnalyzing && "animate-spin")} />
+                    Osveži
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
                 <p className="text-foreground leading-relaxed whitespace-pre-wrap">

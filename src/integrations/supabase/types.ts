@@ -96,6 +96,36 @@ export type Database = {
           },
         ]
       }
+      pattern_analyses: {
+        Row: {
+          analysis_data: Json
+          created_at: string
+          dreams_count: number
+          id: string
+          last_dream_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          analysis_data: Json
+          created_at?: string
+          dreams_count: number
+          id?: string
+          last_dream_date: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          analysis_data?: Json
+          created_at?: string
+          dreams_count?: number
+          id?: string
+          last_dream_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string

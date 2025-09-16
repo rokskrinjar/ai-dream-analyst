@@ -16,7 +16,27 @@ serve(async (req) => {
   try {
     console.log('Dream pattern analysis function called');
 
-    const { dreams, analyses } = await req.json();
+    const { dreams, analyses, forceRefresh } = await req.json();
+
+    // Initialize Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Get user ID from auth header
+    const authHeader = req.headers.get('Authorization');
+    const token = authHeader?.replace('Bearer ', '');
+    const { data: { user } } = await supabase.auth.getUser(token);
+    
+    if (!user) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
 
     if (!dreams || !analyses || dreams.length === 0 || analyses.length === 0) {
       return new Response(
@@ -26,6 +46,30 @@ serve(async (req) => {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       );
+    }
+
+    // Check for cached analysis unless force refresh is requested
+    if (!forceRefresh) {
+      const latestDreamDate = Math.max(...dreams.map((d: any) => new Date(d.dream_date).getTime()));
+      const { data: cachedAnalysis } = await supabase
+        .from('pattern_analyses')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('dreams_count', dreams.length)
+        .gte('last_dream_date', new Date(latestDreamDate).toISOString().split('T')[0])
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (cachedAnalysis) {
+        console.log('Returning cached pattern analysis');
+        return new Response(
+          JSON.stringify({ analysis: cachedAnalysis.analysis_data, cached: true }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
     }
 
     console.log(`Analyzing ${dreams.length} dreams with ${analyses.length} analyses`);
@@ -151,8 +195,21 @@ Odgovor mora biti strukturiran JSON s slovenskim besedilom. Bodite psihološko n
       };
     }
 
+    // Cache the analysis result
+    const latestDreamDate = Math.max(...dreams.map((d: any) => new Date(d.dream_date).getTime()));
+    await supabase
+      .from('pattern_analyses')
+      .upsert({
+        user_id: user.id,
+        analysis_data: parsedAnalysis,
+        dreams_count: dreams.length,
+        last_dream_date: new Date(latestDreamDate).toISOString().split('T')[0],
+      });
+
+    console.log('Pattern analysis cached successfully');
+
     return new Response(
-      JSON.stringify({ analysis: parsedAnalysis }),
+      JSON.stringify({ analysis: parsedAnalysis, cached: false }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
