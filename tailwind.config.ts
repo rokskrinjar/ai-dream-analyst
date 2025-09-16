@@ -57,16 +57,6 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Dream Catcher custom colors
-        dream: {
-          "gradient-start": "hsl(var(--dream-gradient-start))",
-          "gradient-end": "hsl(var(--dream-gradient-end))",
-          "star-shimmer": "hsl(var(--star-shimmer))",
-          "moon-glow": "hsl(var(--moon-glow))",
-          "deep-sleep": "hsl(var(--deep-sleep))",
-          "lucid-purple": "hsl(var(--lucid-purple))",
-          "twilight-mist": "hsl(var(--twilight-mist))",
-        },
       },
       borderRadius: {
         lg: "var(--radius)",

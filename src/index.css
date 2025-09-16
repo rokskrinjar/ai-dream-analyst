@@ -8,55 +8,46 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Dream Catcher Design System - Mystical Night Theme */
+    /* Modern Dream Journal Design System */
     
-    /* Core Background - Deep night sky gradient */
-    --background: 228 39% 7%;
-    --foreground: 43 96% 89%;
+    /* Core Background - Clean whites and light grays */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
 
-    /* Card surfaces - Darker night tones with subtle glow */
-    --card: 228 25% 10%;
-    --card-foreground: 43 96% 89%;
+    /* Card surfaces - Clean white with subtle borders */
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
 
     /* Popover surfaces */
-    --popover: 228 25% 10%;
-    --popover-foreground: 43 96% 89%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
 
-    /* Primary - Golden moonlight */
-    --primary: 43 96% 68%;
-    --primary-foreground: 228 39% 7%;
+    /* Primary - Soft purple accent */
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Deep purple dreams */
-    --secondary: 266 83% 25%;
-    --secondary-foreground: 43 96% 89%;
+    /* Secondary - Light gray */
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
 
-    /* Muted - Soft night tones */
-    --muted: 228 25% 15%;
-    --muted-foreground: 43 20% 65%;
+    /* Muted - Very light gray */
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-    /* Accent - Silvery stardust */
-    --accent: 240 7% 60%;
-    --accent-foreground: 228 39% 7%;
+    /* Accent - Subtle blue */
+    --accent: 220 14.3% 95.9%;
+    --accent-foreground: 220 8.9% 46.1%;
 
     /* Destructive */
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 43 96% 89%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
 
     /* Interactive elements */
-    --border: 228 25% 20%;
-    --input: 228 25% 15%;
-    --ring: 43 96% 68%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 262 83% 58%;
 
-    --radius: 0.75rem;
-
-    /* Custom dream theme colors */
-    --dream-gradient-start: 228 39% 7%;
-    --dream-gradient-end: 266 83% 12%;
-    --star-shimmer: 43 96% 89%;
-    --moon-glow: 43 96% 68%;
-    --deep-sleep: 266 83% 8%;
-    --lucid-purple: 266 83% 35%;
-    --twilight-mist: 240 7% 40%;
+    --radius: 0.5rem;
 
     /* Sidebar - keeping original structure but adapting colors */
     --sidebar-background: 228 25% 10%;
@@ -70,43 +61,34 @@ All colors MUST be HSL.
   }
 
   .dark {
-    /* Dark mode uses the same mystical theme */
-    --background: 228 39% 4%;
-    --foreground: 43 96% 92%;
+    /* Modern dark theme */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
 
-    --card: 228 25% 8%;
-    --card-foreground: 43 96% 92%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 228 25% 8%;
-    --popover-foreground: 43 96% 92%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 43 96% 72%;
-    --primary-foreground: 228 39% 4%;
+    --primary: 263 70% 50.4%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 266 83% 20%;
-    --secondary-foreground: 43 96% 92%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 228 25% 12%;
-    --muted-foreground: 43 20% 70%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
 
-    --accent: 240 7% 65%;
-    --accent-foreground: 228 39% 4%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 62% 55%;
-    --destructive-foreground: 43 96% 92%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 228 25% 18%;
-    --input: 228 25% 12%;
-    --ring: 43 96% 72%;
-
-    /* Enhanced dark theme colors */
-    --dream-gradient-start: 228 39% 4%;
-    --dream-gradient-end: 266 83% 8%;
-    --star-shimmer: 43 96% 92%;
-    --moon-glow: 43 96% 72%;
-    --deep-sleep: 266 83% 5%;
-    --lucid-purple: 266 83% 40%;
-    --twilight-mist: 240 7% 45%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 263 70% 50.4%;
 
     --sidebar-background: 228 25% 8%;
     --sidebar-foreground: 43 96% 92%;
@@ -126,58 +108,5 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground min-h-screen;
-    background: linear-gradient(135deg, hsl(var(--dream-gradient-start)) 0%, hsl(var(--dream-gradient-end)) 100%);
-    background-attachment: fixed;
-  }
-
-  /* Custom dream theme utilities */
-  .dream-gradient {
-    background: linear-gradient(135deg, hsl(var(--dream-gradient-start)) 0%, hsl(var(--dream-gradient-end)) 100%);
-  }
-
-  .star-shimmer {
-    color: hsl(var(--star-shimmer));
-    text-shadow: 0 0 10px hsl(var(--star-shimmer) / 0.5);
-  }
-
-  .moon-glow {
-    color: hsl(var(--moon-glow));
-    text-shadow: 0 0 20px hsl(var(--moon-glow) / 0.6);
-  }
-
-  .glass-effect {
-    background: hsl(var(--card) / 0.8);
-    backdrop-filter: blur(10px);
-    border: 1px solid hsl(var(--border) / 0.3);
-  }
-
-  /* Floating animation for dream elements */
-  @keyframes float {
-    0%, 100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
-  }
-
-  .float-animation {
-    animation: float 6s ease-in-out infinite;
-  }
-
-  /* Shimmer effect for magical elements */
-  @keyframes shimmer {
-    0% {
-      background-position: -200% center;
-    }
-    100% {
-      background-position: 200% center;
-    }
-  }
-
-  .shimmer-effect {
-    background: linear-gradient(90deg, transparent, hsl(var(--star-shimmer) / 0.4), transparent);
-    background-size: 200% 100%;
-    animation: shimmer 3s ease-in-out infinite;
   }
 }

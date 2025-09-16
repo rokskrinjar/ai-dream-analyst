@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Brain, Sparkles, Moon, Stars } from "lucide-react";
-import dreamCatcherHero from "@/assets/dream-catcher-hero.jpg";
+import { BookOpen, Brain, Sparkles, ArrowRight, TrendingUp } from "lucide-react";
+import modernDreamHero from "@/assets/modern-dream-hero.jpg";
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -11,71 +11,51 @@ const Index = () => {
     {
       icon: <BookOpen className="h-6 w-6" />,
       title: "Dnevnik sanj",
-      description: "Vsak dan zapišite svoje sanje in jih ohranite za vedno"
+      description: "Enostavno beležite in organizirajte svoje sanje z intuitivnim vmesnikom"
     },
     {
       icon: <Brain className="h-6 w-6" />,
       title: "AI analiza",
-      description: "Napredna analiza vaših sanj z osebnimi vpogledi"
+      description: "Napredne algoritme prepoznajo vzorce in vam nudijo osebne vpoglede"
     },
     {
-      icon: <Sparkles className="h-6 w-6" />,
-      title: "Sanjski svetovalec",
-      description: "Personalizirani nasveti na osnovi vaših sanjskih vzorcev"
+      icon: <TrendingUp className="h-6 w-6" />,
+      title: "Osebni vpogledi",
+      description: "Odkrijte povezave med vašimi sanjami in vsakodnevnim življenjem"
     }
   ];
 
   return (
-    <div className="min-h-screen w-full relative overflow-hidden">
-      {/* Animated background stars */}
-      <div className="fixed inset-0 pointer-events-none">
-        {Array.from({ length: 50 }).map((_, i) => (
-          <div
-            key={i}
-            className="absolute animate-pulse"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${2 + Math.random() * 2}s`
-            }}
-          >
-            <Stars className="h-1 w-1 star-shimmer" />
-          </div>
-        ))}
-      </div>
-
-      <main className="relative z-10">
+    <div className="min-h-screen bg-background">
+      <main>
         {/* Hero Section */}
         <section className="container mx-auto px-4 py-16 lg:py-24">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="flex-1 text-center lg:text-left">
               <div className="space-y-6">
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
-                  <span className="moon-glow">Lovilec</span>
-                  <br />
-                  <span className="star-shimmer">Sanj</span>
+                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight text-foreground">
+                  Lovilec Sanj
                 </h1>
                 
                 <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto lg:mx-0">
                   Odkrijte skrita sporočila svojih sanj z močjo umetne inteligence. 
-                  Vsak dan je nova priložnost za razumevanje svoje notranje modrosti.
+                  Analizirajte vzorce in pridobite osebne vpoglede v svoj notranji svet.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                   <Button 
                     size="lg" 
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3 rounded-full"
+                    className="font-semibold px-8 py-3"
                     onClick={() => setIsLoading(true)}
                   >
-                    <Moon className="mr-2 h-5 w-5" />
                     Začni beležiti sanje
+                    <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                   
                   <Button 
                     variant="outline" 
                     size="lg"
-                    className="border-2 border-accent text-accent hover:bg-accent hover:text-accent-foreground font-semibold px-8 py-3 rounded-full"
+                    className="font-semibold px-8 py-3"
                   >
                     <Sparkles className="mr-2 h-5 w-5" />
                     Razišči funkcije
@@ -85,26 +65,23 @@ const Index = () => {
             </div>
 
             <div className="flex-1 relative">
-              <div className="relative float-animation">
-                <img
-                  src={dreamCatcherHero}
-                  alt="Mističen lovilec sanj v zvezdnatem nebu"
-                  className="w-full max-w-md mx-auto rounded-3xl shadow-2xl glass-effect"
-                />
-                <div className="absolute inset-0 rounded-3xl shimmer-effect"></div>
-              </div>
+              <img
+                src={modernDreamHero}
+                alt="Sodobna predstava analize sanj z AI tehnologijo"
+                className="w-full max-w-lg mx-auto rounded-lg shadow-lg"
+              />
             </div>
           </div>
         </section>
 
         {/* Features Section */}
-        <section className="container mx-auto px-4 py-16">
+        <section className="container mx-auto px-4 py-16 bg-muted/30">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold moon-glow mb-4">
-              Vaše sanje, naša tehnologija
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Napredne funkcije za analizo sanj
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Kombiniramo najnovejše dosežke umetne inteligence z globokim razumevanjem simbolike sanj
+              Kombiniramo najnovejše dosežke umetne inteligence z uporabnostjo moderne aplikacije
             </p>
           </div>
 
@@ -112,15 +89,15 @@ const Index = () => {
             {features.map((feature, index) => (
               <Card 
                 key={index} 
-                className="glass-effect border-border/50 hover:border-accent/50 transition-all duration-300 hover:scale-105"
+                className="border-border/50 hover:shadow-lg transition-all duration-300 hover:border-primary/20"
               >
                 <CardHeader className="text-center pb-4">
-                  <div className="mx-auto w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center mb-4">
+                  <div className="mx-auto w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                     <div className="text-primary">
                       {feature.icon}
                     </div>
                   </div>
-                  <CardTitle className="text-xl moon-glow">
+                  <CardTitle className="text-xl text-foreground">
                     {feature.title}
                   </CardTitle>
                 </CardHeader>
@@ -136,18 +113,18 @@ const Index = () => {
 
         {/* CTA Section */}
         <section className="container mx-auto px-4 py-16">
-          <Card className="glass-effect border-border/50 max-w-4xl mx-auto">
+          <Card className="border-border/50 max-w-4xl mx-auto">
             <CardContent className="p-8 md:p-12 text-center">
-              <h3 className="text-2xl md:text-3xl font-bold moon-glow mb-4">
-                Pripravljen na sanjsko potovanje?
+              <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+                Pripravljen začeti?
               </h3>
               <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Pridruži se tisočim uporabnikom, ki že odkrivajo skrivnosti svojih sanj
-                in izboljšujejo kakovost spanja z našo platformo.
+                Pridruži se uporabnikom, ki že odkrivajo vzorce svojih sanj
+                in izboljšujejo razumevanje svojega notranjega sveta.
               </p>
               <Button 
                 size="lg"
-                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold px-12 py-4 rounded-full text-lg"
+                className="font-semibold px-12 py-4 text-lg"
                 onClick={() => setIsLoading(true)}
               >
                 <Brain className="mr-2 h-6 w-6" />
@@ -159,12 +136,12 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border/30 mt-24">
+      <footer className="border-t border-border/30 mt-24 bg-muted/20">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center text-muted-foreground">
             <p>© 2024 Lovilec Sanj. Vse pravice pridržane.</p>
             <p className="mt-2 text-sm">
-              Odkrijte moč svojih sanj z umetno inteligenco
+              Analizirajte svoje sanje z umetno inteligenco
             </p>
           </div>
         </div>
