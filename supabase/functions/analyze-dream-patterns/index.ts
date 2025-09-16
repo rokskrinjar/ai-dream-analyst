@@ -64,28 +64,28 @@ ${JSON.stringify(dreamData, null, 2)}
 
 Ustvarite podrobno analizo, ki vključuje:
 
-1. OVERALL_INSIGHTS: Celovit pregled vzorcev (3-4 stavki o glavnih odkritjih)
+1. overall_insights: Celovit pregled vzorcev (3-4 stavki o glavnih odkritjih)
 
-2. THEME_PATTERNS: Seznam najpogostejših tem z:
+2. theme_patterns: Seznam najpogostejših tem z:
    - theme: ime teme
    - frequency: število pojavitev
    - significance: kratek opis pomena (1-2 stavka)
 
-3. EMOTIONAL_JOURNEY: Čustveni vzorci z:
+3. emotional_journey: Čustveni vzorci z:
    - emotion: ime čustva
    - frequency: število pojavitev  
    - trend: opis trenda (naraščajoč, padajoč, stalen)
 
-4. SYMBOL_MEANINGS: Simboli in interpretacije z:
+4. symbol_meanings: Simboli in interpretacije z:
    - symbol: ime simbola
    - frequency: število pojavitev
    - interpretation: psihološka interpretacija (2-3 stavki)
 
-5. TEMPORAL_PATTERNS: Opis časovnih vzorcev (2-3 stavki o tem, kako se sanje spreminjajo skozi čas)
+5. temporal_patterns: Opis časovnih vzorcev (2-3 stavki o tem, kako se sanje spreminjajo skozi čas)
 
-6. RECOMMENDATIONS: Seznam 3-5 priporočil za uporabnika (vsako 1-2 stavka)
+6. recommendations: Seznam 3-5 priporočil za uporabnika (vsako 1-2 stavka)
 
-7. PERSONAL_GROWTH: Analiza osebne rasti na podlagi sanj (3-4 stavki o tem, kaj sanje razkrivajo o razvoju)
+7. personal_growth: Analiza osebne rasti na podlagi sanj (3-4 stavki o tem, kaj sanje razkrivajo o razvoju)
 
 Odgovor mora biti strukturiran JSON s slovenskim besedilom. Bodite psihološko natančni in empatični.`;
 
