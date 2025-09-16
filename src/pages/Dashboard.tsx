@@ -158,6 +158,21 @@ const Dashboard = () => {
     }
   };
 
+  const formatSymbol = (symbol: string): string => {
+    try {
+      // Try to parse as JSON object
+      const parsed = JSON.parse(symbol);
+      if (parsed.symbol && parsed.meaning) {
+        return `${parsed.symbol}: ${parsed.meaning}`;
+      }
+      // If parsing succeeds but doesn't have expected structure, return as is
+      return symbol;
+    } catch {
+      // If parsing fails, it's likely a simple string, return as is
+      return symbol;
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -394,9 +409,9 @@ const Dashboard = () => {
                                   </div>
                                   <div className="flex flex-wrap gap-1">
                                     {analysis.symbols.map((symbol, index) => (
-                                      <Badge key={index} variant="outline" className="text-xs">
-                                        {symbol}
-                                      </Badge>
+                                       <Badge key={index} variant="outline" className="text-xs">
+                                         {formatSymbol(symbol)}
+                                       </Badge>
                                     ))}
                                   </div>
                                 </div>
