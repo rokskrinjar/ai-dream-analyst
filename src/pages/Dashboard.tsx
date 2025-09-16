@@ -466,7 +466,10 @@ const Dashboard = () => {
                 </CardHeader>
               </Card>
 
-              <Card className="border-border/50 hover:shadow-md transition-shadow cursor-pointer">
+              <Card 
+                className="border-border/50 hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => navigate('/analytics')}
+              >
                 <CardHeader>
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">

@@ -2,3 +2,6 @@ project_id = "zdngnqkjjxzfnnxcolyz"
 
 [functions.analyze-dream]
 verify_jwt = false
+
+[functions.analyze-dream-patterns]
+verify_jwt = false
