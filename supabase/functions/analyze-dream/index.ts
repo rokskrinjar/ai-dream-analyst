@@ -228,17 +228,32 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
     console.log('Analysis saved successfully:', savedAnalysis.id);
 
     // Deduct credit and log usage after successful analysis
-    const { error: creditUpdateError } = await supabase
+    // First, get current credit values
+    const { data: currentCredits, error: getCurrentError } = await supabase
       .from('user_credits')
-      .update({ 
-        credits_remaining: supabase.raw('credits_remaining - 1'),
-        credits_used_this_month: supabase.raw('credits_used_this_month + 1')
-      })
-      .eq('user_id', user.id);
+      .select('credits_remaining, credits_used_this_month')
+      .eq('user_id', user.id)
+      .single();
 
-    if (creditUpdateError) {
-      console.error('Error updating credits:', creditUpdateError);
-      // Don't fail the request if credit update fails, just log it
+    if (getCurrentError) {
+      console.error('Error getting current credits:', getCurrentError);
+      // Don't fail the request if credit fetch fails, just log it
+    } else {
+      // Update credits with calculated values
+      const { error: creditUpdateError } = await supabase
+        .from('user_credits')
+        .update({ 
+          credits_remaining: Math.max(0, currentCredits.credits_remaining - 1),
+          credits_used_this_month: currentCredits.credits_used_this_month + 1
+        })
+        .eq('user_id', user.id);
+
+      if (creditUpdateError) {
+        console.error('Error updating credits:', creditUpdateError);
+        // Don't fail the request if credit update fails, just log it
+      } else {
+        console.log('Credits updated successfully for user:', user.id);
+      }
     }
 
     // Log the usage
