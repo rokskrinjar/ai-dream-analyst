@@ -33,6 +33,7 @@ const DreamActivityCalendar = () => {
 
       console.log('Dream activity data:', activity);
       console.log('Total dreams found:', data?.length);
+      console.log('Individual dream dates:', data?.map(d => d.dream_date));
       setActivityData(activity);
     } catch (error) {
       console.error('Error fetching dream activity:', error);
@@ -42,11 +43,11 @@ const DreamActivityCalendar = () => {
   };
 
   const getActivityLevel = (count: number): string => {
-    if (count === 0) return 'bg-muted/20';
-    if (count === 1) return 'bg-emerald-100 dark:bg-emerald-900/40';
-    if (count === 2) return 'bg-emerald-200 dark:bg-emerald-800/60';
-    if (count >= 3) return 'bg-emerald-400 dark:bg-emerald-600';
-    return 'bg-muted/20';
+    if (count === 0) return 'bg-slate-100 dark:bg-slate-800/30';
+    if (count === 1) return 'bg-green-200 dark:bg-green-800/80';
+    if (count === 2) return 'bg-green-400 dark:bg-green-700';
+    if (count >= 3) return 'bg-green-600 dark:bg-green-500';
+    return 'bg-slate-100 dark:bg-slate-800/30';
   };
 
   const generateCalendarData = () => {
@@ -76,6 +77,11 @@ const DreamActivityCalendar = () => {
           level: isInRange ? getActivityLevel(count) : 'bg-transparent',
           isInRange
         });
+        
+        // Debug: log when we find dreams
+        if (count > 0) {
+          console.log(`Found ${count} dreams on ${dateStr}, level: ${getActivityLevel(count)}`);
+        }
         
         currentDate.setDate(currentDate.getDate() + 1);
       }
@@ -192,10 +198,10 @@ const DreamActivityCalendar = () => {
         <div className="flex items-center justify-between text-xs text-muted-foreground ml-8">
           <span className="font-medium">Manj</span>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-sm bg-muted/20"></div>
-            <div className="w-3 h-3 rounded-sm bg-emerald-100 dark:bg-emerald-900/40"></div>
-            <div className="w-3 h-3 rounded-sm bg-emerald-200 dark:bg-emerald-800/60"></div>
-            <div className="w-3 h-3 rounded-sm bg-emerald-400 dark:bg-emerald-600"></div>
+            <div className="w-3 h-3 rounded-sm bg-slate-100 dark:bg-slate-800/30"></div>
+            <div className="w-3 h-3 rounded-sm bg-green-200 dark:bg-green-800/80"></div>
+            <div className="w-3 h-3 rounded-sm bg-green-400 dark:bg-green-700"></div>
+            <div className="w-3 h-3 rounded-sm bg-green-600 dark:bg-green-500"></div>
           </div>
           <span className="font-medium">Več</span>
         </div>
