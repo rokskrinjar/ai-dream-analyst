@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Brain, Sparkles, ArrowRight, TrendingUp, Moon, Eye, Heart, Lightbulb, Users, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import dreamCatcherHero from "@/assets/dream-catcher-colorful.jpg";
+import dreamCatcherHero from "@/assets/dream-catcher-hero.jpg";
+
+// Force cache refresh
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
