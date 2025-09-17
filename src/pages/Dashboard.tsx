@@ -265,6 +265,16 @@ const Dashboard = () => {
             </div>
             
             <div className="flex items-center space-x-4">
+              <nav className="flex items-center space-x-2">
+                <Button variant="ghost" size="sm" onClick={() => navigate('/pricing')}>
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  Cenki
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => navigate('/account')}>
+                  <Settings className="h-4 w-4 mr-2" />
+                  Račun
+                </Button>
+              </nav>
               <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                 <User className="h-4 w-4" />
                 <span>{user?.email}</span>
@@ -279,6 +289,11 @@ const Dashboard = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Credit Display */}
+        <div className="mb-8">
+          <CreditDisplay />
+        </div>
+
         {/* Dream Activity Calendar */}
         <div className="mb-8">
           <DreamActivityCalendar />
@@ -575,6 +590,17 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Credit Usage Modal */}
+      <CreditUsageModal
+        open={showCreditModal}
+        onOpenChange={setShowCreditModal}
+        onConfirm={confirmAnalysis}
+        creditsRequired={1}
+        creditsRemaining={userCredits}
+        actionName="AI Analiza Sanj"
+        actionDescription="Analizirajte svojo sanje z naprednimi AI algoritmi"
+      />
     </div>
   );
 };

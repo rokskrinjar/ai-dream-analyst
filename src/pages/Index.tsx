@@ -124,14 +124,10 @@ const Index = () => {
                     variant="outline" 
                     size="lg"
                     className="font-semibold px-8 py-3"
-                    onClick={() => {
-                      document.getElementById('about-dreams')?.scrollIntoView({ 
-                        behavior: 'smooth' 
-                      });
-                    }}
+                    onClick={() => navigate('/pricing')}
                   >
-                    <Sparkles className="mr-2 h-5 w-5" />
-                    Izvedite več o sanjah
+                    <TrendingUp className="mr-2 h-5 w-5" />
+                    Poglej cene
                   </Button>
                 </div>
               </div>
