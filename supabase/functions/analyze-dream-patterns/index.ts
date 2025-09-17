@@ -25,10 +25,15 @@ serve(async (req) => {
 
     // Get user ID from auth header
     const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      throw new Error('Authorization header is required');
+    }
+
     const token = authHeader?.replace('Bearer ', '');
-    const { data: { user } } = await supabase.auth.getUser(token);
+    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
     
-    if (!user) {
+    if (userError || !user) {
+      console.error('Auth error:', userError);
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         {
@@ -36,6 +41,29 @@ serve(async (req) => {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       );
+    }
+
+    console.log('User authenticated:', user.id);
+
+    // Check if user has sufficient credits (2 credits needed for pattern analysis)
+    const { data: canUseCredits, error: creditError } = await supabase
+      .rpc('can_use_credits', { user_id: user.id, credits_needed: 2 });
+
+    if (creditError) {
+      console.error('Error checking credits:', creditError);
+      throw new Error('Failed to check user credits');
+    }
+
+    if (!canUseCredits && !forceRefresh) {
+      console.log('User has insufficient credits for pattern analysis:', user.id);
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Insufficient credits for pattern analysis (2 credits required). Please upgrade your plan.',
+        errorCode: 'INSUFFICIENT_CREDITS'
+      }), {
+        status: 402, // Payment Required
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     if (!dreams || !analyses || dreams.length === 0 || analyses.length === 0) {
@@ -197,16 +225,55 @@ Odgovor mora biti strukturiran JSON s slovenskim besedilom. Bodite psihološko n
 
     // Cache the analysis result
     const latestDreamDate = Math.max(...dreams.map((d: any) => new Date(d.dream_date).getTime()));
-    await supabase
+    const { data: savedAnalysis, error: saveError } = await supabase
       .from('pattern_analyses')
       .upsert({
         user_id: user.id,
         analysis_data: parsedAnalysis,
         dreams_count: dreams.length,
         last_dream_date: new Date(latestDreamDate).toISOString().split('T')[0],
-      });
+      })
+      .select()
+      .single();
+
+    if (saveError) {
+      console.error('Error saving pattern analysis:', saveError);
+      throw saveError;
+    }
 
     console.log('Pattern analysis cached successfully');
+
+    // Deduct credits and log usage after successful analysis (only if not from cache)
+    if (!forceRefresh) {
+      const { error: creditUpdateError } = await supabase
+        .from('user_credits')
+        .update({ 
+          credits_remaining: supabase.raw('credits_remaining - 2'),
+          credits_used_this_month: supabase.raw('credits_used_this_month + 2')
+        })
+        .eq('user_id', user.id);
+
+      if (creditUpdateError) {
+        console.error('Error updating credits:', creditUpdateError);
+        // Don't fail the request if credit update fails, just log it
+      }
+
+      // Log the usage
+      const { error: logError } = await supabase
+        .from('usage_logs')
+        .insert({
+          user_id: user.id,
+          action_type: 'pattern_analysis',
+          credits_used: 2
+        });
+
+      if (logError) {
+        console.error('Error logging usage:', logError);
+        // Don't fail the request if logging fails
+      }
+
+      console.log('Credits deducted and usage logged for pattern analysis:', user.id);
+    }
 
     return new Response(
       JSON.stringify({ analysis: parsedAnalysis, cached: false }),

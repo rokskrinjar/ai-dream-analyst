@@ -23,6 +23,12 @@ serve(async (req) => {
       throw new Error('Dream ID is required');
     }
 
+    // Get user from Authorization header
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      throw new Error('Authorization header is required');
+    }
+
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
@@ -32,6 +38,38 @@ serve(async (req) => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+
+    // Get user from token
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    
+    if (userError || !user) {
+      console.error('Auth error:', userError);
+      throw new Error('Invalid authentication token');
+    }
+
+    console.log('User authenticated:', user.id);
+
+    // Check if user has sufficient credits (1 credit needed for dream analysis)
+    const { data: canUseCredits, error: creditError } = await supabase
+      .rpc('can_use_credits', { user_id: user.id, credits_needed: 1 });
+
+    if (creditError) {
+      console.error('Error checking credits:', creditError);
+      throw new Error('Failed to check user credits');
+    }
+
+    if (!canUseCredits) {
+      console.log('User has insufficient credits:', user.id);
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Insufficient credits. Please upgrade your plan to continue using AI dream analysis.',
+        errorCode: 'INSUFFICIENT_CREDITS'
+      }), {
+        status: 402, // Payment Required
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     // Check if analysis already exists
     const { data: existingAnalysis, error: checkError } = await supabase
@@ -188,6 +226,37 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
     }
 
     console.log('Analysis saved successfully:', savedAnalysis.id);
+
+    // Deduct credit and log usage after successful analysis
+    const { error: creditUpdateError } = await supabase
+      .from('user_credits')
+      .update({ 
+        credits_remaining: supabase.raw('credits_remaining - 1'),
+        credits_used_this_month: supabase.raw('credits_used_this_month + 1')
+      })
+      .eq('user_id', user.id);
+
+    if (creditUpdateError) {
+      console.error('Error updating credits:', creditUpdateError);
+      // Don't fail the request if credit update fails, just log it
+    }
+
+    // Log the usage
+    const { error: logError } = await supabase
+      .from('usage_logs')
+      .insert({
+        user_id: user.id,
+        dream_id: dreamId,
+        action_type: 'dream_analysis',
+        credits_used: 1
+      });
+
+    if (logError) {
+      console.error('Error logging usage:', logError);
+      // Don't fail the request if logging fails
+    }
+
+    console.log('Credit deducted and usage logged for user:', user.id);
 
     return new Response(JSON.stringify({ 
       success: true, 
