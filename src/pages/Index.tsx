@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { BookOpen, Brain, Sparkles, ArrowRight, TrendingUp, Moon, Eye, Heart, Lightbulb, Users, Shield, Star, Zap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { TestimonialSection } from "@/components/TestimonialSection";
-import { StatsSection } from "@/components/StatsSection";
 import { FAQSection } from "@/components/FAQSection";
 import { InteractiveDreamJournal } from "@/components/InteractiveDreamJournal";
 
@@ -176,8 +175,6 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Stats Section */}
-        <StatsSection />
 
         {/* About Dreams Section */}
         <section id="about-dreams" className="container mx-auto px-4 py-16 bg-muted/30">
