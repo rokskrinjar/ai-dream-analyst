@@ -150,8 +150,8 @@ const DreamActivityCalendar = () => {
     return getMonthLabels(weeksData);
   }, [weeksData]);
 
-  // Show loading state or empty calendar while data loads
-  if (loading || weeksData.length === 0) {
+  // Show loading state - only check loading, not weeksData.length to avoid initialization issues
+  if (loading) {
     return (
       <div className="bg-card border border-border/50 rounded-lg p-6">
         <div className="flex items-center gap-3 mb-4">
@@ -159,6 +159,21 @@ const DreamActivityCalendar = () => {
           <h2 className="text-lg font-semibold">Aktivnost sanj</h2>
         </div>
         <div className="h-32 bg-muted/20 rounded animate-pulse"></div>
+      </div>
+    );
+  }
+
+  // If no data loaded, show empty state
+  if (weeksData.length === 0) {
+    return (
+      <div className="bg-card border border-border/50 rounded-lg p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Calendar className="h-5 w-5 text-muted-foreground" />
+          <h2 className="text-lg font-semibold">Aktivnost sanj</h2>
+        </div>
+        <div className="h-32 flex items-center justify-center text-muted-foreground">
+          Ni podatkov o sanjah
+        </div>
       </div>
     );
   }
