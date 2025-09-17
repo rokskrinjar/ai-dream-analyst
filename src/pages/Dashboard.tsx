@@ -22,6 +22,7 @@ import {
   Loader2,
   Lightbulb
 } from 'lucide-react';
+import DreamActivityCalendar from '@/components/DreamActivityCalendar';
 
 interface Dream {
   id: string;
@@ -283,7 +284,7 @@ const Dashboard = () => {
               <h2 className="text-xl font-semibold text-foreground">Nedavne sanje</h2>
               <Button onClick={() => navigate('/dream/new')}>
                 <Plus className="h-4 w-4 mr-2" />
-                Nova sanja
+                Nove sanje
               </Button>
             </div>
 
@@ -468,20 +469,6 @@ const Dashboard = () => {
             </h2>
             
             <div className="space-y-4">
-              <Card className="border-border/50 hover:shadow-md transition-shadow cursor-pointer">
-                <CardHeader>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Plus className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-base">Nova sanja</CardTitle>
-                      <CardDescription>Beležite novo sanje</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-              </Card>
-
               <Card 
                 className="border-border/50 hover:shadow-md transition-shadow cursor-pointer"
                 onClick={() => navigate('/analytics')}
@@ -498,6 +485,8 @@ const Dashboard = () => {
                   </div>
                 </CardHeader>
               </Card>
+
+              <DreamActivityCalendar />
 
               <Card className="border-border/50 bg-gradient-to-br from-primary/5 to-primary/10">
                 <CardHeader>
