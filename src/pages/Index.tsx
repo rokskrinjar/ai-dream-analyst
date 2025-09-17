@@ -5,11 +5,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { BookOpen, Brain, Sparkles, ArrowRight, TrendingUp, Moon, Eye, Heart, Lightbulb, Users, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import dreamCatcherHero from "@/assets/dream-catcher-colorful.jpg";
+import { removeBackground, loadImageFromSrc } from "@/utils/backgroundRemoval";
 
 // Force cache refresh
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [processedImageSrc, setProcessedImageSrc] = useState<string | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -18,6 +20,23 @@ const Index = () => {
       navigate('/dashboard');
     }
   }, [user, navigate]);
+
+  useEffect(() => {
+    const processImage = async () => {
+      try {
+        const img = await loadImageFromSrc(dreamCatcherHero);
+        const processedBlob = await removeBackground(img);
+        const processedUrl = URL.createObjectURL(processedBlob);
+        setProcessedImageSrc(processedUrl);
+      } catch (error) {
+        console.error('Failed to process image:', error);
+        // Fallback to original image
+        setProcessedImageSrc(dreamCatcherHero);
+      }
+    };
+
+    processImage();
+  }, []);
 
   const features = [
     {
@@ -140,9 +159,9 @@ const Index = () => {
 
             <div className="flex-1 relative">
               <img
-                src={dreamCatcherHero}
+                src={processedImageSrc || dreamCatcherHero}
                 alt="Pisani lovilec sanj - simbol varstva in razumevanja sanj"
-                className="w-full max-w-md mx-auto"
+                className="w-full max-w-xs mx-auto"
               />
             </div>
           </div>
