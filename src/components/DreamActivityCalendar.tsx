@@ -73,8 +73,14 @@ const DreamActivityCalendar = () => {
         const currentDateOnly = new Date(currentDate);
         currentDateOnly.setHours(0, 0, 0, 0);
         
-        const dateStr = currentDate.toISOString().split('T')[0];
+        // Use local date formatting instead of UTC to match database format
+        const dateStr = currentDate.toLocaleDateString('sv-SE'); // YYYY-MM-DD in local time
         const count = activityData[dateStr] || 0;
+        
+        // Debug logging for Sept 17th specifically
+        if (dateStr === '2025-09-17') {
+          console.log('Sept 17 debug - dateStr:', dateStr, 'count from activityData:', count, 'available keys:', Object.keys(activityData));
+        }
         
         // Check if date is within our year range
         const isInRange = currentDateOnly >= startDate && currentDateOnly <= today;
