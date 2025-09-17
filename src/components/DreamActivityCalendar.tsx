@@ -138,19 +138,11 @@ const DreamActivityCalendar = () => {
         <div className="space-y-1">
           {/* Month labels */}
           <div className="flex text-[10px] text-muted-foreground mb-2 ml-6">
-            {monthLabels.map((month, index) => {
-              // Calculate width: each week is 6px (1.5 * 4) + 1px gap = 7px per week
-              const weekWidth = 7;
-              return (
-                <div 
-                  key={index} 
-                  className="text-left"
-                  style={{ width: `${weekWidth}px` }}
-                >
-                  {month && <span className="text-[9px]">{month}</span>}
-                </div>
-              );
-            })}
+            {monthLabels.map((month, index) => (
+              <div key={index} className="flex-1 text-left">
+                {month && <span className="text-[9px]">{month}</span>}
+              </div>
+            ))}
           </div>
 
           {/* Day labels and calendar grid */}
@@ -166,13 +158,13 @@ const DreamActivityCalendar = () => {
             </div>
 
             {/* Weekly calendar grid */}
-            <div className="flex gap-[1px]">
+            <div className="flex gap-[1px] flex-1">
               {weeksData.map((week, weekIndex) => (
-                <div key={weekIndex} className="flex flex-col gap-[1px]">
+                <div key={weekIndex} className="flex flex-col gap-[1px] flex-1">
                   {week.map((day) => (
                     <div
                       key={day.date}
-                      className={`w-1.5 h-2 rounded-[1px] ${day.level} transition-colors cursor-pointer`}
+                      className={`w-full h-2 rounded-[1px] ${day.level} transition-colors cursor-pointer`}
                       title={`${day.date}: ${day.count} ${day.count === 1 ? 'sanja' : 'sanj'}`}
                     />
                   ))}
