@@ -52,16 +52,10 @@ const DreamActivityCalendar = () => {
 
   const generateCalendarData = () => {
     const today = new Date();
-    // Set today to end of day to ensure it's included
-    today.setHours(23, 59, 59, 999);
+    today.setHours(23, 59, 59, 999); // End of today to include full day
     
     const startDate = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
     startDate.setHours(0, 0, 0, 0); // Start of day
-    
-    console.log('Calendar range:', { 
-      start: startDate.toISOString().split('T')[0], 
-      end: today.toISOString().split('T')[0] 
-    });
     
     // Find the Monday of the week containing startDate
     const startDayOfWeek = startDate.getDay();
@@ -69,13 +63,9 @@ const DreamActivityCalendar = () => {
     const mondayStart = new Date(startDate);
     mondayStart.setDate(startDate.getDate() - mondayOffset);
     
-    // Generate weeks data - ensure we complete the current week
+    // Generate weeks data
     const weeks = [];
     let currentDate = new Date(mondayStart);
-    
-    // Continue until we finish the week containing today
-    const todayDateOnly = new Date(today);
-    todayDateOnly.setHours(0, 0, 0, 0);
     
     while (currentDate <= today) {
       const week = [];
@@ -86,11 +76,8 @@ const DreamActivityCalendar = () => {
         const dateStr = currentDate.toISOString().split('T')[0];
         const count = activityData[dateStr] || 0;
         
-        // Use date-only comparison to fix the range issue
-        const isInRange = currentDateOnly >= startDate && currentDateOnly <= todayDateOnly;
-        
-        console.log(`Processing ${dateStr}: count=${count}, isInRange=${isInRange}, currentDate=${currentDateOnly.toISOString().split('T')[0]}`);
-        
+        // Check if date is within our year range
+        const isInRange = currentDateOnly >= startDate && currentDateOnly <= today;
         const activityLevel = isInRange ? getActivityLevel(count) : 'bg-transparent';
         
         week.push({
@@ -100,41 +87,10 @@ const DreamActivityCalendar = () => {
           isInRange
         });
         
-        // Debug: log when we find dreams
-        if (count > 0) {
-          console.log(`Found ${count} dreams on ${dateStr}, level: ${activityLevel}, isInRange: ${isInRange}`);
-        }
-        
-        week.push({
-          date: dateStr,
-          count: isInRange ? count : 0,
-          level: isInRange ? getActivityLevel(count) : 'bg-transparent',
-          isInRange
-        });
-        
-        // Debug: log when we find dreams
-        if (count > 0) {
-          console.log(`Found ${count} dreams on ${dateStr}, level: ${getActivityLevel(count)}`);
-        }
-        
         currentDate.setDate(currentDate.getDate() + 1);
       }
       weeks.push(week);
-      
-      // If we've processed today, complete this week and stop
-      const weekContainsToday = week.some(day => {
-        const dayDate = new Date(day.date);
-        dayDate.setHours(0, 0, 0, 0);
-        return dayDate.getTime() === todayDateOnly.getTime();
-      });
-      
-      if (weekContainsToday) {
-        // Complete the current week and stop
-        break;
-      }
     }
-    
-    console.log('Generated weeks:', weeks.length, 'Last week days:', weeks[weeks.length - 1]?.map(d => d.date));
     
     return weeks;
   };
