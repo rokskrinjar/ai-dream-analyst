@@ -65,8 +65,11 @@ export function CreditDisplay() {
       if (subError && subError.code !== 'PGRST116') {
         // Default to free plan
         setPlan({ name: 'Brezplačni', ai_credits_monthly: 5 });
-      } else {
+      } else if (subscriptionData && subscriptionData.subscription_plans) {
         setPlan(subscriptionData.subscription_plans);
+      } else {
+        // Default to free plan if no subscription
+        setPlan({ name: 'Brezplačni', ai_credits_monthly: 5 });
       }
 
     } catch (error) {
