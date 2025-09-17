@@ -1,28 +1,36 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Separator } from '@/components/ui/separator';
 import { 
-  Plus, 
-  BookOpen, 
+  Calendar, 
   Brain, 
-  TrendingUp, 
-  LogOut, 
+  BarChart3, 
+  PlusCircle, 
+  ChevronDown, 
+  ChevronRight, 
+  Lightbulb,
   User,
-  Calendar,
+  LogOut,
+  TrendingUp,
+  BookOpen,
   Sparkles,
-  ChevronDown,
-  Heart,
-  Eye,
+  Settings,
+  CreditCard,
+  Plus,
   Loader2,
-  Lightbulb
+  Eye,
+  Heart
 } from 'lucide-react';
 import DreamActivityCalendar from '@/components/DreamActivityCalendar';
+import { CreditDisplay } from '@/components/CreditDisplay';
+import { CreditUsageModal } from '@/components/CreditUsageModal';
+import { useToast } from "@/hooks/use-toast";
 
 interface Dream {
   id: string;
@@ -51,14 +59,37 @@ const Dashboard = () => {
   const [analyses, setAnalyses] = useState<{ [key: string]: DreamAnalysis }>({});
   const [loading, setLoading] = useState(true);
   const [analyzingDreams, setAnalyzingDreams] = useState<Set<string>>(new Set());
+  const [showCreditModal, setShowCreditModal] = useState(false);
+  const [pendingAnalysis, setPendingAnalysis] = useState<string | null>(null);
+  const [userCredits, setUserCredits] = useState<number>(5);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!user) {
       navigate('/auth');
       return;
     }
+
     fetchDreams();
+    fetchUserCredits();
   }, [user, navigate]);
+
+  const fetchUserCredits = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('user_credits')
+        .select('credits_remaining')
+        .eq('user_id', user.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') throw error;
+      setUserCredits(data?.credits_remaining || 5);
+    } catch (error) {
+      console.error('Error fetching credits:', error);
+    }
+  };
 
   const fetchDreams = async () => {
     try {
@@ -109,42 +140,77 @@ const Dashboard = () => {
 
   const analyzeDream = async (dreamId: string) => {
     if (analyzingDreams.has(dreamId)) return;
-    
-    setAnalyzingDreams(prev => new Set(prev).add(dreamId));
-    
+
+    // Check credits first
+    if (userCredits < 1) {
+      toast({
+        title: "Ni dovolj kreditov",
+        description: "Za analizo sanj potrebujete vsaj 1 kredit. Nadgradite svoj načrt.",
+        variant: "destructive",
+      });
+      navigate('/pricing');
+      return;
+    }
+
+    // Show credit confirmation modal
+    setPendingAnalysis(dreamId);
+    setShowCreditModal(true);
+  };
+
+  const confirmAnalysis = async () => {
+    if (!pendingAnalysis) return;
+
+    setShowCreditModal(false);
+    setAnalyzingDreams(prev => new Set(prev).add(pendingAnalysis));
+    toast({
+      title: "Analiza se izvaja",
+      description: "AI analizira vašo sanje...",
+    });
+
     try {
       const { data, error } = await supabase.functions.invoke('analyze-dream', {
-        body: { dreamId }
+        body: { dreamId: pendingAnalysis }
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message?.includes('402')) {
+          toast({
+            title: "Ni dovolj kreditov",
+            description: "Za to analizo potrebujete več kreditov.",
+            variant: "destructive",
+          });
+          navigate('/pricing');
+          return;
+        }
+        throw error;
+      }
 
-      if (data.success) {
+      if (data.analysis) {
         setAnalyses(prev => ({
           ...prev,
-          [dreamId]: data.analysis
+          [pendingAnalysis]: data.analysis
         }));
-        
         toast({
-          title: "Uspešno!",
-          description: "Analiza sanje je bila uspešno opravljena.",
+          title: "Analiza končana",
+          description: `AI analiza je pripravljena! Porabili ste 1 kredit.`,
         });
-      } else {
-        throw new Error(data.error || 'Neznana napaka');
+        // Refresh credits
+        await fetchUserCredits();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error analyzing dream:', error);
       toast({
-        title: "Napaka",
-        description: "Napaka pri analizi sanje. Poskusite znova.",
+        title: "Napaka pri analizi",
+        description: error.message || "Prišlo je do napake pri analizi sanj.",
         variant: "destructive",
       });
     } finally {
       setAnalyzingDreams(prev => {
         const newSet = new Set(prev);
-        newSet.delete(dreamId);
+        newSet.delete(pendingAnalysis);
         return newSet;
       });
+      setPendingAnalysis(null);
     }
   };
 
