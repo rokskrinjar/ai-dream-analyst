@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { TestimonialSection } from "@/components/TestimonialSection";
 import { StatsSection } from "@/components/StatsSection";
 import { FAQSection } from "@/components/FAQSection";
-import dreamCatcherHero from "@/assets/dream-catcher-hero-new.jpg";
+import { InteractiveDreamJournal } from "@/components/InteractiveDreamJournal";
 
 // Force cache refresh
 
@@ -169,15 +169,8 @@ const Index = () => {
                 </div>
               </div>
 
-              <div className="flex-1 relative animate-float">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-full blur-3xl"></div>
-                  <img
-                    src={dreamCatcherHero}
-                    alt="Pisani lovilec sanj - simbol varstva in razumevanja sanj"
-                    className="relative w-full max-w-md mx-auto hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
+              <div className="flex-1 relative">
+                <InteractiveDreamJournal />
               </div>
             </div>
           </div>
