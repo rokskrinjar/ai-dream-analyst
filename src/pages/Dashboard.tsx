@@ -30,7 +30,7 @@ import {
   MessageCircleQuestion
 } from 'lucide-react';
 import DreamActivityCalendar from '@/components/DreamActivityCalendar';
-import { CreditDisplay } from '@/components/CreditDisplay';
+import { CompactCreditDisplay } from '@/components/CompactCreditDisplay';
 import { CreditUsageModal } from '@/components/CreditUsageModal';
 import { useToast } from "@/hooks/use-toast";
 
@@ -292,6 +292,7 @@ const Dashboard = () => {
                   Račun
                 </Button>
               </nav>
+              <CompactCreditDisplay />
               <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                 <User className="h-4 w-4" />
                 <span>{user?.email}</span>
@@ -306,11 +307,6 @@ const Dashboard = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Credit Display */}
-        <div className="mb-8">
-          <CreditDisplay />
-        </div>
-
         {/* Dream Activity Calendar */}
         <div className="mb-8">
           <DreamActivityCalendar />
