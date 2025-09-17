@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { Calendar } from 'lucide-react';
@@ -130,7 +130,28 @@ const DreamActivityCalendar = () => {
     return labels;
   };
 
-  if (loading) {
+  // Memoized calendar generation - only runs when activityData changes and has data
+  const weeksData = useMemo(() => {
+    // Don't generate calendar if we're loading or have no data
+    if (loading || Object.keys(activityData).length === 0) {
+      console.log('Calendar generation skipped - loading:', loading, 'data keys:', Object.keys(activityData).length);
+      return [];
+    }
+    
+    // Validate we have the expected data for Sep 17th
+    const hasSep17 = activityData['2025-09-17'];
+    console.log('Calendar generation with data:', activityData, 'Sep 17 count:', hasSep17);
+    
+    return generateCalendarData();
+  }, [activityData, loading]);
+
+  const monthLabels = useMemo(() => {
+    if (weeksData.length === 0) return {};
+    return getMonthLabels(weeksData);
+  }, [weeksData]);
+
+  // Show loading state or empty calendar while data loads
+  if (loading || weeksData.length === 0) {
     return (
       <div className="bg-card border border-border/50 rounded-lg p-6">
         <div className="flex items-center gap-3 mb-4">
@@ -141,9 +162,6 @@ const DreamActivityCalendar = () => {
       </div>
     );
   }
-
-  const weeksData = generateCalendarData();
-  const monthLabels = getMonthLabels(weeksData);
 
   return (
     <div className="bg-card border border-border/50 rounded-lg p-6">
