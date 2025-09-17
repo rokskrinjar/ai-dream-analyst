@@ -115,19 +115,31 @@ serve(async (req) => {
     }
 
     // Prepare the prompt for dream analysis
-    const analysisPrompt = `Analizirajte vaše sanje in vrnite strukturiran odgovor v JSON formatu. Vaše sanje:
-
-Naslov: ${dream.title}
-Vsebina: ${dream.content}
-Razpoloženje: ${dream.mood || 'Ni navedeno'}
-Oznake: ${dream.tags ? dream.tags.join(', ') : 'Ni oznak'}
-
-Prosim, analizirajte vaše sanje in vrnite JSON z naslednjimi ključi (direktno nagovarjajte uporabnika v drugi osebi):
-- "themes": seznam glavnih tem (največ 5)
-- "emotions": seznam čustev (največ 5) 
-- "symbols": seznam simbolov in njihovih možnih pomenov (največ 5)
-- "analysis_text": podroben opis analize v drugi osebi (2-3 odstavki) - "Vaše sanje razkrivajo..."
-- "recommendations": terapevtska priporočila in nasveti v drugi osebi (2-3 odstavki) - "Predlagam vam..."
+    const analysisPrompt = `Analiziraj moje sanje na osnovi naslednjih podatkov:
+        
+        Naslov sanj: ${dream.title}
+        Vsebina sanj: ${dream.content}
+        Razpoloženje: ${dream.mood || 'Ni navedeno'}
+        Oznake: ${dream.tags ? dream.tags.join(', ') : 'Ni navedenih'}
+        
+        Vrni analizo v naslednjem JSON formatu v slovenščini:
+        {
+          "themes": [seznam glavnih tem iz sanj],
+          "emotions": [seznam čustev, ki se pojavljajo v sanjah],
+          "symbols": [
+            {
+              "symbol": "ime simbola",
+              "meaning": "pomen simbola"
+            }
+          ],
+          "analysis_text": "podrobna analiza sanj v slovenščini",
+          "recommendations": "priporočila za nadaljnje razmišljanje in ukrepanje",
+          "reflection_questions": [
+            "Razmislite o tem, kako se vaša čustva iz sanj povezujejo z vašim trenutnim življenjem?",
+            "Kaj mislite, da vam simboli iz sanj sporočajo o vaših trenutnih izzivih?",
+            "Kako lahko uporabite ugotovitve iz te analize za osebno rast?"
+          ]
+        }
 
 POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json in brez \`\`\`, brez dodatnega besedila.`;
 
@@ -215,7 +227,8 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
         emotions: parsedAnalysis.emotions || [],
         symbols: parsedAnalysis.symbols || [],
         analysis_text: parsedAnalysis.analysis_text || 'Analiza ni na voljo.',
-        recommendations: parsedAnalysis.recommendations || 'Priporočila niso na voljo.'
+        recommendations: parsedAnalysis.recommendations || 'Priporočila niso na voljo.',
+        reflection_questions: parsedAnalysis.reflection_questions || []
       })
       .select()
       .single();

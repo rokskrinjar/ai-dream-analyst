@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
+import { getUserSubscriptionPlan, isPremiumUser, truncateRecommendations } from '@/utils/subscriptionUtils';
 import { 
   Calendar, 
   Brain, 
@@ -25,7 +26,8 @@ import {
   Plus,
   Loader2,
   Eye,
-  Heart
+  Heart,
+  MessageCircleQuestion
 } from 'lucide-react';
 import DreamActivityCalendar from '@/components/DreamActivityCalendar';
 import { CreditDisplay } from '@/components/CreditDisplay';
@@ -49,6 +51,7 @@ interface DreamAnalysis {
   symbols: string[];
   analysis_text: string;
   recommendations: string;
+  reflection_questions?: string[];
   created_at: string;
 }
 
@@ -62,6 +65,7 @@ const Dashboard = () => {
   const [showCreditModal, setShowCreditModal] = useState(false);
   const [pendingAnalysis, setPendingAnalysis] = useState<string | null>(null);
   const [userCredits, setUserCredits] = useState<number>(5);
+  const [userPlan, setUserPlan] = useState<any>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -72,7 +76,14 @@ const Dashboard = () => {
 
     fetchDreams();
     fetchUserCredits();
+    fetchUserPlan();
   }, [user, navigate]);
+
+  const fetchUserPlan = async () => {
+    if (!user) return;
+    const plan = await getUserSubscriptionPlan(user.id);
+    setUserPlan(plan);
+  };
 
   const fetchUserCredits = async () => {
     if (!user) return;
@@ -519,15 +530,51 @@ const Dashboard = () => {
                               )}
 
                               {analysis.recommendations && (
-                                <div className="border-t pt-3 mt-3">
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <Lightbulb className="h-4 w-4 text-emerald-500" />
-                                    <span className="text-sm font-medium text-emerald-600">Priporočila</span>
+                                <div className="mt-4">
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <Lightbulb className="h-4 w-4 text-yellow-500" />
+                                    <h4 className="font-medium">Priporočila</h4>
                                   </div>
-                                  <div className="bg-emerald-50 dark:bg-emerald-950/20 p-3 rounded-lg border-l-4 border-emerald-500">
-                                    <p className="text-sm text-emerald-800 dark:text-emerald-200 leading-relaxed">
+                                  {isPremiumUser(userPlan) ? (
+                                    <p className="text-muted-foreground text-sm whitespace-pre-line">
                                       {analysis.recommendations}
                                     </p>
+                                  ) : (
+                                    <div>
+                                      <p className="text-muted-foreground text-sm whitespace-pre-line">
+                                        {truncateRecommendations(analysis.recommendations)}
+                                      </p>
+                                      <div className="mt-3 p-3 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg border border-primary/20">
+                                        <p className="text-sm text-muted-foreground mb-2">
+                                          Nadgradite za celotna priporočila
+                                        </p>
+                                        <Button 
+                                          size="sm" 
+                                          onClick={() => navigate('/pricing')}
+                                          className="w-full"
+                                        >
+                                          <CreditCard className="h-4 w-4 mr-2" />
+                                          Nadgradite zdaj
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
+                              {analysis.reflection_questions && analysis.reflection_questions.length > 0 && (
+                                <div className="mt-4">
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <MessageCircleQuestion className="h-4 w-4 text-blue-500" />
+                                    <h4 className="font-medium">Razmislite</h4>
+                                  </div>
+                                  <div className="space-y-2">
+                                    {analysis.reflection_questions.map((question, index) => (
+                                      <div key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                                        <span className="text-primary font-medium">{index + 1}.</span>
+                                        <p>{question}</p>
+                                      </div>
+                                    ))}
                                   </div>
                                 </div>
                               )}

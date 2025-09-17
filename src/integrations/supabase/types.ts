@@ -22,6 +22,7 @@ export type Database = {
           emotions: string[] | null
           id: string
           recommendations: string | null
+          reflection_questions: string[] | null
           symbols: string[] | null
           themes: string[] | null
         }
@@ -32,6 +33,7 @@ export type Database = {
           emotions?: string[] | null
           id?: string
           recommendations?: string | null
+          reflection_questions?: string[] | null
           symbols?: string[] | null
           themes?: string[] | null
         }
@@ -42,6 +44,7 @@ export type Database = {
           emotions?: string[] | null
           id?: string
           recommendations?: string | null
+          reflection_questions?: string[] | null
           symbols?: string[] | null
           themes?: string[] | null
         }
