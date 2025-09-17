@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Modern Dream Journal Design System */
+    /* Mystical Dream Journal Design System */
     
     /* Core Background - Clean whites and light grays */
     --background: 0 0% 100%;
@@ -22,8 +22,8 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    /* Primary - Soft purple accent */
-    --primary: 262 83% 58%;
+    /* Primary - Deep mystical purple */
+    --primary: 259 94% 51%;
     --primary-foreground: 0 0% 100%;
 
     /* Secondary - Light gray */
@@ -34,9 +34,9 @@ All colors MUST be HSL.
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
 
-    /* Accent - Subtle blue */
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220 8.9% 46.1%;
+    /* Accent - Golden amber for mystical accents */
+    --accent: 43 96% 56%;
+    --accent-foreground: 240 10% 3.9%;
 
     /* Destructive */
     --destructive: 0 84.2% 60.2%;
@@ -45,7 +45,16 @@ All colors MUST be HSL.
     /* Interactive elements */
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 262 83% 58%;
+    --ring: 259 94% 51%;
+
+    /* Mystical Hero Colors */
+    --hero-gradient-start: 259 94% 51%;  /* Deep purple */
+    --hero-gradient-middle: 251 91% 35%; /* Indigo */
+    --hero-gradient-end: 240 27% 9%;     /* Midnight blue */
+    --hero-text-primary: 43 96% 89%;     /* Cream/gold */
+    --hero-text-secondary: 0 0% 92%;     /* Light cream */
+    --hero-accent: 43 96% 68%;           /* Golden accent */
+    --hero-cta: 43 96% 56%;              /* CTA button gold */
 
     --radius: 0.5rem;
 
