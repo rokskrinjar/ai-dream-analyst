@@ -213,6 +213,11 @@ const Dashboard = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Dream Activity Calendar */}
+        <div className="mb-8">
+          <DreamActivityCalendar />
+        </div>
+
         {/* Quick Stats */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <Card className="border-border/50">
@@ -485,8 +490,6 @@ const Dashboard = () => {
                   </div>
                 </CardHeader>
               </Card>
-
-              <DreamActivityCalendar />
 
               <Card className="border-border/50 bg-gradient-to-br from-primary/5 to-primary/10">
                 <CardHeader>

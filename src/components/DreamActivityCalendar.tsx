@@ -42,11 +42,11 @@ const DreamActivityCalendar = () => {
   };
 
   const getActivityLevel = (count: number): string => {
-    if (count === 0) return 'bg-muted/30';
-    if (count === 1) return 'bg-emerald-200 dark:bg-emerald-900';
-    if (count === 2) return 'bg-emerald-300 dark:bg-emerald-800';
-    if (count >= 3) return 'bg-emerald-500 dark:bg-emerald-700';
-    return 'bg-muted/30';
+    if (count === 0) return 'bg-muted/20';
+    if (count === 1) return 'bg-emerald-100 dark:bg-emerald-900/40';
+    if (count === 2) return 'bg-emerald-200 dark:bg-emerald-800/60';
+    if (count >= 3) return 'bg-emerald-400 dark:bg-emerald-600';
+    return 'bg-muted/20';
   };
 
   const generateCalendarData = () => {
@@ -88,7 +88,7 @@ const DreamActivityCalendar = () => {
   const getMonthLabels = (weeks: any[][]) => {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 
                    'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'];
-    const labels: (string | undefined)[] = [];
+    const labels: { [key: number]: string } = {};
     let lastMonth = -1;
     
     weeks.forEach((week, weekIndex) => {
@@ -96,8 +96,21 @@ const DreamActivityCalendar = () => {
         const firstDay = new Date(week[0].date);
         const currentMonth = firstDay.getMonth();
         
-        // Show month label when month changes or it's the first week
-        if (currentMonth !== lastMonth || weekIndex === 0) {
+        // Show month label when month changes and there's enough space (at least 3 weeks visible)
+        if (currentMonth !== lastMonth && weekIndex > 0) {
+          // Only show if we have at least 3 weeks of the month visible
+          const remainingWeeks = weeks.length - weekIndex;
+          const monthWeeksCount = weeks.slice(weekIndex).filter((w, i) => {
+            if (w.length === 0) return false;
+            const wDate = new Date(w[0].date);
+            return wDate.getMonth() === currentMonth;
+          }).length;
+          
+          if (monthWeeksCount >= 2) {
+            labels[weekIndex] = months[currentMonth];
+          }
+          lastMonth = currentMonth;
+        } else if (weekIndex === 0) {
           labels[weekIndex] = months[currentMonth];
           lastMonth = currentMonth;
         }
@@ -109,17 +122,13 @@ const DreamActivityCalendar = () => {
 
   if (loading) {
     return (
-      <Card className="border-border/50">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm flex items-center gap-2">
-            <Calendar className="h-3 w-3" />
-            Aktivnost sanj
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-2">
-          <div className="h-16 bg-muted/20 rounded animate-pulse"></div>
-        </CardContent>
-      </Card>
+      <div className="bg-card border border-border/50 rounded-lg p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Calendar className="h-5 w-5 text-muted-foreground" />
+          <h2 className="text-lg font-semibold">Aktivnost sanj</h2>
+        </div>
+        <div className="h-32 bg-muted/20 rounded animate-pulse"></div>
+      </div>
     );
   }
 
@@ -127,66 +136,71 @@ const DreamActivityCalendar = () => {
   const monthLabels = getMonthLabels(weeksData);
 
   return (
-    <Card className="border-border/50">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm flex items-center gap-2">
-          <Calendar className="h-3 w-3" />
-          Aktivnost sanj
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-2">
-        <div className="space-y-1">
-          {/* Month labels */}
-          <div className="flex text-[10px] text-muted-foreground mb-2 ml-6">
-            {monthLabels.map((month, index) => (
-              <div key={index} className="flex-1 text-left">
-                {month && <span className="text-[9px]">{month}</span>}
+    <div className="bg-card border border-border/50 rounded-lg p-6">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <Calendar className="h-5 w-5 text-muted-foreground" />
+        <div>
+          <h2 className="text-lg font-semibold">Aktivnost sanj</h2>
+          <p className="text-sm text-muted-foreground">
+            {Object.values(activityData).reduce((a, b) => a + b, 0)} sanj v zadnjem letu
+          </p>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        {/* Month labels */}
+        <div className="flex text-xs text-muted-foreground ml-8">
+          {weeksData.map((week, weekIndex) => (
+            <div key={weekIndex} className="flex-1 text-left">
+              {monthLabels[weekIndex] && (
+                <span className="text-xs font-medium">{monthLabels[weekIndex]}</span>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Day labels and calendar grid */}
+        <div className="flex items-start gap-3">
+          <div className="flex flex-col text-xs text-muted-foreground space-y-1 pt-1">
+            <div className="h-3 flex items-center justify-end pr-1 font-medium">P</div>
+            <div className="h-3 flex items-center justify-end pr-1 font-medium">T</div>
+            <div className="h-3 flex items-center justify-end pr-1 font-medium">S</div>
+            <div className="h-3 flex items-center justify-end pr-1 font-medium">Č</div>
+            <div className="h-3 flex items-center justify-end pr-1 font-medium">P</div>
+            <div className="h-3 flex items-center justify-end pr-1 font-medium">S</div>
+            <div className="h-3 flex items-center justify-end pr-1 font-medium">N</div>
+          </div>
+
+          {/* Weekly calendar grid */}
+          <div className="flex gap-1 flex-1">
+            {weeksData.map((week, weekIndex) => (
+              <div key={weekIndex} className="flex flex-col gap-1 flex-1">
+                {week.map((day) => (
+                  <div
+                    key={day.date}
+                    className={`w-full h-3 rounded-sm ${day.level} transition-all duration-150 hover:ring-2 hover:ring-offset-1 hover:ring-primary/30 cursor-pointer`}
+                    title={`${new Date(day.date).toLocaleDateString('sl-SI')}: ${day.count} ${day.count === 1 ? 'sanja' : 'sanj'}`}
+                  />
+                ))}
               </div>
             ))}
           </div>
-
-          {/* Day labels and calendar grid */}
-          <div className="flex items-start gap-1">
-            <div className="flex flex-col text-[8px] text-muted-foreground mr-1 pt-0.5">
-              <div className="h-2 flex items-center">P</div>
-              <div className="h-2 flex items-center">T</div>
-              <div className="h-2 flex items-center">S</div>
-              <div className="h-2 flex items-center">Č</div>
-              <div className="h-2 flex items-center">P</div>
-              <div className="h-2 flex items-center">S</div>
-              <div className="h-2 flex items-center">N</div>
-            </div>
-
-            {/* Weekly calendar grid */}
-            <div className="flex gap-[1px] flex-1">
-              {weeksData.map((week, weekIndex) => (
-                <div key={weekIndex} className="flex flex-col gap-[1px] flex-1">
-                  {week.map((day) => (
-                    <div
-                      key={day.date}
-                      className={`w-full h-2 rounded-[1px] ${day.level} transition-colors cursor-pointer`}
-                      title={`${day.date}: ${day.count} ${day.count === 1 ? 'sanja' : 'sanj'}`}
-                    />
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Legend */}
-          <div className="flex items-center justify-between mt-3 text-[9px] text-muted-foreground">
-            <span>Manj</span>
-            <div className="flex items-center gap-[1px]">
-              <div className="w-1.5 h-2 rounded-[1px] bg-muted/30"></div>
-              <div className="w-1.5 h-2 rounded-[1px] bg-emerald-200 dark:bg-emerald-900"></div>
-              <div className="w-1.5 h-2 rounded-[1px] bg-emerald-300 dark:bg-emerald-800"></div>
-              <div className="w-1.5 h-2 rounded-[1px] bg-emerald-500 dark:bg-emerald-700"></div>
-            </div>
-            <span>Več</span>
-          </div>
         </div>
-      </CardContent>
-    </Card>
+
+        {/* Legend */}
+        <div className="flex items-center justify-between text-xs text-muted-foreground ml-8">
+          <span className="font-medium">Manj</span>
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded-sm bg-muted/20"></div>
+            <div className="w-3 h-3 rounded-sm bg-emerald-100 dark:bg-emerald-900/40"></div>
+            <div className="w-3 h-3 rounded-sm bg-emerald-200 dark:bg-emerald-800/60"></div>
+            <div className="w-3 h-3 rounded-sm bg-emerald-400 dark:bg-emerald-600"></div>
+          </div>
+          <span className="font-medium">Več</span>
+        </div>
+      </div>
+    </div>
   );
 };
 
