@@ -49,32 +49,57 @@ const DreamActivityCalendar = () => {
 
   const generateCalendarData = () => {
     const today = new Date();
-    const oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
-    const calendar = [];
-
-    for (let d = new Date(oneYearAgo); d <= today; d.setDate(d.getDate() + 1)) {
-      const dateStr = d.toISOString().split('T')[0];
-      const count = activityData[dateStr] || 0;
-      calendar.push({
-        date: dateStr,
-        count,
-        level: getActivityLevel(count)
-      });
+    const startDate = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
+    
+    // Find the Monday of the week containing startDate
+    const startDayOfWeek = startDate.getDay();
+    const mondayOffset = startDayOfWeek === 0 ? 6 : startDayOfWeek - 1;
+    const mondayStart = new Date(startDate);
+    mondayStart.setDate(startDate.getDate() - mondayOffset);
+    
+    // Generate weeks data
+    const weeks = [];
+    let currentDate = new Date(mondayStart);
+    
+    while (currentDate <= today) {
+      const week = [];
+      for (let i = 0; i < 7; i++) {
+        const dateStr = currentDate.toISOString().split('T')[0];
+        const count = activityData[dateStr] || 0;
+        const isInRange = currentDate >= startDate && currentDate <= today;
+        
+        week.push({
+          date: dateStr,
+          count: isInRange ? count : 0,
+          level: isInRange ? getActivityLevel(count) : 'bg-transparent',
+          isInRange
+        });
+        
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+      weeks.push(week);
     }
-
-    return calendar;
+    
+    return weeks;
   };
 
-  const getMonthLabels = () => {
+  const getMonthLabels = (weeks: any[][]) => {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 
                    'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'];
-    const today = new Date();
     const labels = [];
     
-    for (let i = 0; i < 12; i++) {
-      const month = new Date(today.getFullYear(), today.getMonth() - 11 + i, 1);
-      labels.push(months[month.getMonth()]);
-    }
+    // Get first day of each week to determine month positions
+    weeks.forEach((week, weekIndex) => {
+      if (week.length > 0) {
+        const firstDay = new Date(week[0].date);
+        const weekStart = firstDay.getDate();
+        
+        // Only show month label if it's the first week of month or first few weeks
+        if (weekStart <= 7 || weekIndex === 0) {
+          labels[weekIndex] = months[firstDay.getMonth()];
+        }
+      }
+    });
     
     return labels;
   };
@@ -82,77 +107,75 @@ const DreamActivityCalendar = () => {
   if (loading) {
     return (
       <Card className="border-border/50">
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <Calendar className="h-3 w-3" />
             Aktivnost sanj
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="h-24 bg-muted/20 rounded animate-pulse"></div>
+        <CardContent className="p-2">
+          <div className="h-16 bg-muted/20 rounded animate-pulse"></div>
         </CardContent>
       </Card>
     );
   }
 
-  const calendarData = generateCalendarData();
-  const monthLabels = getMonthLabels();
-  const weeksData: any[][] = [];
-
-  // Group calendar data by weeks (7 days)
-  for (let i = 0; i < calendarData.length; i += 7) {
-    weeksData.push(calendarData.slice(i, i + 7));
-  }
+  const weeksData = generateCalendarData();
+  const monthLabels = getMonthLabels(weeksData);
 
   return (
     <Card className="border-border/50">
-      <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2">
-          <Calendar className="h-4 w-4" />
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm flex items-center gap-2">
+          <Calendar className="h-3 w-3" />
           Aktivnost sanj
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-3">
+      <CardContent className="p-2">
         <div className="space-y-1">
           {/* Month labels */}
-          <div className="flex justify-between text-xs text-muted-foreground mb-2">
+          <div className="flex text-[10px] text-muted-foreground mb-1">
             {monthLabels.map((month, index) => (
-              <span key={index} className="w-8 text-center">{month}</span>
+              <span key={index} className="w-3 text-left">{month}</span>
             ))}
           </div>
 
-          {/* Day labels */}
+          {/* Day labels and calendar grid */}
           <div className="flex items-start gap-1">
-            <div className="flex flex-col gap-1 text-xs text-muted-foreground mt-1">
-              <div className="h-2"></div>
-              <div>Pon</div>
-              <div className="h-2"></div>
-              <div>Sre</div>
-              <div className="h-2"></div>
-              <div>Pet</div>
-              <div className="h-2"></div>
+            <div className="flex flex-col text-[9px] text-muted-foreground mr-1">
+              <div className="h-1"></div>
+              <div className="h-1.5">P</div>
+              <div className="h-1.5"></div>
+              <div className="h-1.5">S</div>
+              <div className="h-1.5"></div>
+              <div className="h-1.5">P</div>
+              <div className="h-1.5"></div>
             </div>
 
-            {/* Calendar grid */}
-            <div className="grid grid-cols-53 gap-[1px] ml-2">
-              {calendarData.map((day) => (
-                <div
-                  key={day.date}
-                  className={`w-2 h-2 rounded-sm ${day.level} transition-colors cursor-pointer`}
-                  title={`${day.date}: ${day.count} ${day.count === 1 ? 'sanja' : 'sanj'}`}
-                />
+            {/* Weekly calendar grid */}
+            <div className="flex gap-[1px]">
+              {weeksData.map((week, weekIndex) => (
+                <div key={weekIndex} className="flex flex-col gap-[1px]">
+                  {week.map((day) => (
+                    <div
+                      key={day.date}
+                      className={`w-1.5 h-1.5 rounded-[1px] ${day.level} transition-colors cursor-pointer`}
+                      title={`${day.date}: ${day.count} ${day.count === 1 ? 'sanja' : 'sanj'}`}
+                    />
+                  ))}
+                </div>
               ))}
             </div>
           </div>
 
           {/* Legend */}
-          <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
+          <div className="flex items-center justify-between mt-2 text-[9px] text-muted-foreground">
             <span>Manj</span>
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-sm bg-muted/30"></div>
-              <div className="w-2 h-2 rounded-sm bg-emerald-200 dark:bg-emerald-900"></div>
-              <div className="w-2 h-2 rounded-sm bg-emerald-300 dark:bg-emerald-800"></div>
-              <div className="w-2 h-2 rounded-sm bg-emerald-500 dark:bg-emerald-700"></div>
+            <div className="flex items-center gap-[1px]">
+              <div className="w-1.5 h-1.5 rounded-[1px] bg-muted/30"></div>
+              <div className="w-1.5 h-1.5 rounded-[1px] bg-emerald-200 dark:bg-emerald-900"></div>
+              <div className="w-1.5 h-1.5 rounded-[1px] bg-emerald-300 dark:bg-emerald-800"></div>
+              <div className="w-1.5 h-1.5 rounded-[1px] bg-emerald-500 dark:bg-emerald-700"></div>
             </div>
             <span>Več</span>
           </div>
