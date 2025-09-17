@@ -22,9 +22,11 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    /* Primary - Soft purple accent */
+    /* Primary - Enhanced gradient purple */
     --primary: 262 83% 58%;
     --primary-foreground: 0 0% 100%;
+    --primary-light: 262 83% 70%;
+    --primary-dark: 262 83% 45%;
 
     /* Secondary - Light gray */
     --secondary: 240 4.8% 95.9%;
@@ -34,9 +36,10 @@ All colors MUST be HSL.
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
 
-    /* Accent - Subtle blue */
-    --accent: 220 14.3% 95.9%;
+    /* Accent - Enhanced blue */
+    --accent: 220 50% 70%;
     --accent-foreground: 220 8.9% 46.1%;
+    --accent-light: 220 50% 85%;
 
     /* Destructive */
     --destructive: 0 84.2% 60.2%;
@@ -46,6 +49,18 @@ All colors MUST be HSL.
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
     --ring: 262 83% 58%;
+
+    /* Modern Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
+    --gradient-hero: linear-gradient(135deg, hsl(262 83% 58% / 0.1), hsl(220 50% 70% / 0.1));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100% / 0.8), hsl(240 4.8% 95.9% / 0.4));
+    --gradient-glass: linear-gradient(145deg, hsl(0 0% 100% / 0.1), hsl(0 0% 100% / 0.05));
+
+    /* Shadows for depth */
+    --shadow-soft: 0 4px 20px hsl(240 5.9% 10% / 0.05);
+    --shadow-medium: 0 8px 30px hsl(240 5.9% 10% / 0.1);
+    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.2);
+    --shadow-glass: 0 8px 32px hsl(240 5.9% 10% / 0.08);
 
     --radius: 0.5rem;
 
@@ -73,6 +88,8 @@ All colors MUST be HSL.
 
     --primary: 263 70% 50.4%;
     --primary-foreground: 0 0% 98%;
+    --primary-light: 263 70% 60%;
+    --primary-dark: 263 70% 40%;
 
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
@@ -80,8 +97,9 @@ All colors MUST be HSL.
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
 
-    --accent: 240 3.7% 15.9%;
+    --accent: 240 40% 60%;
     --accent-foreground: 0 0% 98%;
+    --accent-light: 240 40% 70%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
@@ -89,6 +107,18 @@ All colors MUST be HSL.
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 263 70% 50.4%;
+
+    /* Dark mode gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
+    --gradient-hero: linear-gradient(135deg, hsl(263 70% 50% / 0.15), hsl(240 40% 60% / 0.1));
+    --gradient-card: linear-gradient(145deg, hsl(240 10% 3.9% / 0.8), hsl(240 3.7% 15.9% / 0.4));
+    --gradient-glass: linear-gradient(145deg, hsl(240 10% 15% / 0.1), hsl(240 10% 10% / 0.05));
+
+    /* Dark shadows */
+    --shadow-soft: 0 4px 20px hsl(0 0% 0% / 0.1);
+    --shadow-medium: 0 8px 30px hsl(0 0% 0% / 0.2);
+    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.3);
+    --shadow-glass: 0 8px 32px hsl(0 0% 0% / 0.15);
 
     --sidebar-background: 228 25% 8%;
     --sidebar-foreground: 43 96% 92%;
@@ -108,5 +138,26 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground min-h-screen;
+  }
+
+  /* Glassmorphism utilities */
+  .glass-card {
+    background: var(--gradient-glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(0 0% 100% / 0.1);
+    box-shadow: var(--shadow-glass);
+  }
+
+  .gradient-bg {
+    background: var(--gradient-hero);
+  }
+
+  .floating-animation {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
   }
 }

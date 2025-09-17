@@ -2,8 +2,11 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Brain, Sparkles, ArrowRight, TrendingUp, Moon, Eye, Heart, Lightbulb, Users, Shield } from "lucide-react";
+import { BookOpen, Brain, Sparkles, ArrowRight, TrendingUp, Moon, Eye, Heart, Lightbulb, Users, Shield, Star, Zap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { TestimonialSection } from "@/components/TestimonialSection";
+import { StatsSection } from "@/components/StatsSection";
+import { FAQSection } from "@/components/FAQSection";
 import dreamCatcherHero from "@/assets/dream-catcher-hero-new.jpg";
 
 // Force cache refresh
@@ -96,52 +99,92 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <main>
-        {/* Hero Section */}
-        <section className="container mx-auto px-4 py-16 lg:py-24">
-          <div className="flex flex-col lg:flex-row items-center gap-12">
-            <div className="flex-1 text-center lg:text-left">
-              <div className="space-y-6">
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight text-foreground">
-                  Lovilec Sanj
-                </h1>
-                
-                <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto lg:mx-0">
-                  Odkrijte skrita sporočila svojih sanj z močjo umetne inteligence. 
-                  Analizirajte vzorce, razumejte simboliko in pridobite osebne vpoglede v svoj notranji svet.
-                </p>
+        {/* Enhanced Hero Section */}
+        <section className="relative overflow-hidden">
+          <div className="absolute inset-0 gradient-bg"></div>
+          <div className="container relative mx-auto px-4 py-16 lg:py-24">
+            <div className="flex flex-col lg:flex-row items-center gap-12">
+              <div className="flex-1 text-center lg:text-left">
+                <div className="space-y-8 animate-fade-in-up">
+                  {/* Trust indicators */}
+                  <div className="flex items-center justify-center lg:justify-start gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                      <span>4.9/5 ocena</span>
+                    </div>
+                    <div className="w-px h-4 bg-border"></div>
+                    <div className="flex items-center gap-1">
+                      <Users className="h-4 w-4" />
+                      <span>10,000+ uporabnikov</span>
+                    </div>
+                    <div className="w-px h-4 bg-border"></div>
+                    <div className="flex items-center gap-1">
+                      <Shield className="h-4 w-4" />
+                      <span>100% zasebno</span>
+                    </div>
+                  </div>
 
-                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                  <Button 
-                    size="lg" 
-                    className="font-semibold px-8 py-3"
-                    onClick={() => navigate('/auth')}
-                  >
-                    Začni raziskovati svoje sanje
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
+                  <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-foreground animate-glow-pulse">
+                    <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                      Lovilec Sanj
+                    </span>
+                  </h1>
                   
-                  <Button 
-                    variant="outline" 
-                    size="lg"
-                    className="font-semibold px-8 py-3"
-                    onClick={() => navigate('/pricing')}
-                  >
-                    <TrendingUp className="mr-2 h-5 w-5" />
-                    Poglej cene
-                  </Button>
+                  <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                    Odkrijte skrita sporočila svojih sanj z močjo umetne inteligence. 
+                    Analizirajte vzorce, razumejte simboliko in pridobite osebne vpoglede v svoj notranji svet.
+                  </p>
+
+                  {/* Social proof */}
+                  <div className="glass-card p-4 max-w-md mx-auto lg:mx-0">
+                    <div className="flex items-center gap-3">
+                      <Zap className="h-5 w-5 text-primary" />
+                      <div className="text-sm">
+                        <span className="font-semibold text-foreground">Nova AI analiza</span>
+                        <span className="text-muted-foreground"> • Posodobljena z GPT-4o</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                    <Button 
+                      size="lg" 
+                      className="font-semibold px-8 py-4 text-lg hover:shadow-lg transition-all duration-300 animate-glow-pulse"
+                      onClick={() => navigate('/auth')}
+                    >
+                      Začni brezplačno
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                    
+                    <Button 
+                      variant="outline" 
+                      size="lg"
+                      className="font-semibold px-8 py-4 text-lg glass-card hover:bg-primary/5"
+                      onClick={() => navigate('/pricing')}
+                    >
+                      <TrendingUp className="mr-2 h-5 w-5" />
+                      Poglej cene
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex-1 relative animate-float">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-full blur-3xl"></div>
+                  <img
+                    src={dreamCatcherHero}
+                    alt="Pisani lovilec sanj - simbol varstva in razumevanja sanj"
+                    className="relative w-full max-w-md mx-auto hover:scale-105 transition-transform duration-500"
+                  />
                 </div>
               </div>
             </div>
-
-            <div className="flex-1 relative">
-              <img
-                src={dreamCatcherHero}
-                alt="Pisani lovilec sanj - simbol varstva in razumevanja sanj"
-                className="w-full max-w-xs mx-auto"
-              />
-            </div>
           </div>
         </section>
+
+        {/* Stats Section */}
+        <StatsSection />
 
         {/* About Dreams Section */}
         <section id="about-dreams" className="container mx-auto px-4 py-16 bg-muted/30">
@@ -184,9 +227,9 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Features Section */}
+        {/* Enhanced Features Section */}
         <section className="container mx-auto px-4 py-16">
-          <div className="text-center mb-12">
+          <div className="text-center mb-12 animate-fade-in-up">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Napredne funkcije za analizo sanj
             </h2>
@@ -199,20 +242,21 @@ const Index = () => {
             {features.map((feature, index) => (
               <Card 
                 key={index} 
-                className="border-border/50 hover:shadow-lg transition-all duration-300 hover:border-primary/20"
+                className="glass-card hover:shadow-lg transition-all duration-500 hover:scale-105 group animate-fade-in-up"
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <CardHeader className="text-center pb-4">
-                  <div className="mx-auto w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                    <div className="text-primary">
+                  <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 flex items-center justify-center mb-4 group-hover:from-primary/30 group-hover:to-accent/30 transition-all duration-300">
+                    <div className="text-primary group-hover:scale-110 transition-transform duration-300">
                       {feature.icon}
                     </div>
                   </div>
-                  <CardTitle className="text-xl text-foreground">
+                  <CardTitle className="text-xl text-foreground group-hover:text-primary transition-colors duration-300">
                     {feature.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-center text-muted-foreground">
+                  <CardDescription className="text-center text-muted-foreground leading-relaxed">
                     {feature.description}
                   </CardDescription>
                 </CardContent>
@@ -221,9 +265,12 @@ const Index = () => {
           </div>
         </section>
 
-        {/* How It Works Section */}
-        <section className="container mx-auto px-4 py-16 bg-muted/30">
-          <div className="text-center mb-12">
+        {/* Testimonials Section */}
+        <TestimonialSection />
+
+        {/* Enhanced How It Works Section */}
+        <section className="container mx-auto px-4 py-16 gradient-bg">
+          <div className="text-center mb-12 animate-fade-in-up">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Kako deluje analiza sanj?
             </h2>
@@ -234,16 +281,26 @@ const Index = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {steps.map((step, index) => (
-              <div key={index} className="text-center">
-                <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                  <div className="text-primary">
-                    {step.icon}
+              <div 
+                key={index} 
+                className="text-center group animate-fade-in-up"
+                style={{ animationDelay: `${index * 0.2}s` }}
+              >
+                <div className="relative mb-6">
+                  {/* Step number */}
+                  <div className="absolute -top-2 -left-2 w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center">
+                    {index + 1}
+                  </div>
+                  <div className="mx-auto w-20 h-20 rounded-full glass-card flex items-center justify-center group-hover:scale-110 transition-all duration-300">
+                    <div className="text-primary group-hover:scale-110 transition-transform duration-300">
+                      {step.icon}
+                    </div>
                   </div>
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-2">
+                <h3 className="text-xl font-semibold text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
                   {step.title}
                 </h3>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground leading-relaxed">
                   {step.description}
                 </p>
               </div>
@@ -251,10 +308,10 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Scientific Background Section */}
+        {/* Enhanced Scientific Background Section */}
         <section className="container mx-auto px-4 py-16">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12 animate-fade-in-up">
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                 Znanstvena podlaga
               </h2>
@@ -264,38 +321,48 @@ const Index = () => {
             </div>
 
             <div className="grid md:grid-cols-2 gap-12 mb-12">
-              <div>
-                <h3 className="text-2xl font-semibold text-foreground mb-4">Freudova teorija</h3>
-                <p className="text-muted-foreground mb-4">
+              <Card className="glass-card p-8 animate-fade-in-up">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                    <Brain className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-foreground">Freudova teorija</h3>
+                </div>
+                <p className="text-muted-foreground mb-6 leading-relaxed">
                   Sigmund Freud je opredelil sanje kot "ventile" za nepotešene želje in nezavedne impulze. 
                   Sanje nam omogočajo, da potešimo nagone, zaradi katerih smo nemirni, in razkrijejo 
                   potlačene misli ter spomini.
                 </p>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Brain className="h-4 w-4" />
-                  <span>Nezavedno procesiranje</span>
+                <div className="glass-card p-3 flex items-center gap-2">
+                  <Brain className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium text-foreground">Nezavedno procesiranje</span>
                 </div>
-              </div>
+              </Card>
 
-              <div>
-                <h3 className="text-2xl font-semibold text-foreground mb-4">Jungovi arhetipi</h3>
-                <p className="text-muted-foreground mb-4">
+              <Card className="glass-card p-8 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
+                    <Eye className="h-6 w-6 text-accent" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-foreground">Jungovi arhetipi</h3>
+                </div>
+                <p className="text-muted-foreground mb-6 leading-relaxed">
                   Carl Gustav Jung je predstavil teorijo kolektivnega nezavednega in arhetipov. 
                   Vsak posameznik shranjuje simbole in vzorce, ki se izražajo skozi sanje in 
                   nosijo pomembna sporočila podzavesti.
                 </p>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Eye className="h-4 w-4" />
-                  <span>Simbolika in vzorci</span>
+                <div className="glass-card p-3 flex items-center gap-2">
+                  <Eye className="h-4 w-4 text-accent" />
+                  <span className="text-sm font-medium text-foreground">Simbolika in vzorci</span>
                 </div>
-              </div>
+              </Card>
             </div>
 
             <div className="text-center">
               <Button 
                 variant="outline"
                 size="lg"
-                className="font-semibold px-8 py-3"
+                className="font-semibold px-8 py-4 text-lg glass-card hover:bg-primary/5 animate-glow-pulse"
                 onClick={() => navigate('/auth')}
               >
                 Odkrijte svojo simboliko sanj
@@ -305,41 +372,75 @@ const Index = () => {
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="container mx-auto px-4 py-16 bg-gradient-to-r from-primary/5 to-secondary/5">
-          <Card className="border-border/50 max-w-4xl mx-auto">
-            <CardContent className="p-8 md:p-12 text-center">
-              <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-                Pripravljen odkrivati skrivnosti svojih sanj?
-              </h3>
-              <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Pridruži se uporabnikom, ki že raziskujejo vzorce svojih sanj in izboljšujejo 
-                razumevanje svojega notranjega sveta z znanstveno podprto analizo.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  size="lg"
-                  className="font-semibold px-12 py-4 text-lg"
-                  onClick={() => navigate('/auth')}
-                >
-                  <Brain className="mr-2 h-6 w-6" />
-                  Registriraj se brezplačno
-                </Button>
-                <Button 
-                  variant="outline"
-                  size="lg"
-                  className="font-semibold px-8 py-4 text-lg"
-                  onClick={() => {
-                    document.getElementById('about-dreams')?.scrollIntoView({ 
-                      behavior: 'smooth' 
-                    });
-                  }}
-                >
-                  Preberi več o sanjah
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+        {/* FAQ Section */}
+        <FAQSection />
+
+        {/* Enhanced CTA Section */}
+        <section className="relative py-24 overflow-hidden">
+          <div className="absolute inset-0 gradient-bg"></div>
+          <div className="container relative mx-auto px-4">
+            <Card className="glass-card max-w-5xl mx-auto border-border/20 animate-fade-in-up">
+              <CardContent className="p-12 md:p-16 text-center">
+                <div className="mb-8">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-6">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-medium text-foreground">Začni danes brezplačno</span>
+                  </div>
+                  
+                  <h3 className="text-3xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
+                    Pripravljen odkrivati 
+                    <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"> 
+                      {" "}skrivnosti svojih sanj?
+                    </span>
+                  </h3>
+                  
+                  <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
+                    Pridruži se več kot 10,000 uporabnikom, ki že raziskujejo vzorce svojih sanj in izboljšujejo 
+                    razumevanje svojega notranjega sveta z znanstveno podprto AI analizo.
+                  </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-6 justify-center mb-8">
+                  <Button 
+                    size="lg"
+                    className="font-semibold px-12 py-4 text-xl hover:shadow-lg transition-all duration-300 animate-glow-pulse"
+                    onClick={() => navigate('/auth')}
+                  >
+                    <Brain className="mr-3 h-6 w-6" />
+                    Registriraj se brezplačno
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    size="lg"
+                    className="font-semibold px-8 py-4 text-xl glass-card hover:bg-primary/5"
+                    onClick={() => {
+                      document.getElementById('about-dreams')?.scrollIntoView({ 
+                        behavior: 'smooth' 
+                      });
+                    }}
+                  >
+                    Preberi več o sanjah
+                  </Button>
+                </div>
+
+                {/* Trust indicators */}
+                <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4" />
+                    <span>100% zasebno in varno</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                    <span>4.9/5 povprečna ocena</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Zap className="h-4 w-4 text-primary" />
+                    <span>Takojšnja analiza</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </section>
       </main>
 
