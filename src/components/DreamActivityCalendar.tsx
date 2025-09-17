@@ -86,17 +86,18 @@ const DreamActivityCalendar = () => {
   const getMonthLabels = (weeks: any[][]) => {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 
                    'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'];
-    const labels = [];
+    const labels: (string | undefined)[] = [];
+    let lastMonth = -1;
     
-    // Get first day of each week to determine month positions
     weeks.forEach((week, weekIndex) => {
       if (week.length > 0) {
         const firstDay = new Date(week[0].date);
-        const weekStart = firstDay.getDate();
+        const currentMonth = firstDay.getMonth();
         
-        // Only show month label if it's the first week of month or first few weeks
-        if (weekStart <= 7 || weekIndex === 0) {
-          labels[weekIndex] = months[firstDay.getMonth()];
+        // Show month label when month changes or it's the first week
+        if (currentMonth !== lastMonth || weekIndex === 0) {
+          labels[weekIndex] = months[currentMonth];
+          lastMonth = currentMonth;
         }
       }
     });
@@ -134,9 +135,11 @@ const DreamActivityCalendar = () => {
       <CardContent className="p-2">
         <div className="space-y-1">
           {/* Month labels */}
-          <div className="flex text-[10px] text-muted-foreground mb-1">
+          <div className="flex text-[10px] text-muted-foreground mb-1 ml-4">
             {monthLabels.map((month, index) => (
-              <span key={index} className="w-3 text-left">{month}</span>
+              <div key={index} className="flex-1 min-w-fit text-left">
+                {month && <span className="px-1">{month}</span>}
+              </div>
             ))}
           </div>
 
