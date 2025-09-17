@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Brain, Sparkles, ArrowRight, TrendingUp, Moon, Eye, Heart, Lightbulb, Users, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import dreamCatcherHero from "@/assets/dream-catcher-hero.jpg";
+import dreamCatcherHero from "@/assets/dream-catcher-colorful.jpg";
 
 // Force cache refresh
 
@@ -142,7 +142,7 @@ const Index = () => {
               <img
                 src={dreamCatcherHero}
                 alt="Pisani lovilec sanj - simbol varstva in razumevanja sanj"
-                className="w-full max-w-lg mx-auto rounded-lg shadow-2xl"
+                className="w-full max-w-md mx-auto"
               />
             </div>
           </div>
