@@ -31,6 +31,8 @@ const DreamActivityCalendar = () => {
         activity[date] = (activity[date] || 0) + 1;
       });
 
+      console.log('Dream activity data:', activity);
+      console.log('Total dreams found:', data?.length);
       setActivityData(activity);
     } catch (error) {
       console.error('Error fetching dream activity:', error);
@@ -135,24 +137,32 @@ const DreamActivityCalendar = () => {
       <CardContent className="p-2">
         <div className="space-y-1">
           {/* Month labels */}
-          <div className="flex text-[10px] text-muted-foreground mb-1 ml-4">
-            {monthLabels.map((month, index) => (
-              <div key={index} className="flex-1 min-w-fit text-left">
-                {month && <span className="px-1">{month}</span>}
-              </div>
-            ))}
+          <div className="flex text-[10px] text-muted-foreground mb-2 ml-6">
+            {monthLabels.map((month, index) => {
+              // Calculate width: each week is 6px (1.5 * 4) + 1px gap = 7px per week
+              const weekWidth = 7;
+              return (
+                <div 
+                  key={index} 
+                  className="text-left"
+                  style={{ width: `${weekWidth}px` }}
+                >
+                  {month && <span className="text-[9px]">{month}</span>}
+                </div>
+              );
+            })}
           </div>
 
           {/* Day labels and calendar grid */}
           <div className="flex items-start gap-1">
-            <div className="flex flex-col text-[9px] text-muted-foreground mr-1">
-              <div className="h-1"></div>
-              <div className="h-1.5">P</div>
-              <div className="h-1.5"></div>
-              <div className="h-1.5">S</div>
-              <div className="h-1.5"></div>
-              <div className="h-1.5">P</div>
-              <div className="h-1.5"></div>
+            <div className="flex flex-col text-[8px] text-muted-foreground mr-1 pt-0.5">
+              <div className="h-2 flex items-center">P</div>
+              <div className="h-2 flex items-center">T</div>
+              <div className="h-2 flex items-center">S</div>
+              <div className="h-2 flex items-center">Č</div>
+              <div className="h-2 flex items-center">P</div>
+              <div className="h-2 flex items-center">S</div>
+              <div className="h-2 flex items-center">N</div>
             </div>
 
             {/* Weekly calendar grid */}
@@ -162,7 +172,7 @@ const DreamActivityCalendar = () => {
                   {week.map((day) => (
                     <div
                       key={day.date}
-                      className={`w-1.5 h-1.5 rounded-[1px] ${day.level} transition-colors cursor-pointer`}
+                      className={`w-1.5 h-2 rounded-[1px] ${day.level} transition-colors cursor-pointer`}
                       title={`${day.date}: ${day.count} ${day.count === 1 ? 'sanja' : 'sanj'}`}
                     />
                   ))}
@@ -172,13 +182,13 @@ const DreamActivityCalendar = () => {
           </div>
 
           {/* Legend */}
-          <div className="flex items-center justify-between mt-2 text-[9px] text-muted-foreground">
+          <div className="flex items-center justify-between mt-3 text-[9px] text-muted-foreground">
             <span>Manj</span>
             <div className="flex items-center gap-[1px]">
-              <div className="w-1.5 h-1.5 rounded-[1px] bg-muted/30"></div>
-              <div className="w-1.5 h-1.5 rounded-[1px] bg-emerald-200 dark:bg-emerald-900"></div>
-              <div className="w-1.5 h-1.5 rounded-[1px] bg-emerald-300 dark:bg-emerald-800"></div>
-              <div className="w-1.5 h-1.5 rounded-[1px] bg-emerald-500 dark:bg-emerald-700"></div>
+              <div className="w-1.5 h-2 rounded-[1px] bg-muted/30"></div>
+              <div className="w-1.5 h-2 rounded-[1px] bg-emerald-200 dark:bg-emerald-900"></div>
+              <div className="w-1.5 h-2 rounded-[1px] bg-emerald-300 dark:bg-emerald-800"></div>
+              <div className="w-1.5 h-2 rounded-[1px] bg-emerald-500 dark:bg-emerald-700"></div>
             </div>
             <span>Več</span>
           </div>
