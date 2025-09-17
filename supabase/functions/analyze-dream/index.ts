@@ -135,11 +135,21 @@ serve(async (req) => {
           "analysis_text": "podrobna analiza sanj v slovenščini",
           "recommendations": "priporočila za nadaljnje razmišljanje in ukrepanje",
           "reflection_questions": [
-            "Razmislite o tem, kako se vaša čustva iz sanj povezujejo z vašim trenutnim življenjem?",
-            "Kaj mislite, da vam simboli iz sanj sporočajo o vaših trenutnih izzivih?",
-            "Kako lahko uporabite ugotovitve iz te analize za osebno rast?"
+            "Specifično vprašanje 1 povezano s to sanjijo",
+            "Specifično vprašanje 2 povezano s to sanjijo", 
+            "Specifično vprašanje 3 povezano s to sanjijo"
           ]
         }
+
+POMEMBNO za reflection_questions:
+- Vprašanja MORAJO biti specifična za te natančne sanje: "${dream.title}" - "${dream.content.substring(0, 100)}..."
+- Vprašanja naj se začnejo z "Razmislite o..." 
+- Vprašanja naj neposredno omenjajo elemente iz sanj (osebe, kraje, predmete, situacije)
+- Primeri dobrih vprašanj: 
+  * "Razmislite o tem, kako [konkretna oseba/situacija iz sanj] odraža vaše trenutne odnose..."
+  * "Razmislite o povezavi med [konkreten element iz sanj] in vašimi nedavnimi skrbmi..."
+  * "Razmislite o tem, kaj vam [specifična situacija iz vsebine sanj] sporoča o vaših strahovih/željah..."
+- NE uporabljaj splošnih vprašanj kot so "kako se čustva povezujejo z življenjem"
 
 POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json in brez \`\`\`, brez dodatnega besedila.`;
 

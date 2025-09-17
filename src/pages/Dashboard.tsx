@@ -66,6 +66,7 @@ const Dashboard = () => {
   const [pendingAnalysis, setPendingAnalysis] = useState<string | null>(null);
   const [userCredits, setUserCredits] = useState<number>(5);
   const [userPlan, setUserPlan] = useState<any>(null);
+  const [showAllDreams, setShowAllDreams] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -77,7 +78,7 @@ const Dashboard = () => {
     fetchDreams();
     fetchUserCredits();
     fetchUserPlan();
-  }, [user, navigate]);
+  }, [user, navigate, showAllDreams]);
 
   const fetchUserPlan = async () => {
     if (!user) return;
@@ -104,11 +105,16 @@ const Dashboard = () => {
 
   const fetchDreams = async () => {
     try {
-      const { data, error } = await supabase
+      const query = supabase
         .from('dreams')
         .select('*')
-        .order('created_at', { ascending: false })
-        .limit(5);
+        .order('created_at', { ascending: false });
+      
+      if (!showAllDreams) {
+        query.limit(5);
+      }
+      
+      const { data, error } = await query;
 
       if (error) throw error;
       setDreams(data || []);
@@ -541,9 +547,20 @@ const Dashboard = () => {
                                     </p>
                                   ) : (
                                     <div>
-                                      <p className="text-muted-foreground text-sm whitespace-pre-line">
-                                        {truncateRecommendations(analysis.recommendations)}
-                                      </p>
+                                      {(() => {
+                                        const truncated = truncateRecommendations(analysis.recommendations);
+                                        return (
+                                          <div className="text-muted-foreground text-sm">
+                                            <p className="whitespace-pre-line">{truncated.truncatedText}</p>
+                                            {truncated.fadedLine && (
+                                              <p className="whitespace-pre-line opacity-50 mt-1">
+                                                {truncated.fadedLine}
+                                              </p>
+                                            )}
+                                            <span className="opacity-60">...</span>
+                                          </div>
+                                        );
+                                      })()}
                                       <div className="mt-3 p-3 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg border border-primary/20">
                                         <p className="text-sm text-muted-foreground mb-2">
                                           Nadgradite za celotna priporočila
@@ -587,8 +604,12 @@ const Dashboard = () => {
                 })}
                 
                 {dreams.length >= 5 && (
-                  <Button variant="outline" className="w-full">
-                    Prikaži vse sanje
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => setShowAllDreams(!showAllDreams)}
+                  >
+                    {showAllDreams ? 'Prikaži manj sanj' : 'Prikaži vse sanje'}
                   </Button>
                 )}
               </div>

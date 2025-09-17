@@ -55,9 +55,30 @@ export const isPremiumUser = (plan: SubscriptionPlan | null): boolean => {
   return plan.name.toLowerCase() !== 'free';
 };
 
-export const truncateRecommendations = (recommendations: string, maxLines: number = 2): string => {
+export const truncateRecommendations = (recommendations: string): { 
+  fullText: string; 
+  truncatedText: string; 
+  fadedLine: string; 
+  hasMore: boolean; 
+} => {
   const lines = recommendations.split('\n').filter(line => line.trim() !== '');
-  if (lines.length <= maxLines) return recommendations;
   
-  return lines.slice(0, maxLines).join('\n') + '...';
+  if (lines.length <= 2) {
+    return {
+      fullText: recommendations,
+      truncatedText: recommendations,
+      fadedLine: '',
+      hasMore: false
+    };
+  }
+  
+  const truncatedText = lines.slice(0, 2).join('\n');
+  const fadedLine = lines[2] || '';
+  
+  return {
+    fullText: recommendations,
+    truncatedText,
+    fadedLine,
+    hasMore: lines.length > 3
+  };
 };
