@@ -77,18 +77,19 @@ serve(async (req) => {
     }
 
     // Prepare the prompt for dream analysis
-    const analysisPrompt = `Analiziraj to sanje in vrni strukturiran odgovor v JSON formatu. Sanje:
+    const analysisPrompt = `Analizirajte vaše sanje in vrnite strukturiran odgovor v JSON formatu. Vaše sanje:
 
 Naslov: ${dream.title}
 Vsebina: ${dream.content}
 Razpoloženje: ${dream.mood || 'Ni navedeno'}
 Oznake: ${dream.tags ? dream.tags.join(', ') : 'Ni oznak'}
 
-Prosim, analiziraj sanje in vrni JSON z naslednjimi ključi:
+Prosim, analizirajte vaše sanje in vrnite JSON z naslednjimi ključi (direktno nagovarjajte uporabnika v drugi osebi):
 - "themes": seznam glavnih tem (največ 5)
 - "emotions": seznam čustev (največ 5) 
 - "symbols": seznam simbolov in njihovih možnih pomenov (največ 5)
-- "analysis_text": podroben opis analize (2-3 odstavki)
+- "analysis_text": podroben opis analize v drugi osebi (2-3 odstavki) - "Vaše sanje razkrivajo..."
+- "recommendations": terapevtska priporočila in nasveti v drugi osebi (2-3 odstavki) - "Predlagam vam..."
 
 POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json in brez \`\`\`, brez dodatnega besedila.`;
 
@@ -114,7 +115,7 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
           }
         ],
         temperature: 0.7,
-        max_tokens: 1000,
+        max_tokens: 1500,
       }),
     });
 
@@ -149,7 +150,7 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
       parsedAnalysis = JSON.parse(cleanContent);
       
       // Validate required fields
-      if (!parsedAnalysis.themes || !parsedAnalysis.emotions || !parsedAnalysis.symbols || !parsedAnalysis.analysis_text) {
+      if (!parsedAnalysis.themes || !parsedAnalysis.emotions || !parsedAnalysis.symbols || !parsedAnalysis.analysis_text || !parsedAnalysis.recommendations) {
         throw new Error('Missing required fields in analysis');
       }
       
@@ -162,7 +163,8 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
         themes: ['Splošna analiza'],
         emotions: ['Različna čustva'],
         symbols: ['Različni simboli'],
-        analysis_text: analysisContent || 'Analiza ni bila mogoča zaradi napake pri obdelavi.'
+        analysis_text: analysisContent || 'Analiza ni bila mogoča zaradi napake pri obdelavi.',
+        recommendations: 'Priporočila niso na voljo zaradi napake pri obdelavi.'
       };
     }
 
@@ -174,7 +176,8 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
         themes: parsedAnalysis.themes || [],
         emotions: parsedAnalysis.emotions || [],
         symbols: parsedAnalysis.symbols || [],
-        analysis_text: parsedAnalysis.analysis_text || 'Analiza ni na voljo.'
+        analysis_text: parsedAnalysis.analysis_text || 'Analiza ni na voljo.',
+        recommendations: parsedAnalysis.recommendations || 'Priporočila niso na voljo.'
       })
       .select()
       .single();

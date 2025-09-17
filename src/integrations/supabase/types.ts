@@ -21,6 +21,7 @@ export type Database = {
           dream_id: string
           emotions: string[] | null
           id: string
+          recommendations: string | null
           symbols: string[] | null
           themes: string[] | null
         }
@@ -30,6 +31,7 @@ export type Database = {
           dream_id: string
           emotions?: string[] | null
           id?: string
+          recommendations?: string | null
           symbols?: string[] | null
           themes?: string[] | null
         }
@@ -39,6 +41,7 @@ export type Database = {
           dream_id?: string
           emotions?: string[] | null
           id?: string
+          recommendations?: string | null
           symbols?: string[] | null
           themes?: string[] | null
         }
