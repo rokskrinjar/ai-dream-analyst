@@ -57,15 +57,6 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        hero: {
-          "gradient-start": "hsl(var(--hero-gradient-start))",
-          "gradient-middle": "hsl(var(--hero-gradient-middle))",
-          "gradient-end": "hsl(var(--hero-gradient-end))",
-          "text-primary": "hsl(var(--hero-text-primary))",
-          "text-secondary": "hsl(var(--hero-text-secondary))",
-          accent: "hsl(var(--hero-accent))",
-          cta: "hsl(var(--hero-cta))",
-        },
       },
       borderRadius: {
         lg: "var(--radius)",

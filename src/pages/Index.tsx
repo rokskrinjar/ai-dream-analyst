@@ -97,64 +97,52 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <main>
         {/* Hero Section */}
-        <section className="relative py-16 lg:py-24 bg-gradient-to-br from-hero-gradient-start via-hero-gradient-middle to-hero-gradient-end overflow-hidden">
-          {/* Mystical overlay pattern */}
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute inset-0" style={{
-              backgroundImage: `radial-gradient(circle at 25% 25%, hsl(var(--hero-accent)) 0.5px, transparent 0.5px),
-                               radial-gradient(circle at 75% 75%, hsl(var(--hero-accent)) 0.5px, transparent 0.5px)`,
-              backgroundSize: '50px 50px'
-            }}></div>
-          </div>
-          
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="flex flex-col lg:flex-row items-center gap-12">
-              <div className="flex-1 text-center lg:text-left">
-                <div className="space-y-6">
-                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight text-hero-text-primary drop-shadow-lg">
-                    Lovilec Sanj
-                  </h1>
-                  
-                  <p className="text-lg md:text-xl text-hero-text-secondary max-w-2xl mx-auto lg:mx-0 drop-shadow-sm">
-                    Odkrijte skrita sporočila svojih sanj z močjo umetne inteligence. 
-                    Analizirajte vzorce, razumejte simboliko in pridobite osebne vpoglede v svoj notranji svet.
-                  </p>
+        <section className="container mx-auto px-4 py-16 lg:py-24">
+          <div className="flex flex-col lg:flex-row items-center gap-12">
+            <div className="flex-1 text-center lg:text-left">
+              <div className="space-y-6">
+                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight text-foreground">
+                  Lovilec Sanj
+                </h1>
+                
+                <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto lg:mx-0">
+                  Odkrijte skrita sporočila svojih sanj z močjo umetne inteligence. 
+                  Analizirajte vzorce, razumejte simboliko in pridobite osebne vpoglede v svoj notranji svet.
+                </p>
 
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                    <Button 
-                      size="lg" 
-                      className="bg-hero-cta hover:bg-hero-accent text-hero-gradient-end font-semibold px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-hero-accent/30"
-                      onClick={() => navigate('/auth')}
-                    >
-                      Začni raziskovati svoje sanje
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
-                    
-                    <Button 
-                      variant="outline" 
-                      size="lg"
-                      className="border-hero-text-secondary/30 text-hero-text-secondary hover:bg-hero-text-secondary/10 hover:text-hero-text-primary font-semibold px-8 py-3 transition-all duration-300"
-                      onClick={() => {
-                        document.getElementById('about-dreams')?.scrollIntoView({ 
-                          behavior: 'smooth' 
-                        });
-                      }}
-                    >
-                      <Sparkles className="mr-2 h-5 w-5" />
-                      Izvedite več o sanjah
-                    </Button>
-                  </div>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                  <Button 
+                    size="lg" 
+                    className="font-semibold px-8 py-3"
+                    onClick={() => navigate('/auth')}
+                  >
+                    Začni raziskovati svoje sanje
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                  
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    className="font-semibold px-8 py-3"
+                    onClick={() => {
+                      document.getElementById('about-dreams')?.scrollIntoView({ 
+                        behavior: 'smooth' 
+                      });
+                    }}
+                  >
+                    <Sparkles className="mr-2 h-5 w-5" />
+                    Izvedite več o sanjah
+                  </Button>
                 </div>
               </div>
+            </div>
 
-              <div className="flex-1 relative">
-                <div className="absolute inset-0 bg-gradient-to-tr from-hero-accent/20 to-transparent rounded-full blur-3xl transform scale-150"></div>
-                <img
-                  src={dreamCatcherHero}
-                  alt="Pisani lovilec sanj - simbol varstva in razumevanja sanj"
-                  className="w-full max-w-xs mx-auto relative z-10 drop-shadow-2xl"
-                />
-              </div>
+            <div className="flex-1 relative">
+              <img
+                src={dreamCatcherHero}
+                alt="Pisani lovilec sanj - simbol varstva in razumevanja sanj"
+                className="w-full max-w-xs mx-auto"
+              />
             </div>
           </div>
         </section>
