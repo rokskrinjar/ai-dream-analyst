@@ -72,6 +72,9 @@ const Dashboard = () => {
   const [showAllDreams, setShowAllDreams] = useState(false);
   const { toast } = useToast();
 
+  // Debug logging
+  console.log('Dashboard render - credits:', credits, 'plan:', plan);
+
   useEffect(() => {
     if (!user) {
       navigate('/auth');
@@ -135,6 +138,8 @@ const Dashboard = () => {
 
   const analyzeDream = async (dreamId: string) => {
     if (analyzingDreams.has(dreamId)) return;
+
+    console.log('analyzeDream called - credits:', credits, 'isUnlimited:', isUnlimited);
 
     // Check credits first (unless unlimited)
     if (!isUnlimited && (!credits || credits.credits_remaining < 1)) {
