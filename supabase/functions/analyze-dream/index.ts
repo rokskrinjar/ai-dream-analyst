@@ -29,19 +29,29 @@ serve(async (req) => {
       throw new Error('Authorization header is required');
     }
 
-    // Initialize Supabase client
+    // Initialize Supabase clients
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
     const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     
-    if (!supabaseUrl || !supabaseServiceRoleKey) {
+    if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceRoleKey) {
       throw new Error('Missing Supabase configuration');
     }
 
-    const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+    // Create client for user authentication with anon key
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: authHeader,
+        },
+      },
+    });
 
-    // Get user from token
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    // Create client for admin operations with service role key  
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey);
+
+    // Get user from authenticated client
+    const { data: { user }, error: userError } = await supabaseAuth.auth.getUser();
     
     if (userError || !user) {
       console.error('Auth error:', userError);
@@ -51,7 +61,7 @@ serve(async (req) => {
     console.log('User authenticated:', user.id);
 
     // Check if user has sufficient credits (1 credit needed for dream analysis)
-    const { data: canUseCredits, error: creditError } = await supabase
+    const { data: canUseCredits, error: creditError } = await supabaseAdmin
       .rpc('can_use_credits', { user_id: user.id, credits_needed: 1 });
 
     if (creditError) {
@@ -72,7 +82,7 @@ serve(async (req) => {
     }
 
     // Check if analysis already exists
-    const { data: existingAnalysis, error: checkError } = await supabase
+    const { data: existingAnalysis, error: checkError } = await supabaseAdmin
       .from('dream_analyses')
       .select('*')
       .eq('dream_id', dreamId)
@@ -95,7 +105,7 @@ serve(async (req) => {
     }
 
     // Fetch the dream content
-    const { data: dream, error: dreamError } = await supabase
+    const { data: dream, error: dreamError } = await supabaseAdmin
       .from('dreams')
       .select('*')
       .eq('id', dreamId)
@@ -229,7 +239,7 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
     }
 
     // Save analysis to database
-    const { data: savedAnalysis, error: saveError } = await supabase
+    const { data: savedAnalysis, error: saveError } = await supabaseAdmin
       .from('dream_analyses')
       .insert({
         dream_id: dreamId,
@@ -252,7 +262,7 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
 
     // Deduct credit and log usage after successful analysis
     // First, get current credit values
-    const { data: currentCredits, error: getCurrentError } = await supabase
+    const { data: currentCredits, error: getCurrentError } = await supabaseAdmin
       .from('user_credits')
       .select('credits_remaining, credits_used_this_month')
       .eq('user_id', user.id)
@@ -263,7 +273,7 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
       // Don't fail the request if credit fetch fails, just log it
     } else {
       // Update credits with calculated values
-      const { error: creditUpdateError } = await supabase
+      const { error: creditUpdateError } = await supabaseAdmin
         .from('user_credits')
         .update({ 
           credits_remaining: Math.max(0, currentCredits.credits_remaining - 1),
@@ -280,7 +290,7 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
     }
 
     // Log the usage
-    const { error: logError } = await supabase
+    const { error: logError } = await supabaseAdmin
       .from('usage_logs')
       .insert({
         user_id: user.id,
