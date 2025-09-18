@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAdmin } from '@/hooks/useAdmin';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -22,6 +23,7 @@ import {
   BookOpen,
   Sparkles,
   Settings,
+  Shield,
   CreditCard,
   Plus,
   Loader2,
@@ -57,6 +59,7 @@ interface DreamAnalysis {
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
+  const { isAdmin } = useAdmin();
   const navigate = useNavigate();
   const [dreams, setDreams] = useState<Dream[]>([]);
   const [analyses, setAnalyses] = useState<{ [key: string]: DreamAnalysis }>({});
