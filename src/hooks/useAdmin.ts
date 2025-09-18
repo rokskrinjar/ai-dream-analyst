@@ -16,13 +16,20 @@ export const useAdmin = () => {
       }
 
       try {
-        const { data, error } = await supabase.rpc('is_admin');
+        // Query user_roles table directly instead of using RPC function
+        const { data, error } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id)
+          .eq('role', 'admin')
+          .single();
         
         if (error) {
-          console.error('Error checking admin status:', error);
+          console.log('User is not admin or error checking admin status:', error);
           setIsAdmin(false);
         } else {
-          setIsAdmin(data || false);
+          setIsAdmin(data && data.role === 'admin');
+          console.log('Admin status check result:', data && data.role === 'admin');
         }
       } catch (error) {
         console.error('Error checking admin status:', error);

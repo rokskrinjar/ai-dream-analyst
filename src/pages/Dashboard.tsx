@@ -294,6 +294,12 @@ const Dashboard = () => {
                   <Settings className="h-4 w-4 mr-2" />
                   Račun
                 </Button>
+                {isAdmin && (
+                  <Button variant="ghost" size="sm" onClick={() => navigate('/admin')}>
+                    <Shield className="h-4 w-4 mr-2" />
+                    Admin
+                  </Button>
+                )}
               </nav>
               <CompactCreditDisplay />
               <div className="flex items-center space-x-2 text-sm text-muted-foreground">
