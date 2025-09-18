@@ -537,41 +537,9 @@ const Dashboard = () => {
                                     <Lightbulb className="h-4 w-4 text-yellow-500" />
                                     <h4 className="font-medium">Priporočila</h4>
                                   </div>
-                                  {isPremiumUser(userPlan) ? (
-                                    <p className="text-muted-foreground text-sm whitespace-pre-line">
-                                      {analysis.recommendations}
-                                    </p>
-                                  ) : (
-                                    <div>
-                                      {(() => {
-                                        const truncated = truncateRecommendations(analysis.recommendations);
-                                        return (
-                                          <div className="text-muted-foreground text-sm">
-                                            <p className="whitespace-pre-line">{truncated.truncatedText}</p>
-                                            {truncated.fadedLine && (
-                                              <p className="whitespace-pre-line opacity-50 mt-1">
-                                                {truncated.fadedLine}
-                                              </p>
-                                            )}
-                                            <span className="opacity-60">...</span>
-                                          </div>
-                                        );
-                                      })()}
-                                      <div className="mt-3 p-3 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg border border-primary/20">
-                                        <p className="text-sm text-muted-foreground mb-2">
-                                          Nadgradite za celotna priporočila
-                                        </p>
-                                        <Button 
-                                          size="sm" 
-                                          onClick={() => navigate('/pricing')}
-                                          className="w-full"
-                                        >
-                                          <CreditCard className="h-4 w-4 mr-2" />
-                                          Nadgradite zdaj
-                                        </Button>
-                                      </div>
-                                    </div>
-                                  )}
+                                  <p className="text-muted-foreground text-sm whitespace-pre-line">
+                                    {analysis.recommendations}
+                                  </p>
                                 </div>
                               )}
 
