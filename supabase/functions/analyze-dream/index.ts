@@ -60,6 +60,15 @@ serve(async (req) => {
 
     console.log('User authenticated:', user.id);
 
+    // First, reset credits if needed (handles monthly reset)
+    const { error: resetError } = await supabaseAdmin
+      .rpc('reset_credits_if_needed', { user_id: user.id });
+
+    if (resetError) {
+      console.error('Error resetting credits:', resetError);
+      // Continue anyway, as this might not be critical
+    }
+
     // Check if user has sufficient credits (1 credit needed for dream analysis)
     const { data: canUseCredits, error: creditError } = await supabaseAdmin
       .rpc('can_use_credits', { user_id: user.id, credits_needed: 1 });

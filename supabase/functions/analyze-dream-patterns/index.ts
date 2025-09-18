@@ -45,6 +45,15 @@ serve(async (req) => {
 
     console.log('User authenticated:', user.id);
 
+    // First, reset credits if needed (handles monthly reset)
+    const { error: resetError } = await supabase
+      .rpc('reset_credits_if_needed', { user_id: user.id });
+
+    if (resetError) {
+      console.error('Error resetting credits:', resetError);
+      // Continue anyway, as this might not be critical
+    }
+
     // Check if user has sufficient credits (2 credits needed for pattern analysis)
     const { data: canUseCredits, error: creditError } = await supabase
       .rpc('can_use_credits', { user_id: user.id, credits_needed: 2 });

@@ -384,6 +384,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      reset_credits_if_needed: {
+        Args: { user_id: string }
+        Returns: undefined
+      }
       reset_monthly_credits: {
         Args: Record<PropertyKey, never>
         Returns: undefined
