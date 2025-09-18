@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCreditContext } from '@/contexts/CreditContext';
 import { useAdmin } from '@/hooks/useAdmin';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
-import { getUserSubscriptionPlan, isPremiumUser, truncateRecommendations } from '@/utils/subscriptionUtils';
+import { isPremiumUser, truncateRecommendations } from '@/utils/subscriptionUtils';
 import { 
   Calendar, 
   Brain, 
@@ -59,6 +60,7 @@ interface DreamAnalysis {
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
+  const { credits, plan, refreshCredits, deductCredits, isUnlimited } = useCreditContext();
   const { isAdmin } = useAdmin();
   const navigate = useNavigate();
   const [dreams, setDreams] = useState<Dream[]>([]);
@@ -67,8 +69,6 @@ const Dashboard = () => {
   const [analyzingDreams, setAnalyzingDreams] = useState<Set<string>>(new Set());
   const [showCreditModal, setShowCreditModal] = useState(false);
   const [pendingAnalysis, setPendingAnalysis] = useState<string | null>(null);
-  const [userCredits, setUserCredits] = useState<number>(5);
-  const [userPlan, setUserPlan] = useState<any>(null);
   const [showAllDreams, setShowAllDreams] = useState(false);
   const { toast } = useToast();
 
@@ -79,32 +79,7 @@ const Dashboard = () => {
     }
 
     fetchDreams();
-    fetchUserCredits();
-    fetchUserPlan();
   }, [user, navigate, showAllDreams]);
-
-  const fetchUserPlan = async () => {
-    if (!user) return;
-    const plan = await getUserSubscriptionPlan(user.id);
-    setUserPlan(plan);
-  };
-
-  const fetchUserCredits = async () => {
-    if (!user) return;
-    
-    try {
-      const { data, error } = await supabase
-        .from('user_credits')
-        .select('credits_remaining')
-        .eq('user_id', user.id)
-        .single();
-
-      if (error && error.code !== 'PGRST116') throw error;
-      setUserCredits(data?.credits_remaining || 5);
-    } catch (error) {
-      console.error('Error fetching credits:', error);
-    }
-  };
 
   const fetchDreams = async () => {
     try {
@@ -161,8 +136,8 @@ const Dashboard = () => {
   const analyzeDream = async (dreamId: string) => {
     if (analyzingDreams.has(dreamId)) return;
 
-    // Check credits first
-    if (userCredits < 1) {
+    // Check credits first (unless unlimited)
+    if (!isUnlimited && (!credits || credits.credits_remaining < 1)) {
       toast({
         title: "Ni dovolj kreditov",
         description: "Za analizo sanj potrebujete vsaj 1 kredit. Nadgradite svoj načrt.",
@@ -188,6 +163,17 @@ const Dashboard = () => {
     });
 
     try {
+      // Deduct credits first (optimistic update)
+      const success = await deductCredits(1);
+      if (!success && !isUnlimited) {
+        toast({
+          title: "Napaka pri odštevanju kreditov",
+          description: "Prišlo je do napake pri odštevanju kreditov.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('analyze-dream', {
         body: { dreamId: pendingAnalysis }
       });
@@ -199,6 +185,8 @@ const Dashboard = () => {
             description: "Za to analizo potrebujete več kreditov.",
             variant: "destructive",
           });
+          // Refresh credits to get the latest state
+          await refreshCredits();
           navigate('/pricing');
           return;
         }
@@ -214,8 +202,6 @@ const Dashboard = () => {
           title: "Analiza končana",
           description: `AI analiza je pripravljena! Porabili ste 1 kredit.`,
         });
-        // Refresh credits
-        await fetchUserCredits();
       }
     } catch (error: any) {
       console.error('Error analyzing dream:', error);
@@ -638,7 +624,7 @@ const Dashboard = () => {
         onOpenChange={setShowCreditModal}
         onConfirm={confirmAnalysis}
         creditsRequired={1}
-        creditsRemaining={userCredits}
+        creditsRemaining={credits?.credits_remaining || 0}
         actionName="AI Analiza Sanj"
         actionDescription="Analizirajte svojo sanje z naprednimi AI algoritmi"
       />

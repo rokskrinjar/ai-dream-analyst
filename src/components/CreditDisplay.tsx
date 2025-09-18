@@ -1,85 +1,14 @@
-import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Coins, Zap, AlertTriangle } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-
-interface UserCredits {
-  credits_remaining: number;
-  credits_used_this_month: number;
-}
-
-interface SubscriptionPlan {
-  name: string;
-  ai_credits_monthly: number;
-}
+import { useCreditContext } from "@/contexts/CreditContext";
 
 export function CreditDisplay() {
-  const { user } = useAuth();
   const navigate = useNavigate();
-  const [credits, setCredits] = useState<UserCredits | null>(null);
-  const [plan, setPlan] = useState<SubscriptionPlan | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (user) {
-      fetchCreditData();
-    }
-  }, [user]);
-
-  const fetchCreditData = async () => {
-    if (!user) return;
-
-    try {
-      // Fetch user credits
-      const { data: creditsData, error: creditsError } = await supabase
-        .from('user_credits')
-        .select('credits_remaining, credits_used_this_month')
-        .eq('user_id', user.id)
-        .single();
-
-      if (creditsError && creditsError.code !== 'PGRST116') {
-        // If no credits record exists, create one with default values
-        setCredits({ credits_remaining: 5, credits_used_this_month: 0 });
-      } else {
-        setCredits(creditsData);
-      }
-
-      // Fetch user's current plan
-      const { data: subscriptionData, error: subError } = await supabase
-        .from('user_subscriptions')
-        .select(`
-          subscription_plans (
-            name,
-            ai_credits_monthly
-          )
-        `)
-        .eq('user_id', user.id)
-        .eq('status', 'active')
-        .single();
-
-      if (subError && subError.code !== 'PGRST116') {
-        // Default to free plan
-        setPlan({ name: 'Brezplačni', ai_credits_monthly: 5 });
-      } else if (subscriptionData && subscriptionData.subscription_plans) {
-        setPlan(subscriptionData.subscription_plans);
-      } else {
-        // Default to free plan if no subscription
-        setPlan({ name: 'Brezplačni', ai_credits_monthly: 5 });
-      }
-
-    } catch (error) {
-      console.error('Error fetching credit data:', error);
-      setCredits({ credits_remaining: 5, credits_used_this_month: 0 });
-      setPlan({ name: 'Brezplačni', ai_credits_monthly: 5 });
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { credits, plan, loading, isUnlimited } = useCreditContext();
 
   if (loading || !credits || !plan) {
     return (
@@ -95,7 +24,6 @@ export function CreditDisplay() {
     );
   }
 
-  const isUnlimited = plan.ai_credits_monthly === -1;
   const totalCredits = isUnlimited ? 999999 : plan.ai_credits_monthly;
   const usagePercent = isUnlimited ? 0 : (credits.credits_used_this_month / totalCredits) * 100;
   const isLowCredits = !isUnlimited && credits.credits_remaining < totalCredits * 0.2;

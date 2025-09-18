@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useCreditContext } from "@/contexts/CreditContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -25,19 +26,13 @@ interface SubscriptionPlan {
   ai_credits_monthly: number;
 }
 
-interface UserCredits {
-  credits_remaining: number;
-  credits_used_this_month: number;
-  last_reset_date: string;
-}
-
 export default function Account() {
   const { user, signOut } = useAuth();
+  const { credits, plan, loading: creditsLoading, isUnlimited } = useCreditContext();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [subscription, setSubscription] = useState<UserSubscription | null>(null);
-  const [plan, setPlan] = useState<SubscriptionPlan | null>(null);
-  const [credits, setCredits] = useState<UserCredits | null>(null);
+  const [subscriptionPlan, setSubscriptionPlan] = useState<SubscriptionPlan | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -45,10 +40,10 @@ export default function Account() {
       navigate('/auth');
       return;
     }
-    fetchAccountData();
+    fetchSubscriptionData();
   }, [user, navigate]);
 
-  const fetchAccountData = async () => {
+  const fetchSubscriptionData = async () => {
     if (!user) return;
 
     try {
@@ -73,24 +68,14 @@ export default function Account() {
           .single();
 
         if (planError) throw planError;
-        setPlan(planData);
+        setSubscriptionPlan(planData);
       }
 
-      // Fetch user credits
-      const { data: creditsData, error: creditsError } = await supabase
-        .from('user_credits')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-
-      if (creditsError && creditsError.code !== 'PGRST116') throw creditsError;
-      setCredits(creditsData);
-
     } catch (error) {
-      console.error('Error fetching account data:', error);
+      console.error('Error fetching subscription data:', error);
       toast({
         title: "Napaka",
-        description: "Napaka pri nalaganju podatkov o računu.",
+        description: "Napaka pri nalaganju podatkov o naročnini.",
         variant: "destructive",
       });
     } finally {
@@ -119,7 +104,7 @@ export default function Account() {
     return null;
   }
 
-  if (loading) {
+  if (loading || creditsLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
@@ -194,14 +179,14 @@ export default function Account() {
                 </div>
                 <div className="text-center p-4 bg-muted rounded-lg">
                   <p className="text-2xl font-bold text-foreground">
-                    {plan?.ai_credits_monthly === -1 ? '∞' : plan?.ai_credits_monthly || 5}
+                    {isUnlimited ? '∞' : plan?.ai_credits_monthly || 5}
                   </p>
                   <p className="text-sm text-muted-foreground">Mesečna kvota</p>
                 </div>
               </div>
               <Separator className="my-4" />
               <p className="text-sm text-muted-foreground">
-                Zadnja obnovitev: {formatDate(credits.last_reset_date)}
+                Zadnja obnovitev: {credits?.last_reset_date ? formatDate(credits.last_reset_date) : 'N/A'}
               </p>
             </CardContent>
           </Card>
@@ -216,12 +201,12 @@ export default function Account() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {plan && subscription ? (
+            {subscriptionPlan && subscription ? (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-lg font-semibold text-foreground">{plan.name}</h3>
-                    <p className="text-muted-foreground">€{plan.price_monthly}/mesec</p>
+                    <h3 className="text-lg font-semibold text-foreground">{subscriptionPlan.name}</h3>
+                    <p className="text-muted-foreground">€{subscriptionPlan.price_monthly}/mesec</p>
                   </div>
                   <Badge 
                     variant={subscription.status === 'active' ? 'default' : 'secondary'}
