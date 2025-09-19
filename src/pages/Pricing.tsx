@@ -30,6 +30,7 @@ export default function Pricing() {
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [userSubscription, setUserSubscription] = useState<UserSubscription | null>(null);
   const [loading, setLoading] = useState(true);
+  const [processingPlanId, setProcessingPlanId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchPricingData();
@@ -94,24 +95,44 @@ export default function Pricing() {
       return;
     }
     
+    console.log('Starting plan selection for:', plan.name, 'ID:', plan.id);
+    setProcessingPlanId(plan.id);
+    
     try {
-      setLoading(true);
-      
+      console.log('Calling create-checkout-session...');
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
         body: { planId: plan.id }
       });
 
+      console.log('Response:', { data, error });
+
       if (error) {
         console.error('Error creating checkout session:', error);
+        alert('Napaka pri ustvarjanju plačila. Poskusite znova.');
         return;
       }
 
-      // Redirect to Stripe checkout
-      window.location.href = data.sessionUrl;
+      if (!data || !data.sessionUrl) {
+        console.error('Invalid response - missing sessionUrl:', data);
+        alert('Napaka pri ustvarjanju plačila. Poskusite znova.');
+        return;
+      }
+
+      console.log('Redirecting to:', data.sessionUrl);
+      
+      // Add a small delay to ensure UI updates, then redirect
+      setTimeout(() => {
+        window.location.href = data.sessionUrl;
+      }, 100);
+      
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Unexpected error:', error);
+      alert('Nepričakovana napaka. Poskusite znova.');
     } finally {
-      setLoading(false);
+      // Reset processing state after a delay to prevent UI flicker
+      setTimeout(() => {
+        setProcessingPlanId(null);
+      }, 1000);
     }
   };
 
@@ -217,8 +238,16 @@ export default function Pricing() {
                       className="w-full" 
                       variant={isCurrent ? "outline" : (isPopular ? "default" : "outline")}
                       onClick={() => handlePlanSelection(plan)}
+                      disabled={processingPlanId === plan.id}
                     >
-                      {isCurrent ? 'Upravljaj naročnino' : 'Izberi načrt'}
+                      {processingPlanId === plan.id ? (
+                        <div className="flex items-center space-x-2">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
+                          <span>Obdelavam...</span>
+                        </div>
+                      ) : (
+                        isCurrent ? 'Upravljaj naročnino' : 'Izberi načrt'
+                      )}
                     </Button>
                   </CardFooter>
                 </Card>
