@@ -223,19 +223,25 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
     const analysisContent = openAIData.choices[0].message.content;
     console.log('Analysis content:', analysisContent);
 
-    // Parse the JSON response from OpenAI
+    // Parse the JSON response from OpenAI with enhanced cleaning
     let parsedAnalysis;
     try {
-      // Strip markdown code blocks if present
-      let cleanContent = analysisContent.trim();
-      if (cleanContent.startsWith('```json')) {
-        cleanContent = cleanContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-      } else if (cleanContent.startsWith('```')) {
-        cleanContent = cleanContent.replace(/^```\s*/, '').replace(/\s*```$/, '');
-      }
+      // Enhanced JSON cleaning to handle control characters and newlines
+      let cleanedContent = analysisContent.replace(/```json|```/g, '').trim();
       
-      console.log('Cleaned content for parsing:', cleanContent);
-      parsedAnalysis = JSON.parse(cleanContent);
+      // Remove or escape problematic control characters step by step
+      cleanedContent = cleanedContent
+        // Remove control characters except newlines, tabs, and carriage returns
+        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+        // Handle newlines in JSON strings properly
+        .replace(/(?<!\\)\n/g, '\\n')
+        // Handle carriage returns
+        .replace(/(?<!\\)\r/g, '\\r')
+        // Handle tabs
+        .replace(/(?<!\\)\t/g, '\\t');
+
+      console.log('Cleaned content for parsing:', cleanedContent);
+      parsedAnalysis = JSON.parse(cleanedContent);
       
       // Validate required fields
       if (!parsedAnalysis.themes || !parsedAnalysis.emotions || !parsedAnalysis.symbols || !parsedAnalysis.analysis_text || !parsedAnalysis.recommendations) {
@@ -244,16 +250,59 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
       
     } catch (parseError) {
       console.error('Error parsing OpenAI JSON response:', parseError);
+      console.error('Parse error details:', {
+        message: parseError.message,
+        position: parseError.message.match(/position (\d+)/)?.[1]
+      });
       console.error('Raw content:', analysisContent);
       
-      // Fallback: create a simple analysis if JSON parsing fails
-      parsedAnalysis = {
-        themes: ['Splošna analiza'],
-        emotions: ['Različna čustva'],
-        symbols: ['Različni simboli'],
-        analysis_text: analysisContent || 'Analiza ni bila mogoča zaradi napake pri obdelavi.',
-        recommendations: 'Priporočila niso na voljo zaradi napake pri obdelavi.'
-      };
+      // Try alternative cleaning approach
+      try {
+        const alternativeClean = analysisContent
+          .replace(/```json|```/g, '')
+          // Replace all problematic characters with spaces and normalize
+          .replace(/[\x00-\x1F\x7F]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+        
+        parsedAnalysis = JSON.parse(alternativeClean);
+        console.log('Successfully parsed with alternative cleaning');
+        
+      } catch (secondError) {
+        console.error('Alternative parsing also failed:', secondError);
+        
+        // Final fallback: extract structured content using regex
+        try {
+          const themeMatch = analysisContent.match(/"themes":\s*\[(.*?)\]/s);
+          const emotionMatch = analysisContent.match(/"emotions":\s*\[(.*?)\]/s);
+          const analysisMatch = analysisContent.match(/"analysis_text":\s*"(.*?)"/s);
+          const recommendationsMatch = analysisContent.match(/"recommendations":\s*"(.*?)"/s);
+          const questionsMatch = analysisContent.match(/"reflection_questions":\s*\[(.*?)\]/s);
+          
+          parsedAnalysis = {
+            themes: themeMatch ? JSON.parse(`[${themeMatch[1]}]`) : ["Splošna analiza"],
+            emotions: emotionMatch ? JSON.parse(`[${emotionMatch[1]}]`) : ["Različna čustva"],
+            symbols: [{ symbol: "sanje", meaning: "simboli iz sanj" }],
+            analysis_text: analysisMatch ? analysisMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"') : "Analiza ni bila mogoča zaradi napake pri obdelavi.",
+            recommendations: recommendationsMatch ? recommendationsMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"') : "Priporočila niso na voljo zaradi napake pri obdelavi.",
+            reflection_questions: questionsMatch ? JSON.parse(`[${questionsMatch[1]}]`) : ["Razmislite o svojih sanjah."]
+          };
+          console.log('Successfully extracted content using regex fallback');
+          
+        } catch (regexError) {
+          console.error('Regex extraction also failed:', regexError);
+          
+          // Ultimate fallback: create simple structure
+          parsedAnalysis = {
+            themes: ['Splošna analiza'],
+            emotions: ['Različna čustva'],
+            symbols: [{ symbol: "sanje", meaning: "simboli iz sanj" }],
+            analysis_text: analysisContent.replace(/```json|```/g, '').trim() || 'Analiza ni bila mogoča zaradi napake pri obdelavi.',
+            recommendations: 'Priporočila niso na voljo zaradi napake pri obdelavi.',
+            reflection_questions: ["Razmislite o svojih sanjah."]
+          };
+        }
+      }
     }
 
     // Save analysis to database
