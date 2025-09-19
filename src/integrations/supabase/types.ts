@@ -92,6 +92,8 @@ export type Database = {
           dream_date: string
           id: string
           mood: string | null
+          primary_emotion: string | null
+          secondary_emotion: string | null
           tags: string[] | null
           title: string
           updated_at: string
@@ -103,6 +105,8 @@ export type Database = {
           dream_date?: string
           id?: string
           mood?: string | null
+          primary_emotion?: string | null
+          secondary_emotion?: string | null
           tags?: string[] | null
           title: string
           updated_at?: string
@@ -114,6 +118,8 @@ export type Database = {
           dream_date?: string
           id?: string
           mood?: string | null
+          primary_emotion?: string | null
+          secondary_emotion?: string | null
           tags?: string[] | null
           title?: string
           updated_at?: string

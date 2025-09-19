@@ -5,11 +5,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { ArrowLeft, Save, Calendar, Heart, Tag } from 'lucide-react';
+import { EmotionWheel } from '@/components/EmotionWheel';
 
 const DreamEntry = () => {
   const { user } = useAuth();
@@ -20,22 +20,18 @@ const DreamEntry = () => {
     title: '',
     content: '',
     dream_date: new Date().toISOString().split('T')[0],
-    mood: '',
+    primary_emotion: '',
+    secondary_emotion: '',
     tags: '',
   });
 
-  const moods = [
-    'Mirno',
-    'Sanjavo',
-    'Vznemirjeno',
-    'Strah',
-    'Veselje',
-    'Žalost',
-    'Zmedenost',
-    'Nostalgija',
-    'Energično',
-    'Miren'
-  ];
+  const handleEmotionSelect = (primary: string, secondary: string) => {
+    setFormData(prev => ({
+      ...prev,
+      primary_emotion: primary,
+      secondary_emotion: secondary
+    }));
+  };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -72,16 +68,17 @@ const DreamEntry = () => {
         ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
         : [];
 
-      const { error } = await supabase
-        .from('dreams')
-        .insert({
-          title: formData.title,
-          content: formData.content,
-          dream_date: formData.dream_date,
-          mood: formData.mood || null,
-          tags: tagsArray.length > 0 ? tagsArray : null,
-          user_id: user.id,
-        });
+        const { error } = await supabase
+          .from('dreams')
+          .insert({
+            title: formData.title,
+            content: formData.content,
+            dream_date: formData.dream_date,
+            primary_emotion: formData.primary_emotion || null,
+            secondary_emotion: formData.secondary_emotion || null,
+            tags: tagsArray.length > 0 ? tagsArray : null,
+            user_id: user.id,
+          });
 
       if (error) throw error;
 
@@ -179,24 +176,17 @@ const DreamEntry = () => {
                 />
               </div>
 
-              {/* Mood */}
+              {/* Emotions */}
               <div className="space-y-2">
                 <Label className="text-foreground font-medium flex items-center">
                   <Heart className="h-4 w-4 mr-2" />
-                  Razpoloženje
+                  Čustva v sanje
                 </Label>
-                <Select onValueChange={(value) => handleInputChange('mood', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Kako ste se počutili v sanje?" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {moods.map((mood) => (
-                      <SelectItem key={mood} value={mood}>
-                        {mood}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <EmotionWheel
+                  onEmotionSelect={handleEmotionSelect}
+                  selectedPrimary={formData.primary_emotion}
+                  selectedSecondary={formData.secondary_emotion}
+                />
               </div>
 
               {/* Tags */}
