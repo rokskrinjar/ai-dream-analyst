@@ -197,10 +197,10 @@ serve(async (req) => {
 
     // Calculate estimated cost based on input size
     const finalInputText = JSON.stringify(dreamData);
-    const estimatedTokens = Math.ceil(finalInputText.length / 4); // Rough estimation: 4 chars per token
-    const estimatedCost = Math.max(2, Math.ceil(estimatedTokens / 1000)); // Minimum 2 credits, +1 per 1000 tokens
+    const finalEstimatedTokens = Math.ceil(finalInputText.length / 4); // Rough estimation: 4 chars per token
+    const finalEstimatedCost = Math.max(2, Math.ceil(finalEstimatedTokens / 1000)); // Minimum 2 credits, +1 per 1000 tokens
 
-    console.log(`Estimated tokens: ${estimatedTokens}, Estimated cost: ${estimatedCost} credits`);
+    console.log(`Estimated tokens: ${finalEstimatedTokens}, Estimated cost: ${finalEstimatedCost} credits`);
 
     const prompt = `Kot strokovnjak za analizo sanj analizirajte naslednje podatke ${dreamData.length} sanj uporabnika in ustvarite celovito, poglobljeno analizo vzorcev. Odzovite se v JSON formatu s slovenskimi besedami.
 
@@ -383,15 +383,15 @@ Vsak oddelek naj bo obsežen, strokoven in psihološko natančen. Uporabite komp
         const { error: updateError } = await supabase
           .from('user_credits')
           .update({ 
-            credits_remaining: Math.max(0, currentCredits.credits_remaining - estimatedCost),
-            credits_used_this_month: (currentCredits.credits_used_this_month || 0) + estimatedCost
+            credits_remaining: Math.max(0, currentCredits.credits_remaining - finalEstimatedCost),
+            credits_used_this_month: (currentCredits.credits_used_this_month || 0) + finalEstimatedCost
           })
           .eq('user_id', user.id);
 
         if (updateError) {
           console.error('Error updating credits:', updateError);
         } else {
-          console.log(`Deducted ${estimatedCost} credits for pattern analysis:`, user.id);
+          console.log(`Deducted ${finalEstimatedCost} credits for pattern analysis:`, user.id);
         }
       }
 
@@ -401,7 +401,7 @@ Vsak oddelek naj bo obsežen, strokoven in psihološko natančen. Uporabite komp
         .insert({
           user_id: user.id,
           action_type: 'pattern_analysis',
-          credits_used: estimatedCost
+          credits_used: finalEstimatedCost
         });
 
       if (logError) {
@@ -413,7 +413,7 @@ Vsak oddelek naj bo obsežen, strokoven in psihološko natančen. Uporabite komp
       JSON.stringify({ 
         analysis: parsedAnalysis, 
         cached: false, 
-        creditsUsed: estimatedCost,
+        creditsUsed: finalEstimatedCost,
         dreamsAnalyzed: recentAnalyzedDreams.length 
       }),
       {
