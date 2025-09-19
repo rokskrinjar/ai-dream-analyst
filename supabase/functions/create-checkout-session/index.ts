@@ -85,14 +85,31 @@ serve(async (req) => {
 
     // Parse request body
     console.log('📋 Parsing request body...');
+    console.log('📋 Request method:', req.method);
+    console.log('📋 Content-Type:', req.headers.get('content-type'));
+    
     let requestBody;
     try {
-      requestBody = await req.json();
+      const bodyText = await req.text();
+      console.log('📋 Raw body text:', bodyText);
+      
+      if (!bodyText || bodyText.trim() === '') {
+        console.error('❌ Empty request body received');
+        return new Response(
+          JSON.stringify({ error: 'Request body is empty' }),
+          { 
+            status: 400, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        );
+      }
+      
+      requestBody = JSON.parse(bodyText);
       console.log('📋 Request body parsed:', requestBody);
     } catch (parseError) {
       console.error('❌ Failed to parse request body:', parseError);
       return new Response(
-        JSON.stringify({ error: 'Invalid JSON in request body' }),
+        JSON.stringify({ error: 'Invalid JSON in request body', details: parseError.message }),
         { 
           status: 400, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 

@@ -130,11 +130,11 @@ export default function Pricing() {
       console.log('🔄 Invoking create-checkout-session edge function...');
       const startTime = Date.now();
       
+      const requestPayload = { planId: plan.id };
+      console.log('🛒 Request payload:', requestPayload);
+      
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-        body: { planId: plan.id },
-        headers: {
-          'Content-Type': 'application/json',
-        }
+        body: requestPayload,
       });
 
       const duration = Date.now() - startTime;
