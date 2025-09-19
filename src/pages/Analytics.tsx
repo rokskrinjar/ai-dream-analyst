@@ -281,12 +281,6 @@ const Analytics = () => {
     value: ej.frequency
   })) || [];
 
-  const dreamCategoriesData = [
-    { name: 'Običajne sanje', value: Math.floor(dreams.length * 0.6), color: 'hsl(var(--primary))' },
-    { name: 'Lucidne sanje', value: Math.floor(dreams.length * 0.15), color: 'hsl(var(--secondary))' },
-    { name: 'Nočne more', value: Math.floor(dreams.length * 0.10), color: 'hsl(var(--destructive))' },
-    { name: 'Ponavljajoče', value: Math.floor(dreams.length * 0.15), color: 'hsl(var(--accent))' },
-  ];
 
   const milestones = [
     { title: 'Prvi zapisovalec', description: 'Zapisali ste prvo sanje', achieved: dreams.length >= 1, icon: BookOpen },
@@ -458,28 +452,24 @@ const Analytics = () => {
                       disabled={isAnalyzing}
                       variant="outline"
                       size="sm"
+                      title={`Ustvari novo AI analizo vaših vzorcev sanjanja (${estimatedCost} kreditov)`}
                     >
                       <RefreshCw className={cn("h-4 w-4 mr-2", isAnalyzing && "animate-spin")} />
-                      Osveži analizo
+                      Nova AI analiza ({estimatedCost} kreditov)
                     </Button>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="font-semibold mb-3 text-lg">Izvršni povzetek</h3>
-                    <div className="text-sm text-muted-foreground leading-relaxed space-y-3">
-                      {Array.isArray(patternAnalysis.executive_summary) 
-                        ? patternAnalysis.executive_summary.map((paragraph, idx) => (
-                            <p key={idx}>{paragraph}</p>
-                          ))
-                        : (patternAnalysis.executive_summary || patternAnalysis.overall_insights)?.split('\n\n').map((paragraph, idx) => (
-                            <p key={idx}>{paragraph}</p>
-                          ))
-                      }
-                    </div>
-                  </div>
+                <div className="text-sm text-muted-foreground leading-relaxed space-y-3">
+                  {Array.isArray(patternAnalysis.executive_summary) 
+                    ? patternAnalysis.executive_summary.map((paragraph, idx) => (
+                        <p key={idx}>{paragraph}</p>
+                      ))
+                    : (patternAnalysis.executive_summary || patternAnalysis.overall_insights)?.split('\n\n').map((paragraph, idx) => (
+                        <p key={idx}>{paragraph}</p>
+                      ))
+                  }
                 </div>
               </CardContent>
             </Card>
@@ -556,31 +546,6 @@ const Analytics = () => {
               </div>
             )}
 
-            {/* Dream Categories */}
-            <Card className="mb-8">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Eye className="h-5 w-5 text-primary" />
-                  <span>Kategorije sanj</span>
-                </CardTitle>
-                <CardDescription>Razdelitev vaših sanj po kategorijah</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={dreamCategoriesData} layout="horizontal">
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" fontSize={12} />
-                    <YAxis dataKey="name" type="category" fontSize={12} width={100} />
-                    <Tooltip />
-                    <Bar 
-                      dataKey="value" 
-                      fill="hsl(var(--primary))"
-                      radius={[0, 4, 4, 0]}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               {/* Milestones */}

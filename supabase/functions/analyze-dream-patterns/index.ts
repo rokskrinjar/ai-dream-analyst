@@ -218,70 +218,70 @@ serve(async (req) => {
 
     console.log(`Estimated tokens: ${finalEstimatedTokens}, Estimated cost: ${finalEstimatedCost} credits`);
 
-    const prompt = `Kot strokovnjak za analizo sanj analizirajte naslednje podatke ${dreamData.length} sanj uporabnika in ustvarite celovito, poglobljeno analizo vzorcev. Odzovite se v JSON formatu s slovenskimi besedami.
+    const prompt = `Kot strokovnjak za analizo sanj analizirajte naslednje podatke ${dreamData.length} sanj uporabnika in ustvarite celovito, poglobljeno analizo vzorcev. KRITIČNO: VEDNO se obračajte na uporabnika v DRUGI OSEBI (vi, vam, vaš, vaše, vaših). Odzovite se v JSON formatu s slovenskimi besedami.
 
 PODATKI O SANJAH IN AI ANALIZAH:
 ${JSON.stringify(dreamData, null, 2)}
 
-Ustvarite obsežno, večstransko analizo, ki vključuje:
+Ustvarite obsežno, večstransko analizo, ki se VEDNO obrača direktno na uporabnika z "vi", "vam", "vaš", "vaše", "vaših". Vključuje:
 
-1. executive_summary: Povzetek ključnih odkritij (4-5 odstavkov, vsak 3-4 stavki)
+1. executive_summary: Povzetek ključnih odkritij (4-5 odstavkov, vsak 3-4 stavki). Nagovarjajte uporabnika direktno: "Vaše sanje kažejo...", "V vaših sanjah se pojavlja...", "Vi imate tendence..."
 
 2. theme_patterns: Seznam najpogostejših tem (vsaj 8-12 tem) z:
    - theme: ime teme
    - frequency: število pojavitev
-   - significance: podroben opis pomena in psihološkega ozadja (3-4 stavki)
-   - evolution: kako se tema razvija skozi čas
+   - significance: opis pomena za UPORABNIKA v drugi osebi (3-4 stavki): "Ta tema vam razkriva...", "V vaših sanjah..."
+   - evolution: kako se tema razvija v VAŠIH sanjah skozi čas
 
 3. emotional_journey: Poglobljena čustvena analiza z:
    - emotion: ime čustva
    - frequency: število pojavitev
-   - trend: opis trenda z analizo
-   - psychological_significance: kaj čustvo razkriva o psihičnem stanju
-   - triggers: možni sprožilci tega čustva v sanjah
+   - trend: opis trenda za UPORABNIKA: "Vaša čustva kažejo..."
+   - psychological_significance: kaj čustvo razkriva o VAŠEM psihičnem stanju
+   - triggers: možni sprožilci v VAŠIH sanjah
 
 4. symbol_meanings: Podrobna simbolna interpretacija (vsaj 10-15 simbolov) z:
    - symbol: ime simbola
-   - frequency: število pojavitev
-   - interpretation: poglobljena psihološka interpretacija (4-5 stavkov)
-   - personal_context: kako se povezuje z uporabnikovo življenje
-   - archetypal_meaning: univerzalni pomen simbola
+   - frequency: število pojavitev v VAŠIH sanjah
+   - interpretation: interpretacija za UPORABNIKA (4-5 stavkov): "Ta simbol v vaših sanjah predstavlja..."
+   - personal_context: kako se povezuje z VAŠIM življenjem
+   - archetypal_meaning: univerzalni pomen za VAS
 
-5. temporal_patterns: Obsežna analiza časovnih vzorcev (4-5 odstavkov) o:
-   - Sezonskih vzorcih
-   - Tedenskih ciklih
-   - Evoluciji sanj skozi čas
-   - Povezavah z življenjskimi dogodki
+5. temporal_patterns: Obsežna analiza časovnih vzorcev (4-5 odstavkov) direktno nagovarjajoč uporabnika:
+   - "Vaši sezonski vzorci kažejo..."
+   - "V vašem tedenskem ciklu..."
+   - "Evolucija vaših sanj skozi čas..."
+   - "Povezave z vašimi življenjskimi dogodki..."
 
-6. psychological_insights: Poglobljena psihološka analiza (4-5 odstavkov) o:
-   - Nezavednih strah in želj
-   - Osebnostnih značilnostih
-   - Konfliktih in notranjih bojih
-   - Potencialih za rast
+6. psychological_insights: Poglobljena psihološka analiza (4-5 odstavkov) z direktnim nagovarjanjem:
+   - "Vaše nezavedne strahove in želje..."
+   - "Vaše osebnostne značilnosti..."
+   - "Vaši konflikti in notranji boji..."
+   - "Vaš potencial za rast..."
 
-7. life_stage_analysis: Analiza življenjske faze (3-4 odstavki) o:
-   - Trenutni življenjski izzivi
-   - Razvojne naloge
-   - Prehodi in spremembe
+7. life_stage_analysis: Analiza življenjske faze (3-4 odstavki) z direktnim nagovarjanjem:
+   - "Vaši trenutni življenjski izzivi..."
+   - "Vaše razvojne naloge..."
+   - "Vaši prehodi in spremembe..."
 
-8. recommendations: Obsežen seznam 12-15 specifičnih priporočil z:
-   - action: konkretno dejanje
-   - rationale: zakaj je priporočeno
-   - implementation: kako izvesti
-   - expected_outcome: pričakovani rezultat
+8. recommendations: Obsežen seznam 12-15 specifičnih priporočil z direktnim nagovarjanjem:
+   - action: konkretno dejanje ZA VAS: "Poskusite...", "Razmislite o...", "Vključite v svoj..."
+   - rationale: zakaj JE PRIPOROČENO ZA VAS: "To vam bo pomagalo...", "Za vas bo koristno..."
+   - implementation: kako VI izveste: "Lahko to storite tako..."
+   - expected_outcome: pričakovani rezultat ZA VAS: "S tem boste dosegli..."
 
-9. personal_growth: Celovita analiza osebne rasti (5-6 odstavkov) o:
-   - Doseženi razvoj
-   - Področja za izboljšave
-   - Potencial za prihodnost
-   - Povezave med sanjami in resničnostjo
+9. personal_growth: Celovita analiza osebne rasti (5-6 odstavkov) z direktnim nagovarjanjem:
+   - "Vaš doseženi razvoj..."
+   - "Vaša področja za izboljšave..."
+   - "Vaš potencial za prihodnost..."
+   - "Povezave med vašimi sanjami in resničnostjo..."
 
-10. integration_suggestions: Predlogi za integracijo spoznanj (3-4 odstavki) o:
-    - Dnevnih praksah
-    - Refleksijskih tehnikah
-    - Načinih uporabe spoznanj
+10. integration_suggestions: Predlogi za integracijo spoznanj (3-4 odstavki) direktno za uporabnika:
+    - "V vaših dnevnih praksah..."
+    - "Vaše refleksijske tehnike..."
+    - "Načini, kako VI lahko uporabite spoznanja..."
 
-Vsak oddelek naj bo obsežen, strokoven in psihološko natančen. Uporabite kompleksne psihološke koncepte in teorije. Analiza naj bo vredna 2+ kreditov z vsaj 3-4 strani vsebine.`;
+KRITIČNO: Vsak stavek mora biti napisan v DRUGI OSEBI. Uporabite "vi", "vam", "vaš", "vaše", "vaših" namesto tretje osebe. Primer: "Vaše sanje kažejo..." namesto "Sanje kažejo...". Analiza naj bo vredna 2+ kreditov z vsaj 3-4 strani vsebine.`;
 
     console.log('Sending request to OpenAI for pattern analysis...');
 
