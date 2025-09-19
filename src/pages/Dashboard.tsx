@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import DreamActivityCalendar from '@/components/DreamActivityCalendar';
 import { CompactCreditDisplay } from '@/components/CompactCreditDisplay';
+import { CreditDisplay } from '@/components/CreditDisplay';
 import { CreditUsageModal } from '@/components/CreditUsageModal';
 import { useToast } from "@/hooks/use-toast";
 
@@ -307,6 +308,11 @@ const Dashboard = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Subscription Overview */}
+        <div className="mb-8">
+          <CreditDisplay />
+        </div>
+
         {/* Dream Activity Calendar */}
         <div className="mb-8">
           <DreamActivityCalendar />
