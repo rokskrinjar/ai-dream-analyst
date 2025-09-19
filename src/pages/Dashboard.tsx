@@ -66,6 +66,8 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [dreams, setDreams] = useState<Dream[]>([]);
   const [analyses, setAnalyses] = useState<{ [key: string]: DreamAnalysis }>({});
+  const [allDreams, setAllDreams] = useState<Dream[]>([]);
+  const [allAnalyses, setAllAnalyses] = useState<{ [key: string]: DreamAnalysis }>({});
   const [loading, setLoading] = useState(true);
   const [analyzingDreams, setAnalyzingDreams] = useState<Set<string>>(new Set());
   const [showCreditModal, setShowCreditModal] = useState(false);
@@ -83,6 +85,7 @@ const Dashboard = () => {
     }
 
     fetchDreams();
+    fetchAllDreamsForStats();
   }, [user, navigate, showAllDreams]);
 
   const fetchDreams = async () => {
@@ -134,6 +137,38 @@ const Dashboard = () => {
       setAnalyses(analysesMap);
     } catch (error) {
       console.error('Error fetching analyses:', error);
+    }
+  };
+
+  const fetchAllDreamsForStats = async () => {
+    try {
+      // Fetch all dreams for statistics
+      const { data: allDreamsData, error: dreamsError } = await supabase
+        .from('dreams')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (dreamsError) throw dreamsError;
+      setAllDreams(allDreamsData || []);
+      
+      // Fetch all analyses for complete statistics
+      if (allDreamsData && allDreamsData.length > 0) {
+        const allDreamIds = allDreamsData.map(dream => dream.id);
+        const { data: allAnalysesData, error: analysesError } = await supabase
+          .from('dream_analyses')
+          .select('*')
+          .in('dream_id', allDreamIds);
+
+        if (analysesError) throw analysesError;
+        
+        const allAnalysesMap: { [key: string]: DreamAnalysis } = {};
+        (allAnalysesData || []).forEach(analysis => {
+          allAnalysesMap[analysis.dream_id] = analysis;
+        });
+        setAllAnalyses(allAnalysesMap);
+      }
+    } catch (error) {
+      console.error('Error fetching all dreams for stats:', error);
     }
   };
 
@@ -330,7 +365,7 @@ const Dashboard = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">{dreams.length}</div>
+              <div className="text-2xl font-bold text-foreground">{allDreams.length}</div>
               <p className="text-xs text-muted-foreground mt-1">
                 Vaš osebni dnevnik
               </p>
@@ -348,7 +383,7 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-foreground">
-                {dreams.filter(dream => {
+                {allDreams.filter(dream => {
                   const dreamDate = new Date(dream.created_at);
                   const now = new Date();
                   return dreamDate.getMonth() === now.getMonth() && 
@@ -372,7 +407,7 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-foreground">
-                {Object.keys(analyses).length}
+                {Object.keys(allAnalyses).length}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 Opravljenih
