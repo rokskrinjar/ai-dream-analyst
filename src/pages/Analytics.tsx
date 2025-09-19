@@ -174,10 +174,24 @@ const Analytics = () => {
     try {
       const { data } = await supabase
         .from('pattern_analyses')
-        .select('id')
+        .select('id, created_at')
         .eq('user_id', user!.id)
+        .order('created_at', { ascending: false })
         .limit(1);
-      return data && data.length > 0;
+      
+      // Invalidate analyses created before the second-person prompt update (September 19, 2025, 20:00 UTC)
+      if (data && data.length > 0) {
+        const analysisDate = new Date(data[0].created_at);
+        const cutoffDate = new Date('2025-09-19T20:00:00Z');
+        
+        if (analysisDate < cutoffDate) {
+          console.log('Invalidating old cached analysis - regenerating with updated second-person prompt');
+          return false;
+        }
+        return true;
+      }
+      
+      return false;
     } catch (error) {
       return false;
     }
