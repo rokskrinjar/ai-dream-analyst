@@ -132,6 +132,7 @@ export type Database = {
       pattern_analyses: {
         Row: {
           analysis_data: Json
+          analysis_version: number
           created_at: string
           dreams_count: number
           id: string
@@ -141,6 +142,7 @@ export type Database = {
         }
         Insert: {
           analysis_data: Json
+          analysis_version?: number
           created_at?: string
           dreams_count: number
           id?: string
@@ -150,6 +152,7 @@ export type Database = {
         }
         Update: {
           analysis_data?: Json
+          analysis_version?: number
           created_at?: string
           dreams_count?: number
           id?: string

@@ -83,6 +83,7 @@ const Analytics = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [estimatedCost, setEstimatedCost] = useState<number>(2);
   const [showCostConfirmation, setShowCostConfirmation] = useState(false);
+  const [showUpgradeOption, setShowUpgradeOption] = useState(false);
   const [analysisRequirements, setAnalysisRequirements] = useState({
     analyzedDreams: 0,
     required: 10,
@@ -216,12 +217,28 @@ const Analytics = () => {
       
       if (data?.analysis) {
         setPatternAnalysis(data.analysis);
+        
+        // Check if upgrade is available
+        if (data.upgradeAvailable) {
+          setEstimatedCost(data.estimatedUpgradeCost);
+          setShowUpgradeOption(true);
+        } else {
+          setShowUpgradeOption(false);
+        }
+        
         if (data.cached && !forceRefresh) {
           console.log('Loaded cached pattern analysis');
-          toast({
-            title: "Analiza naložena",
-            description: "Prikazana je vaša zadnja shranjena analiza vzorcev.",
-          });
+          if (data.upgradeAvailable) {
+            toast({
+              title: "Analiza naložena",
+              description: "Prikazana je vaša analiza. Nova izboljšana verzija je na voljo!",
+            });
+          } else {
+            toast({
+              title: "Analiza naložena",
+              description: "Prikazana je vaša zadnja shranjena analiza vzorcev.",
+            });
+          }
         } else {
           console.log('Generated fresh pattern analysis');
           toast({
@@ -244,6 +261,7 @@ const Analytics = () => {
       generatePatternAnalysis(dreams, analyses, true);
     }
     setShowCostConfirmation(false);
+    setShowUpgradeOption(false);
   };
 
   // Prepare chart data
@@ -397,8 +415,11 @@ const Analytics = () => {
           onConfirm={() => handleAnalysisConfirmation(true)}
           creditsRequired={estimatedCost}
           creditsRemaining={credits?.credits_remaining || 0}
-          actionName="AI Vzorčna analiza"
-          actionDescription={`Celovita AI analiza vzorcev za ${Math.min(analysisRequirements.analyzedDreams, 30)} najnovejših analiziranih sanj.`}
+          actionName={showUpgradeOption ? "Izboljšana AI vzorčna analiza" : "AI Vzorčna analiza"}
+          actionDescription={showUpgradeOption 
+            ? `Nadgradite na novo izboljšano analizo z dodatnimi uvidi in priporočili za ${Math.min(analysisRequirements.analyzedDreams, 30)} najnovejših analiziranih sanj.`
+            : `Celovita AI analiza vzorcev za ${Math.min(analysisRequirements.analyzedDreams, 30)} najnovejših analiziranih sanj.`
+          }
         />
 
         {/* AI Pattern Analysis */}
@@ -422,15 +443,27 @@ const Analytics = () => {
                     <Brain className="h-5 w-5 text-primary" />
                     <span>AI Pregled vzorcev</span>
                   </CardTitle>
-                  <Button 
-                    onClick={() => generatePatternAnalysis(dreams, analyses, true)}
-                    disabled={isAnalyzing}
-                    variant="outline"
-                    size="sm"
-                  >
-                    <RefreshCw className={cn("h-4 w-4 mr-2", isAnalyzing && "animate-spin")} />
-                    Osveži
-                  </Button>
+                  <div className="flex gap-2">
+                    {showUpgradeOption && (
+                      <Button
+                        onClick={() => setShowCostConfirmation(true)}
+                        className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                        size="sm"
+                      >
+                        <Sparkles className="h-4 w-4 mr-2" />
+                        Nova izboljšana analiza ({estimatedCost} kreditov)
+                      </Button>
+                    )}
+                    <Button 
+                      onClick={() => generatePatternAnalysis(dreams, analyses, true)}
+                      disabled={isAnalyzing}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <RefreshCw className={cn("h-4 w-4 mr-2", isAnalyzing && "animate-spin")} />
+                      Osveži
+                    </Button>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>

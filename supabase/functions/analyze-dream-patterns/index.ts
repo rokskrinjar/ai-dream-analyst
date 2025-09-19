@@ -112,6 +112,8 @@ serve(async (req) => {
     }
 
 
+    const CURRENT_ANALYSIS_VERSION = 2; // Version 2 = comprehensive analysis
+
     // Check for cached analysis unless force refresh is requested
     if (!forceRefresh) {
       const latestDreamDate = Math.max(...dreams.map((d: any) => new Date(d.dream_date).getTime()));
@@ -126,7 +128,34 @@ serve(async (req) => {
         .single();
 
       if (cachedAnalysis) {
-        console.log('Returning cached pattern analysis');
+        // Check if it's an old version analysis
+        const analysisVersion = cachedAnalysis.analysis_version || 1;
+        
+        if (analysisVersion < CURRENT_ANALYSIS_VERSION) {
+          // Calculate estimated cost for upgrade
+          const finalInputText = JSON.stringify(dreamData);
+          const finalEstimatedTokens = Math.ceil(finalInputText.length / 4);
+          const finalEstimatedCost = Math.max(2, Math.ceil(finalEstimatedTokens / 1000));
+          
+          console.log('Found older version analysis, offering upgrade');
+          return new Response(
+            JSON.stringify({ 
+              analysis: cachedAnalysis.analysis_data, 
+              cached: true,
+              upgradeAvailable: true,
+              currentVersion: analysisVersion,
+              availableVersion: CURRENT_ANALYSIS_VERSION,
+              estimatedUpgradeCost: finalEstimatedCost,
+              creditsUsed: 0,
+              dreamsAnalyzed: cachedAnalysis.dreams_count 
+            }),
+            {
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            }
+          );
+        }
+        
+        console.log('Returning cached pattern analysis (current version)');
         return new Response(
           JSON.stringify({ 
             analysis: cachedAnalysis.analysis_data, 
@@ -342,7 +371,7 @@ Vsak oddelek naj bo obsežen, strokoven in psihološko natančen. Uporabite komp
       };
     }
 
-    // Cache the analysis result
+    // Cache the analysis result with current version
     const latestDreamDate = Math.max(...dreams.map((d: any) => new Date(d.dream_date).getTime()));
     const { data: savedAnalysis, error: saveError } = await supabase
       .from('pattern_analyses')
@@ -351,6 +380,7 @@ Vsak oddelek naj bo obsežen, strokoven in psihološko natančen. Uporabite komp
         analysis_data: parsedAnalysis,
         dreams_count: dreams.length,
         last_dream_date: new Date(latestDreamDate).toISOString().split('T')[0],
+        analysis_version: CURRENT_ANALYSIS_VERSION
       })
       .select()
       .single();
