@@ -83,6 +83,33 @@ serve(async (req) => {
       });
     }
 
+    // Prepare dream data early for cost calculations
+    const analyzedDreams = dreams.filter((dream: any) => 
+      analyses.some((a: any) => a.dream_id === dream.id)
+    );
+    
+    // Use the latest 30 analyzed dreams for analysis
+    const recentAnalyzedDreams = analyzedDreams
+      .sort((a: any, b: any) => new Date(b.dream_date).getTime() - new Date(a.dream_date).getTime())
+      .slice(0, 30);
+
+    // Prepare comprehensive dream data for analysis (needed for cost estimation)
+    const dreamData = recentAnalyzedDreams.map((dream: any) => {
+      const analysis = analyses.find((a: any) => a.dream_id === dream.id);
+      return {
+        title: dream.title,
+        content: dream.content,
+        mood: dream.mood,
+        dream_date: dream.dream_date,
+        tags: dream.tags || [],
+        themes: analysis?.themes || [],
+        emotions: analysis?.emotions || [],
+        symbols: analysis?.symbols || [],
+        analysis_text: analysis?.analysis_text || '',
+        recommendations: analysis?.recommendations || null
+      };
+    });
+
     // Calculate estimated cost based on input data
     const recentDreams = dreams.slice(0, 30);
     const inputText = JSON.stringify(recentDreams) + JSON.stringify(analyses);
@@ -183,46 +210,6 @@ serve(async (req) => {
         }
       );
     }
-
-    // Check minimum requirements: at least 10 analyzed dreams
-    const analyzedDreams = dreams.filter((dream: any) => 
-      analyses.some((a: any) => a.dream_id === dream.id)
-    );
-    
-    if (analyzedDreams.length < 10) {
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: `Za vzorčno analizo potrebujete vsaj 10 analiziranih sanj. Trenutno imate ${analyzedDreams.length} analiziranih sanj.`,
-        errorCode: 'INSUFFICIENT_ANALYZED_DREAMS',
-        current: analyzedDreams.length,
-        required: 10
-      }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // Use the latest 30 analyzed dreams for analysis
-    const recentAnalyzedDreams = analyzedDreams
-      .sort((a: any, b: any) => new Date(b.dream_date).getTime() - new Date(a.dream_date).getTime())
-      .slice(0, 30);
-
-    // Prepare comprehensive dream data for analysis (no truncation)
-    const dreamData = recentAnalyzedDreams.map((dream: any) => {
-      const analysis = analyses.find((a: any) => a.dream_id === dream.id);
-      return {
-        title: dream.title,
-        content: dream.content, // Full content, no truncation
-        mood: dream.mood,
-        dream_date: dream.dream_date,
-        tags: dream.tags || [],
-        themes: analysis?.themes || [],
-        emotions: analysis?.emotions || [],
-        symbols: analysis?.symbols || [],
-        analysis_text: analysis?.analysis_text || '', // Full analysis, no truncation
-        recommendations: analysis?.recommendations || null
-      };
-    });
 
     // Calculate estimated cost based on input size
     const finalInputText = JSON.stringify(dreamData);
