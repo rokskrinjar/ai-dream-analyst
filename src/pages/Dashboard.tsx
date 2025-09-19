@@ -343,10 +343,6 @@ const Dashboard = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Subscription Overview */}
-        <div className="mb-8">
-          <CreditDisplay />
-        </div>
 
         {/* Dream Activity Calendar */}
         <div className="mb-8">
