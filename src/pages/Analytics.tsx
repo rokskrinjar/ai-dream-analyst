@@ -84,6 +84,9 @@ const Analytics = () => {
   const [estimatedCost, setEstimatedCost] = useState<number>(2);
   const [showCostConfirmation, setShowCostConfirmation] = useState(false);
   const [showUpgradeOption, setShowUpgradeOption] = useState(false);
+  const [showChoiceScreen, setShowChoiceScreen] = useState(false);
+  const [hasExistingAnalysis, setHasExistingAnalysis] = useState(false);
+  const [lastAnalysisDate, setLastAnalysisDate] = useState<string | null>(null);
   const [analysisRequirements, setAnalysisRequirements] = useState({
     analyzedDreams: 0,
     required: 10,
@@ -149,12 +152,15 @@ const Analytics = () => {
         const cost = Math.max(2, Math.ceil(estimatedTokens / 2000));
         setEstimatedCost(cost);
         
-        // Auto-generate if we haven't done pattern analysis before
-        const hasExistingAnalysis = await checkExistingPatternAnalysis();
-        if (!hasExistingAnalysis) {
-          setShowCostConfirmation(true);
+        // Check if there's an existing analysis
+        const existingAnalysisInfo = await checkExistingPatternAnalysis();
+        if (existingAnalysisInfo.exists) {
+          setHasExistingAnalysis(true);
+          setLastAnalysisDate(existingAnalysisInfo.date);
+          setShowChoiceScreen(true);
         } else {
-          generatePatternAnalysis(dreamsData, analysesData);
+          setHasExistingAnalysis(false);
+          setShowCostConfirmation(true);
         }
       }
       
@@ -170,7 +176,7 @@ const Analytics = () => {
     }
   };
 
-  const checkExistingPatternAnalysis = async () => {
+  const checkExistingPatternAnalysis = async (): Promise<{ exists: boolean; date: string | null }> => {
     try {
       const { data } = await supabase
         .from('pattern_analyses')
@@ -186,14 +192,14 @@ const Analytics = () => {
         
         if (analysisDate < cutoffDate) {
           console.log('Invalidating old cached analysis - regenerating with updated second-person prompt');
-          return false;
+          return { exists: false, date: null };
         }
-        return true;
+        return { exists: true, date: data[0].created_at };
       }
       
-      return false;
+      return { exists: false, date: null };
     } catch (error) {
-      return false;
+      return { exists: false, date: null };
     }
   };
 
@@ -282,6 +288,21 @@ const Analytics = () => {
     }
     setShowCostConfirmation(false);
     setShowUpgradeOption(false);
+  };
+
+  const handleViewLastAnalysis = () => {
+    setShowChoiceScreen(false);
+    generatePatternAnalysis(dreams, analyses, false);
+  };
+
+  const handleGenerateNewAnalysis = () => {
+    setShowChoiceScreen(false);
+    setShowCostConfirmation(true);
+  };
+
+  const handleBackToChoices = () => {
+    setPatternAnalysis(null);
+    setShowChoiceScreen(true);
   };
 
   // Prepare chart data
@@ -429,6 +450,72 @@ const Analytics = () => {
           }
         />
 
+        {/* Choice Screen */}
+        {showChoiceScreen && analysisRequirements.canAnalyze && (
+          <Card className="mb-8">
+            <CardHeader className="text-center">
+              <CardTitle className="flex items-center justify-center space-x-2 text-2xl">
+                <Brain className="h-6 w-6 text-primary" />
+                <span>AI Vzorčna analiza</span>
+              </CardTitle>
+              <CardDescription className="text-base">
+                Izberite, kaj bi radi naredili z vašo vzorčno analizo
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* View Last Analysis */}
+                <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer" onClick={handleViewLastAnalysis}>
+                  <CardHeader className="text-center">
+                    <Eye className="h-12 w-12 text-primary mx-auto mb-2" />
+                    <CardTitle className="text-lg">Prikaži zadnjo analizo</CardTitle>
+                    <CardDescription>
+                      Brezplačno si oglejte vašo shranjeno vzorčno analizo
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <div className="space-y-2">
+                      <Badge variant="secondary" className="mb-2">BREZPLAČNO</Badge>
+                      {lastAnalysisDate && (
+                        <p className="text-sm text-muted-foreground">
+                          Zadnja analiza: {new Date(lastAnalysisDate).toLocaleDateString('sl-SI')}
+                        </p>
+                      )}
+                      <Button className="w-full" onClick={handleViewLastAnalysis}>
+                        <Eye className="h-4 w-4 mr-2" />
+                        Prikaži analizo
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Generate New Analysis */}
+                <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer" onClick={handleGenerateNewAnalysis}>
+                  <CardHeader className="text-center">
+                    <Sparkles className="h-12 w-12 text-primary mx-auto mb-2" />
+                    <CardTitle className="text-lg">Ustvari novo analizo</CardTitle>
+                    <CardDescription>
+                      Generirajte svežo AI analizo z najnovejšimi uvidi
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <div className="space-y-2">
+                      <Badge variant="outline" className="mb-2">{estimatedCost} KREDITOV</Badge>
+                      <p className="text-sm text-muted-foreground">
+                        Temelji na {Math.min(analysisRequirements.analyzedDreams, 30)} najnovejših analiziranih sanjah
+                      </p>
+                      <Button className="w-full" onClick={handleGenerateNewAnalysis}>
+                        <Sparkles className="h-4 w-4 mr-2" />
+                        Nova analiza
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* AI Pattern Analysis */}
         {isAnalyzing ? (
           <Card className="mb-8">
@@ -451,6 +538,16 @@ const Analytics = () => {
                     <span>AI Pregled vzorcev</span>
                   </CardTitle>
                   <div className="flex gap-2">
+                    {hasExistingAnalysis && !isAnalyzing && (
+                      <Button
+                        onClick={handleBackToChoices}
+                        variant="ghost"
+                        size="sm"
+                      >
+                        <ArrowLeft className="h-4 w-4 mr-2" />
+                        Nazaj na izbire
+                      </Button>
+                    )}
                     {showUpgradeOption && (
                       <Button
                         onClick={() => setShowCostConfirmation(true)}
@@ -469,7 +566,7 @@ const Analytics = () => {
                       title={`Ustvari novo AI analizo vaših vzorcev sanjanja (${estimatedCost} kreditov)`}
                     >
                       <RefreshCw className={cn("h-4 w-4 mr-2", isAnalyzing && "animate-spin")} />
-                      Nova AI analiza ({estimatedCost} kreditov)
+                      Osveži analizo ({estimatedCost} kreditov)
                     </Button>
                   </div>
                 </div>
