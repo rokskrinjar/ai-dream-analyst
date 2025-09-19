@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Brain, TrendingUp, Calendar, Heart, Eye, Loader2, RefreshCw, Award, Target, Zap, Clock, BookOpen, Sparkles } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { CreditUsageModal } from '@/components/CreditUsageModal';
+import { useCreditContext } from '@/contexts/CreditContext';
 import { cn } from '@/lib/utils';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, AreaChart, Area } from 'recharts';
 
@@ -32,19 +34,46 @@ interface DreamAnalysis {
 }
 
 interface PatternAnalysis {
-  overall_insights: string;
-  theme_patterns: Array<{ theme: string; frequency: number; significance: string }>;
-  emotional_journey: Array<{ emotion: string; frequency: number; trend: string }>;
-  symbol_meanings: Array<{ symbol: string; frequency: number; interpretation: string }>;
+  executive_summary?: string;
+  overall_insights?: string; // Keep for backward compatibility
+  theme_patterns: Array<{ 
+    theme: string; 
+    frequency: number; 
+    significance: string;
+    evolution?: string;
+  }>;
+  emotional_journey: Array<{ 
+    emotion: string; 
+    frequency: number; 
+    trend: string;
+    psychological_significance?: string;
+    triggers?: string;
+  }>;
+  symbol_meanings: Array<{ 
+    symbol: string; 
+    frequency: number; 
+    interpretation: string;
+    personal_context?: string;
+    archetypal_meaning?: string;
+  }>;
   temporal_patterns: string;
-  recommendations: string[];
+  psychological_insights?: string;
+  life_stage_analysis?: string;
+  recommendations: Array<{
+    action?: string;
+    rationale?: string;
+    implementation?: string;
+    expected_outcome?: string;
+  }> | string[]; // Support both formats
   personal_growth: string;
+  integration_suggestions?: string;
 }
 
 const COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', 'hsl(var(--secondary))', 'hsl(var(--muted))'];
 
 const Analytics = () => {
   const { user } = useAuth();
+  const { credits } = useCreditContext();
   const navigate = useNavigate();
   
   const [dreams, setDreams] = useState<Dream[]>([]);
@@ -52,6 +81,13 @@ const Analytics = () => {
   const [patternAnalysis, setPatternAnalysis] = useState<PatternAnalysis | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [estimatedCost, setEstimatedCost] = useState<number>(2);
+  const [showCostConfirmation, setShowCostConfirmation] = useState(false);
+  const [analysisRequirements, setAnalysisRequirements] = useState({
+    analyzedDreams: 0,
+    required: 10,
+    canAnalyze: false
+  });
 
   useEffect(() => {
     if (!user) {
@@ -91,9 +127,34 @@ const Analytics = () => {
       setDreams(dreamsData || []);
       setAnalyses(analysesData);
       
-      // Generate pattern analysis if we have enough data
-      if (dreamsData && dreamsData.length > 0 && analysesData.length > 0) {
-        generatePatternAnalysis(dreamsData, analysesData);
+      // Check requirements for pattern analysis
+      const analyzedDreamCount = dreamsData?.filter(dream => 
+        analysesData.some(analysis => analysis.dream_id === dream.id)
+      ).length || 0;
+      
+      const canAnalyze = analyzedDreamCount >= 10;
+      
+      setAnalysisRequirements({
+        analyzedDreams: analyzedDreamCount,
+        required: 10,
+        canAnalyze
+      });
+      
+      // Calculate estimated cost if requirements are met
+      if (canAnalyze && dreamsData && analysesData.length > 0) {
+        const recentDreams = dreamsData.slice(0, 30);
+        const inputSize = JSON.stringify(recentDreams).length + JSON.stringify(analysesData).length;
+        const estimatedTokens = Math.ceil(inputSize / 4);
+        const cost = Math.max(2, Math.ceil(estimatedTokens / 2000));
+        setEstimatedCost(cost);
+        
+        // Auto-generate if we haven't done pattern analysis before
+        const hasExistingAnalysis = await checkExistingPatternAnalysis();
+        if (!hasExistingAnalysis) {
+          setShowCostConfirmation(true);
+        } else {
+          generatePatternAnalysis(dreamsData, analysesData);
+        }
       }
       
     } catch (error: any) {
@@ -108,35 +169,81 @@ const Analytics = () => {
     }
   };
 
+  const checkExistingPatternAnalysis = async () => {
+    try {
+      const { data } = await supabase
+        .from('pattern_analyses')
+        .select('id')
+        .eq('user_id', user!.id)
+        .limit(1);
+      return data && data.length > 0;
+    } catch (error) {
+      return false;
+    }
+  };
+
   const generatePatternAnalysis = async (dreams: Dream[], analyses: DreamAnalysis[], forceRefresh = false) => {
     try {
       setIsAnalyzing(true);
+      setShowCostConfirmation(false);
       
       const { data, error } = await supabase.functions.invoke('analyze-dream-patterns', {
         body: { dreams, analyses, forceRefresh }
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message?.includes('INSUFFICIENT_CREDITS')) {
+          toast({
+            title: "Premalo kreditov",
+            description: `Potrebujete ${estimatedCost} kreditov za to analizo.`,
+            variant: "destructive",
+          });
+        } else if (error.message?.includes('INSUFFICIENT_ANALYZED_DREAMS')) {
+          toast({
+            title: "Premalo analiziranih sanj",
+            description: "Potrebujete vsaj 10 analiziranih sanj za vzorčno analizo.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Napaka",
+            description: "Napaka pri ustvarjanju analize vzorcev.",
+            variant: "destructive",
+          });
+        }
+        throw error;
+      }
       
       if (data?.analysis) {
         setPatternAnalysis(data.analysis);
         if (data.cached && !forceRefresh) {
           console.log('Loaded cached pattern analysis');
+          toast({
+            title: "Analiza naložena",
+            description: "Prikazana je vaša zadnja shranjena analiza vzorcev.",
+          });
         } else {
           console.log('Generated fresh pattern analysis');
+          toast({
+            title: "Analiza končana",
+            description: `Nova analiza vzorcev je pripravljena! Porabili ste ${estimatedCost} kreditov.`,
+          });
         }
       }
       
     } catch (error: any) {
       console.error('Error generating pattern analysis:', error);
-      toast({
-        title: "Napaka",
-        description: "Napaka pri ustvarjanju analize vzorcev.",
-        variant: "destructive",
-      });
+      // Error handling is done above
     } finally {
       setIsAnalyzing(false);
     }
+  };
+
+  const handleAnalysisConfirmation = (confirmed: boolean) => {
+    if (confirmed) {
+      generatePatternAnalysis(dreams, analyses, true);
+    }
+    setShowCostConfirmation(false);
   };
 
   // Prepare chart data
@@ -250,6 +357,50 @@ const Analytics = () => {
           </Card>
         </div>
 
+        {/* Requirements Check */}
+        {!analysisRequirements.canAnalyze && (
+          <Card className="mb-8 border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-900/20">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2 text-orange-800 dark:text-orange-200">
+                <Clock className="h-5 w-5" />
+                <span>AI Vzorčna analiza</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <p className="text-orange-700 dark:text-orange-300">
+                  Za poglobljeno AI analizo vzorcev potrebujete vsaj <strong>10 analiziranih sanj</strong>.
+                </p>
+                <div className="flex items-center space-x-3">
+                  <div className="flex-1 bg-orange-200 dark:bg-orange-800 rounded-full h-2">
+                    <div 
+                      className="bg-orange-500 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${Math.min((analysisRequirements.analyzedDreams / analysisRequirements.required) * 100, 100)}%` }}
+                    />
+                  </div>
+                  <span className="text-sm font-medium text-orange-700 dark:text-orange-300">
+                    {analysisRequirements.analyzedDreams}/{analysisRequirements.required}
+                  </span>
+                </div>
+                <p className="text-sm text-orange-600 dark:text-orange-400">
+                  Še {Math.max(0, analysisRequirements.required - analysisRequirements.analyzedDreams)} analiziranih sanj do odklepa.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Cost Confirmation Modal */}
+        <CreditUsageModal 
+          open={showCostConfirmation}
+          onOpenChange={setShowCostConfirmation}
+          onConfirm={() => handleAnalysisConfirmation(true)}
+          creditsRequired={estimatedCost}
+          creditsRemaining={credits?.credits_remaining || 0}
+          actionName="AI Vzorčna analiza"
+          actionDescription={`Celovita AI analiza vzorcev za ${Math.min(analysisRequirements.analyzedDreams, 30)} najnovejših analiziranih sanj.`}
+        />
+
         {/* AI Pattern Analysis */}
         {isAnalyzing ? (
           <Card className="mb-8">
@@ -257,6 +408,7 @@ const Analytics = () => {
               <div className="text-center">
                 <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
                 <p className="text-muted-foreground">AI analizira vzorce vaših sanj...</p>
+                <p className="text-sm text-muted-foreground mt-2">To lahko traja do 60 sekund</p>
               </div>
             </CardContent>
           </Card>
@@ -283,7 +435,7 @@ const Analytics = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-foreground leading-relaxed whitespace-pre-wrap">
-                  {patternAnalysis.overall_insights}
+                  {patternAnalysis.executive_summary || patternAnalysis.overall_insights}
                 </p>
               </CardContent>
             </Card>
@@ -478,23 +630,93 @@ const Analytics = () => {
                 </CardContent>
               </Card>
 
-              {/* Recommendations */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Priporočila</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    {patternAnalysis.recommendations?.map((rec, index) => (
-                      <li key={index} className="flex items-start space-x-2">
-                        <Badge variant="outline" className="mt-1 shrink-0">{index + 1}</Badge>
-                        <span className="text-foreground">{rec}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            </div>
+               {/* Recommendations */}
+               <Card>
+                 <CardHeader>
+                   <CardTitle>Priporočila</CardTitle>
+                 </CardHeader>
+                 <CardContent>
+                   <ul className="space-y-3">
+                     {patternAnalysis.recommendations?.map((rec, index) => (
+                       <li key={index} className="flex items-start space-x-3">
+                         <Badge variant="outline" className="mt-1 shrink-0">{index + 1}</Badge>
+                         <div className="flex-1">
+                           {typeof rec === 'string' ? (
+                             <span className="text-foreground">{rec}</span>
+                           ) : (
+                             <div className="space-y-1">
+                               <div className="font-medium text-foreground">{rec.action}</div>
+                               {rec.rationale && (
+                                 <div className="text-sm text-muted-foreground">{rec.rationale}</div>
+                               )}
+                               {rec.implementation && (
+                                 <div className="text-xs text-muted-foreground italic">💡 {rec.implementation}</div>
+                               )}
+                             </div>
+                           )}
+                         </div>
+                       </li>
+                     ))}
+                   </ul>
+                 </CardContent>
+               </Card>
+             </div>
+
+             {/* Enhanced Analysis Sections */}
+             {(patternAnalysis.psychological_insights || patternAnalysis.life_stage_analysis || patternAnalysis.integration_suggestions) && (
+               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                 {/* Psychological Insights */}
+                 {patternAnalysis.psychological_insights && (
+                   <Card>
+                     <CardHeader>
+                       <CardTitle className="flex items-center space-x-2">
+                         <Brain className="h-5 w-5 text-primary" />
+                         <span>Psihološki vpogledi</span>
+                       </CardTitle>
+                     </CardHeader>
+                     <CardContent>
+                       <p className="text-foreground leading-relaxed whitespace-pre-wrap">
+                         {patternAnalysis.psychological_insights}
+                       </p>
+                     </CardContent>
+                   </Card>
+                 )}
+
+                 {/* Life Stage Analysis */}
+                 {patternAnalysis.life_stage_analysis && (
+                   <Card>
+                     <CardHeader>
+                       <CardTitle className="flex items-center space-x-2">
+                         <Target className="h-5 w-5 text-primary" />
+                         <span>Življenjska faza</span>
+                       </CardTitle>
+                     </CardHeader>
+                     <CardContent>
+                       <p className="text-foreground leading-relaxed whitespace-pre-wrap">
+                         {patternAnalysis.life_stage_analysis}
+                       </p>
+                     </CardContent>
+                   </Card>
+                 )}
+
+                 {/* Integration Suggestions */}
+                 {patternAnalysis.integration_suggestions && (
+                   <Card className="lg:col-span-2">
+                     <CardHeader>
+                       <CardTitle className="flex items-center space-x-2">
+                         <Sparkles className="h-5 w-5 text-primary" />
+                         <span>Integracija spoznanj</span>
+                       </CardTitle>
+                     </CardHeader>
+                     <CardContent>
+                       <p className="text-foreground leading-relaxed whitespace-pre-wrap">
+                         {patternAnalysis.integration_suggestions}
+                       </p>
+                     </CardContent>
+                   </Card>
+                 )}
+               </div>
+             )}
 
             {/* Symbol Meanings */}
             {patternAnalysis.symbol_meanings && patternAnalysis.symbol_meanings.length > 0 && (
@@ -511,7 +733,17 @@ const Analytics = () => {
                           <h4 className="font-medium text-foreground">{symbol.symbol}</h4>
                           <Badge variant="outline">{symbol.frequency}x</Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground">{symbol.interpretation}</p>
+                         <p className="text-sm text-muted-foreground leading-relaxed">{symbol.interpretation}</p>
+                         {symbol.personal_context && (
+                           <p className="text-xs text-muted-foreground mt-2 italic">
+                             🔗 {symbol.personal_context}
+                           </p>
+                         )}
+                         {symbol.archetypal_meaning && (
+                           <p className="text-xs text-muted-foreground mt-1">
+                             🌍 {symbol.archetypal_meaning}
+                           </p>
+                         )}
                       </div>
                     ))}
                   </div>
@@ -533,6 +765,18 @@ const Analytics = () => {
               </Card>
             )}
           </>
+        ) : !analysisRequirements.canAnalyze ? (
+          <Card>
+            <CardContent className="text-center py-12">
+              <Brain className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium mb-2">Potrebnih več analiziranih sanj</h3>
+              <p className="text-muted-foreground mb-4">
+                Imate {analysisRequirements.analyzedDreams} analiziranih sanj. 
+                Potrebujete še {analysisRequirements.required - analysisRequirements.analyzedDreams} za vzorčno analizo.
+              </p>
+              <Button onClick={() => navigate('/dashboard')}>Analizirajte več sanj</Button>
+            </CardContent>
+          </Card>
         ) : dreams.length === 0 ? (
           <Card>
             <CardContent className="text-center py-12">
