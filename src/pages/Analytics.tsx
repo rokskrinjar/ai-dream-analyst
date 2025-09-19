@@ -11,7 +11,7 @@ import { toast } from '@/hooks/use-toast';
 import { CreditUsageModal } from '@/components/CreditUsageModal';
 import { useCreditContext } from '@/contexts/CreditContext';
 import { cn } from '@/lib/utils';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, AreaChart, Area } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 interface Dream {
   id: string;
@@ -205,6 +205,12 @@ const Analytics = () => {
             description: "Potrebujete vsaj 10 analiziranih sanj za vzorčno analizo.",
             variant: "destructive",
           });
+        } else if (error.message?.includes('AI_ANALYSIS_FAILED')) {
+          toast({
+            title: "AI analiza neuspešna",
+            description: "Poskusite znova čez nekaj trenutkov.",
+            variant: "destructive",
+          });
         } else {
           toast({
             title: "Napaka",
@@ -274,13 +280,6 @@ const Analytics = () => {
     name: ej.emotion,
     value: ej.frequency
   })) || [];
-
-  // Prepare additional analytics data
-  const dreamQualityData = dreams.slice(0, 10).map((dream, index) => ({
-    date: new Date(dream.created_at).toLocaleDateString('sl-SI'),
-    quality: Math.floor(Math.random() * 5) + 6, // Simulated quality score 6-10
-    vividness: Math.floor(Math.random() * 4) + 7, // Simulated vividness 7-10
-  })).reverse();
 
   const dreamCategoriesData = [
     { name: 'Običajne sanje', value: Math.floor(dreams.length * 0.6), color: 'hsl(var(--primary))' },
@@ -461,295 +460,284 @@ const Analytics = () => {
                       size="sm"
                     >
                       <RefreshCw className={cn("h-4 w-4 mr-2", isAnalyzing && "animate-spin")} />
-                      Osveži
+                      Osveži analizo
                     </Button>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-foreground leading-relaxed whitespace-pre-wrap">
-                  {patternAnalysis.executive_summary || patternAnalysis.overall_insights}
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Charts Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              {/* Theme Frequency */}
-              {themeData.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Pogoste teme</CardTitle>
-                    <CardDescription>Najpogosteje pojavljajoče se teme v vaših sanjah</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <BarChart data={themeData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Bar dataKey="value" fill="hsl(var(--primary))" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Emotion Distribution */}
-              {emotionData.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Čustveni vzorci</CardTitle>
-                    <CardDescription>Porazdelitev čustev v vaših sanjah</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <PieChart>
-                        <Pie
-                          data={emotionData}
-                          cx="50%"
-                          cy="50%"
-                          outerRadius={100}
-                          fill="hsl(var(--primary))"
-                          dataKey="value"
-                          label={(entry) => entry.name}
-                        >
-                          {emotionData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-
-            {/* New Analytics Features */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              {/* Dream Quality Trends */}
-              {dreamQualityData.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Kakovost sanj</CardTitle>
-                    <CardDescription>Razvoj kakovosti in živosti sanj</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ResponsiveContainer width="100%" height={250}>
-                      <AreaChart data={dreamQualityData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" />
-                        <YAxis domain={[0, 10]} />
-                        <Tooltip />
-                        <Area 
-                          type="monotone" 
-                          dataKey="quality" 
-                          stackId="1"
-                          stroke="hsl(var(--primary))" 
-                          fill="hsl(var(--primary))" 
-                          fillOpacity={0.3}
-                          name="Kakovost"
-                        />
-                        <Area 
-                          type="monotone" 
-                          dataKey="vividness" 
-                          stackId="2"
-                          stroke="hsl(var(--secondary))" 
-                          fill="hsl(var(--secondary))" 
-                          fillOpacity={0.3}
-                          name="Živost"
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Dream Categories */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Kategorije sanj</CardTitle>
-                  <CardDescription>Porazdelitev tipov sanj</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={250}>
-                    <PieChart>
-                      <Pie
-                        data={dreamCategoriesData}
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={80}
-                        dataKey="value"
-                        label={(entry) => entry.value > 0 ? entry.name : ''}
-                      >
-                        {dreamCategoriesData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Milestones */}
-            <Card className="mb-8">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Award className="h-5 w-5 text-primary" />
-                  <span>Dosežki</span>
-                </CardTitle>
-                <CardDescription>Vaši mejniki v raziskovanju sanj</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {milestones.map((milestone, index) => {
-                    const Icon = milestone.icon;
-                    return (
-                      <div 
-                        key={index} 
-                        className={cn(
-                          "p-4 rounded-lg border transition-all",
-                          milestone.achieved 
-                            ? "border-primary bg-primary/5 shadow-sm" 
-                            : "border-border bg-muted/30"
-                        )}
-                      >
-                        <div className="flex items-center space-x-3 mb-2">
-                          <div className={cn(
-                            "w-8 h-8 rounded-full flex items-center justify-center",
-                            milestone.achieved 
-                              ? "bg-primary text-primary-foreground" 
-                              : "bg-muted text-muted-foreground"
-                          )}>
-                            <Icon className="h-4 w-4" />
-                          </div>
-                          <h4 className={cn(
-                            "font-medium",
-                            milestone.achieved ? "text-foreground" : "text-muted-foreground"
-                          )}>
-                            {milestone.title}
-                          </h4>
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          {milestone.description}
-                        </p>
-                        {milestone.achieved && (
-                          <Badge variant="secondary" className="mt-2">
-                            Doseženo ✓
-                          </Badge>
-                        )}
-                      </div>
-                    );
-                  })}
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-semibold mb-3 text-lg">Izvršni povzetek</h3>
+                    <div className="text-sm text-muted-foreground leading-relaxed space-y-3">
+                      {Array.isArray(patternAnalysis.executive_summary) 
+                        ? patternAnalysis.executive_summary.map((paragraph, idx) => (
+                            <p key={idx}>{paragraph}</p>
+                          ))
+                        : (patternAnalysis.executive_summary || patternAnalysis.overall_insights)?.split('\n\n').map((paragraph, idx) => (
+                            <p key={idx}>{paragraph}</p>
+                          ))
+                      }
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Detailed Insights */}
+            {/* Charts Section */}
+            {(themeData.length > 0 || emotionData.length > 0) && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                {/* Themes Chart */}
+                {themeData.length > 0 && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center space-x-2">
+                        <Heart className="h-5 w-5 text-primary" />
+                        <span>Pogoste teme</span>
+                      </CardTitle>
+                      <CardDescription>Najpogostejše teme v vaših sanjah</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <BarChart data={themeData.slice(0, 8)}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis 
+                            dataKey="name" 
+                            fontSize={12}
+                            angle={-45}
+                            textAnchor="end"
+                            height={80}
+                          />
+                          <YAxis fontSize={12} />
+                          <Tooltip />
+                          <Bar 
+                            dataKey="value" 
+                            fill="hsl(var(--primary))"
+                            radius={[4, 4, 0, 0]}
+                          />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Emotions Chart */}
+                {emotionData.length > 0 && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center space-x-2">
+                        <Heart className="h-5 w-5 text-primary" />
+                        <span>Čustveni vzorci</span>
+                      </CardTitle>
+                      <CardDescription>Čustveno doživljanje v sanjah</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <PieChart>
+                          <Pie
+                            data={emotionData.slice(0, 6)}
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={100}
+                            fill="#8884d8"
+                            dataKey="value"
+                            label={({ name, value }) => `${name}: ${value}`}
+                          >
+                            {emotionData.slice(0, 6).map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            )}
+
+            {/* Dream Categories */}
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Eye className="h-5 w-5 text-primary" />
+                  <span>Kategorije sanj</span>
+                </CardTitle>
+                <CardDescription>Razdelitev vaših sanj po kategorijah</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={dreamCategoriesData} layout="horizontal">
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" fontSize={12} />
+                    <YAxis dataKey="name" type="category" fontSize={12} width={100} />
+                    <Tooltip />
+                    <Bar 
+                      dataKey="value" 
+                      fill="hsl(var(--primary))"
+                      radius={[0, 4, 4, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              {/* Personal Growth */}
+              {/* Milestones */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Osebna rast</CardTitle>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Award className="h-5 w-5 text-primary" />
+                    <span>Vaši dosežki</span>
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-foreground leading-relaxed whitespace-pre-wrap">
-                    {patternAnalysis.personal_growth}
-                  </p>
+                  <div className="space-y-3">
+                    {milestones.map((milestone, index) => (
+                      <div key={index} className="flex items-center space-x-3">
+                        <div className={cn(
+                          "w-8 h-8 rounded-full flex items-center justify-center",
+                          milestone.achieved 
+                            ? "bg-primary text-primary-foreground" 
+                            : "bg-muted text-muted-foreground"
+                        )}>
+                          <milestone.icon className="h-4 w-4" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className={cn(
+                            "font-medium text-sm",
+                            milestone.achieved ? "text-foreground" : "text-muted-foreground"
+                          )}>
+                            {milestone.title}
+                          </h4>
+                          <p className="text-xs text-muted-foreground">
+                            {milestone.description}
+                          </p>
+                        </div>
+                        {milestone.achieved && (
+                          <Badge variant="secondary" className="text-xs">
+                            ✓
+                          </Badge>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
 
-               {/* Recommendations */}
-               <Card>
-                 <CardHeader>
-                   <CardTitle>Priporočila</CardTitle>
-                 </CardHeader>
-                 <CardContent>
-                   <ul className="space-y-3">
-                     {patternAnalysis.recommendations?.map((rec, index) => (
-                       <li key={index} className="flex items-start space-x-3">
-                         <Badge variant="outline" className="mt-1 shrink-0">{index + 1}</Badge>
-                         <div className="flex-1">
-                           {typeof rec === 'string' ? (
-                             <span className="text-foreground">{rec}</span>
-                           ) : (
-                             <div className="space-y-1">
-                               <div className="font-medium text-foreground">{rec.action}</div>
-                               {rec.rationale && (
-                                 <div className="text-sm text-muted-foreground">{rec.rationale}</div>
-                               )}
-                               {rec.implementation && (
-                                 <div className="text-xs text-muted-foreground italic">💡 {rec.implementation}</div>
-                               )}
-                             </div>
-                           )}
-                         </div>
-                       </li>
-                     ))}
-                   </ul>
-                 </CardContent>
-               </Card>
-             </div>
+              {/* Personal Growth & Recommendations */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Priporočila in rast</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {patternAnalysis.recommendations && (
+                    <div>
+                      <h4 className="font-semibold mb-2 flex items-center">
+                        💡 Ključna priporočila
+                      </h4>
+                      <div className="space-y-2">
+                        {patternAnalysis.recommendations.slice(0, 3).map((rec, index) => (
+                          <div key={index} className="p-3 rounded-lg bg-muted/30">
+                            <h4 className="font-medium flex items-center space-x-1">
+                              <span>• {typeof rec === 'string' ? rec : rec.action || rec}</span>
+                            </h4>
+                            {typeof rec === 'object' && rec.rationale && (
+                              <p className="text-sm text-muted-foreground mt-1">{rec.rationale}</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {patternAnalysis.personal_growth && (
+                    <div>
+                      <h4 className="font-semibold mb-2 flex items-center">
+                        🌱 Osebna rast
+                      </h4>
+                      <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
+                        {patternAnalysis.personal_growth?.split('\n\n').map((paragraph, idx) => (
+                          <p key={idx}>{paragraph}</p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
-             {/* Enhanced Analysis Sections */}
-             {(patternAnalysis.psychological_insights || patternAnalysis.life_stage_analysis || patternAnalysis.integration_suggestions) && (
-               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                 {/* Psychological Insights */}
-                 {patternAnalysis.psychological_insights && (
-                   <Card>
-                     <CardHeader>
-                       <CardTitle className="flex items-center space-x-2">
-                         <Brain className="h-5 w-5 text-primary" />
-                         <span>Psihološki vpogledi</span>
-                       </CardTitle>
-                     </CardHeader>
-                     <CardContent>
-                       <p className="text-foreground leading-relaxed whitespace-pre-wrap">
-                         {patternAnalysis.psychological_insights}
-                       </p>
-                     </CardContent>
-                   </Card>
-                 )}
+                  {patternAnalysis.integration_suggestions && (
+                    <div>
+                      <h4 className="font-semibold mb-2 flex items-center">
+                        🔄 Predlogi za integracijo
+                      </h4>
+                      <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
+                        {patternAnalysis.integration_suggestions?.split('\n\n').map((paragraph, idx) => (
+                          <p key={idx}>{paragraph}</p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
 
-                 {/* Life Stage Analysis */}
-                 {patternAnalysis.life_stage_analysis && (
-                   <Card>
-                     <CardHeader>
-                       <CardTitle className="flex items-center space-x-2">
-                         <Target className="h-5 w-5 text-primary" />
-                         <span>Življenjska faza</span>
-                       </CardTitle>
-                     </CardHeader>
-                     <CardContent>
-                       <p className="text-foreground leading-relaxed whitespace-pre-wrap">
-                         {patternAnalysis.life_stage_analysis}
-                       </p>
-                     </CardContent>
-                   </Card>
-                 )}
+            {/* Enhanced Analysis Sections */}
+            {(patternAnalysis.psychological_insights || patternAnalysis.life_stage_analysis || patternAnalysis.temporal_patterns) && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                {patternAnalysis.psychological_insights && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center space-x-2">
+                        <Brain className="h-5 w-5 text-primary" />
+                        <span>Psihološki uvidi</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
+                        {patternAnalysis.psychological_insights.split('\n\n').map((paragraph, idx) => (
+                          <p key={idx}>{paragraph}</p>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
 
-                 {/* Integration Suggestions */}
-                 {patternAnalysis.integration_suggestions && (
-                   <Card className="lg:col-span-2">
-                     <CardHeader>
-                       <CardTitle className="flex items-center space-x-2">
-                         <Sparkles className="h-5 w-5 text-primary" />
-                         <span>Integracija spoznanj</span>
-                       </CardTitle>
-                     </CardHeader>
-                     <CardContent>
-                       <p className="text-foreground leading-relaxed whitespace-pre-wrap">
-                         {patternAnalysis.integration_suggestions}
-                       </p>
-                     </CardContent>
-                   </Card>
-                 )}
-               </div>
-             )}
+                {patternAnalysis.life_stage_analysis && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center space-x-2">
+                        <Target className="h-5 w-5 text-primary" />
+                        <span>Življenjska faza</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
+                        {patternAnalysis.life_stage_analysis.split('\n\n').map((paragraph, idx) => (
+                          <p key={idx}>{paragraph}</p>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {patternAnalysis.temporal_patterns && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center space-x-2">
+                        <Clock className="h-5 w-5 text-primary" />
+                        <span>Časovni vzorci</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
+                        {patternAnalysis.temporal_patterns.split('\n\n').map((paragraph, idx) => (
+                          <p key={idx}>{paragraph}</p>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            )}
 
             {/* Symbol Meanings */}
             {patternAnalysis.symbol_meanings && patternAnalysis.symbol_meanings.length > 0 && (
@@ -759,41 +747,27 @@ const Analytics = () => {
                   <CardDescription>Najpomembnejši simboli v vaših sanjah</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {patternAnalysis.symbol_meanings.map((symbol, index) => (
                       <div key={index} className="p-4 rounded-lg border border-border">
                         <div className="flex items-center justify-between mb-2">
                           <h4 className="font-medium text-foreground">{symbol.symbol}</h4>
                           <Badge variant="outline">{symbol.frequency}x</Badge>
                         </div>
-                         <p className="text-sm text-muted-foreground leading-relaxed">{symbol.interpretation}</p>
-                         {symbol.personal_context && (
-                           <p className="text-xs text-muted-foreground mt-2 italic">
-                             🔗 {symbol.personal_context}
-                           </p>
-                         )}
-                         {symbol.archetypal_meaning && (
-                           <p className="text-xs text-muted-foreground mt-1">
-                             🌍 {symbol.archetypal_meaning}
-                           </p>
-                         )}
+                        <p className="text-sm text-muted-foreground leading-relaxed mb-2">{symbol.interpretation}</p>
+                        {symbol.personal_context && (
+                          <p className="text-xs text-muted-foreground mt-2 italic">
+                            💡 {symbol.personal_context}
+                          </p>
+                        )}
+                        {symbol.archetypal_meaning && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            🌍 {symbol.archetypal_meaning}
+                          </p>
+                        )}
                       </div>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Temporal Patterns */}
-            {patternAnalysis.temporal_patterns && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Časovni vzorci</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-foreground leading-relaxed whitespace-pre-wrap">
-                    {patternAnalysis.temporal_patterns}
-                  </p>
                 </CardContent>
               </Card>
             )}

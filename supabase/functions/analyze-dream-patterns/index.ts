@@ -139,7 +139,7 @@ serve(async (req) => {
     }
 
 
-    const CURRENT_ANALYSIS_VERSION = 2; // Version 2 = comprehensive analysis
+    const CURRENT_ANALYSIS_VERSION = 3; // Version 3 = comprehensive analysis with better validation
 
     // Check for cached analysis unless force refresh is requested
     if (!forceRefresh) {
@@ -292,19 +292,20 @@ Vsak oddelek naj bo obsežen, strokoven in psihološko natančen. Uporabite komp
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4o',
         messages: [
           {
             role: 'system',
-            content: 'Si vrhunski strokovnjak za analizo sanj s preko 20 let izkušenj na področju psihologije, nevrologije in dream raziskav. Specializiran si za prepoznavanje vzorcev, simbolne interpretacije in psihološko analizo. Vedno odgovarijaš v slovenskem jeziku z natančnim JSON formatom. Tvoje analize so poglobljene, strokovno utemeljene in psihološko natančne.'
+            content: 'Si vrhunski strokovnjak za analizo sanj s preko 20 let izkušenj na področju psihologije, nevrologije in dream raziskav. Specializiran si za prepoznavanje vzorcev, simbolne interpretacije in psihološko analizo. KRITIČNO: Vedno odgovoriš z VELJAVNIM JSON objektom brez dodatnega besedila. Tvoje analize so poglobljene, strokovno utemeljene in psihološko natančne. Uporabi slovensko besedila za vse vrednosti.'
           },
           {
             role: 'user',
             content: prompt
           }
         ],
-        temperature: 0.3,
-        max_tokens: 4000,
+        temperature: 0.2,
+        max_tokens: 8000,
+        response_format: { type: "json_object" }
       }),
     });
 
@@ -326,36 +327,52 @@ Vsak oddelek naj bo obsežen, strokoven in psihološko natančen. Uporabite komp
       analysisContent = analysisContent.replace(/```\s*/, '').replace(/```\s*$/, '');
     }
 
-    console.log('Pattern analysis content:', analysisContent);
+    console.log('Raw OpenAI response length:', analysisContent.length);
 
     let parsedAnalysis;
     try {
+      // Validate JSON completeness before parsing
+      if (!analysisContent.trim().endsWith('}')) {
+        console.error('OpenAI response appears truncated - missing closing brace');
+        throw new Error('Truncated JSON response');
+      }
+      
       parsedAnalysis = JSON.parse(analysisContent);
+      
+      // Validate required fields
+      const requiredFields = ['executive_summary', 'theme_patterns', 'emotional_journey', 'symbol_meanings'];
+      for (const field of requiredFields) {
+        if (!parsedAnalysis[field]) {
+          throw new Error(`Missing required field: ${field}`);
+        }
+      }
+      
+      // Validate minimum content requirements
+      if (parsedAnalysis.theme_patterns.length < 6) {
+        throw new Error('Insufficient theme patterns (minimum 6 required)');
+      }
+      if (parsedAnalysis.emotional_journey.length < 4) {
+        throw new Error('Insufficient emotional journey entries (minimum 4 required)');
+      }
+      if (parsedAnalysis.symbol_meanings.length < 8) {
+        throw new Error('Insufficient symbol meanings (minimum 8 required)');
+      }
+      
+      console.log('OpenAI analysis validated successfully');
     } catch (parseError) {
-      console.error('Failed to parse OpenAI response as JSON:', parseError);
-      // Fallback: create a comprehensive structured analysis
-      parsedAnalysis = {
-        executive_summary: "Analizirali smo vaše sanje in odkrili zanimive vzorce. Vaše sanje kažejo na bogato čustveno življenje in aktivno podzavest. Ta analiza temelji na podatkih o vaših sanjah in lahko služi kot osnova za nadaljnje raziskovanje vaše psihične dinamike. Za še bolj natančno analizo priporočamo nadaljnje beleženje sanj.",
-        theme_patterns: [
-          { theme: "Osebni odnosi", frequency: Math.floor(dreamData.length * 0.3), significance: "Pogosta tema, ki kaže na pomembnost medosebnih povezav v vašem življenju.", evolution: "Razvija se skozi čas" },
-          { theme: "Čustvene situacije", frequency: Math.floor(dreamData.length * 0.25), significance: "Vaše sanje pogosto obravnavajo čustvene izzive in notranje konflikte.", evolution: "Različne intenzivnosti" }
-        ],
-        emotional_journey: [
-          { emotion: "Zaskrbljenost", frequency: Math.floor(dreamData.length * 0.4), trend: "Prisotna v različnih oblikah", psychological_significance: "Kaže na prilagajanje na življenjske spremembe", triggers: "Stresne situacije v realnem življenju" }
-        ],
-        symbol_meanings: [
-          { symbol: "Voda", frequency: Math.floor(dreamData.length * 0.2), interpretation: "Simbolizira čustva, nezavedno in pretok življenjske energije. Pogosto se pojavljajo v sanjah kot odraz čustvenega stanja.", personal_context: "Povezano z vašimi trenutnimi čustvenimi izzivi", archetypal_meaning: "Univerzalni simbol čustvene globine" }
-        ],
-        temporal_patterns: "Na podlagi analize vaših sanj skozi čas opažamo določene vzorce. Sanje se spreminjajo glede na vaše življenjske okoliščine in čustveno stanje. Večina sanj je povezanih z vsakodnevnimi izkušnjami, vendar se pojavljajo tudi globlja simbolna sporočila.",
-        psychological_insights: "Vaše sanje razkrivajo aktivno podzavest, ki poskuša predelati dnevne izkušnje in čustva. Opažamo znake zdravega psihičnega delovanja z občasnimi stresnimi elementi, ki jih vaša psihika poskuša rešiti skozi sanjanje.",
-        life_stage_analysis: "Trenutno se nahajate v življenjski fazi, ki zahteva prilagajanje in rast. Vaše sanje odražajo to dinamiko z mešanico stabilnih elementov in novih izzivov.",
-        recommendations: [
-          { action: "Redno beležite sanje", rationale: "Omogoča boljše prepoznavanje vzorcev", implementation: "Držite dnevnik sanj ob postelji", expected_outcome: "Izboljšana samozavest" },
-          { action: "Reflektirajte o čustvih v sanjah", rationale: "Pomaga pri čustveni obdelavi", implementation: "Namenite 5 minut razmisleku vsako jutro", expected_outcome: "Boljše čustveno razumevanje" }
-        ],
-        personal_growth: "Vaše sanje kažejo na potencial za osebnostno rast in globlje samorazumevanje. Priporočamo vam, da uporabljate sanje kot orodje za samopoznavanje in čustveno rast.",
-        integration_suggestions: "Za integracijo spoznanj iz te analize priporočamo redne refleksijske prakse, čustveno pisanje in morda pogovor s strokovnjakom, če se pojavijo intenzivni vzorci."
-      };
+      console.error('Failed to parse or validate OpenAI response:', parseError);
+      console.error('Response content:', analysisContent.substring(0, 500) + '...');
+      
+      // Return error instead of fallback - force user to try again
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: `AI analiza ni bila uspešna zaradi tehnične napake. Poskusite znova.`,
+        errorCode: 'AI_ANALYSIS_FAILED',
+        details: parseError.message
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     // Cache the analysis result with current version
