@@ -77,7 +77,7 @@ export default function Pricing() {
     return userSubscription?.plan_id === planId;
   };
 
-  const handlePlanSelection = (plan: SubscriptionPlan) => {
+  const handlePlanSelection = async (plan: SubscriptionPlan) => {
     if (!user) {
       navigate('/auth');
       return;
@@ -88,8 +88,31 @@ export default function Pricing() {
       return;
     }
 
-    // TODO: Implement Stripe checkout
-    console.log('Upgrading to plan:', plan.name);
+    // Handle free plan selection
+    if (plan.name.toLowerCase() === 'free') {
+      navigate('/account');
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        body: { planId: plan.id }
+      });
+
+      if (error) {
+        console.error('Error creating checkout session:', error);
+        return;
+      }
+
+      // Redirect to Stripe checkout
+      window.location.href = data.sessionUrl;
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) {
