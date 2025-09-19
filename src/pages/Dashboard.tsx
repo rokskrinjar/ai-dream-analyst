@@ -458,7 +458,7 @@ const Dashboard = () => {
                         </div>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                        <p className="text-sm text-muted-foreground mb-3">
                           {dream.content}
                         </p>
                         
