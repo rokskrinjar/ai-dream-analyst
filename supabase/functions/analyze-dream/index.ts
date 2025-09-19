@@ -152,13 +152,22 @@ serve(async (req) => {
             }
           ],
           "analysis_text": "podrobna analiza sanj v slovenščini",
-          "recommendations": "priporočila za nadaljnje razmišljanje in ukrepanje",
+          "recommendations": "obsežna in podrobna priporočila za nadaljnje razmišljanje in ukrepanje (3-5 konkretnih priporočil, vsako v svojem odstavku z razlago in praktičnimi nasveti)",
           "reflection_questions": [
             "Specifično vprašanje 1 povezano s to sanjijo",
             "Specifično vprašanje 2 povezano s to sanjijo", 
             "Specifično vprašanje 3 povezano s to sanjijo"
           ]
         }
+
+POSEBNE NAVODILA ZA PRIPOROČILA:
+- Napiši 3-5 konkretnih, podrobnih priporočil
+- Vsako priporočilo naj bo dolg odstavek (3-5 stavkov) z razlago ZAKAJ je pomembno
+- Vključi praktične korake, ki jih lahko oseba naredi
+- Poveži priporočila z elementi iz sanj in njihovim simbolnim pomenom
+- Napiši priporočila kot povezan tekst z odstavki, ne kot oštevilčen seznam
+- Vsak odstavek naj se začne z novo vrstico za boljšo berljivost
+- Primer strukture: "Prvo priporočilo z razlago...\n\nDrugo priporočilo z razlago...\n\nTretje priporočilo..."
 
 POMEMBNO za reflection_questions:
 - Vprašanja MORAJO biti specifična za te natančne sanje: "${dream.title}" - "${dream.content.substring(0, 100)}..."
@@ -186,7 +195,7 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
         messages: [
           { 
             role: 'system', 
-            content: 'Si strokovnjak za analizo sanj. Odgovarjaj vedno v slovenščini in vrni samo JSON objekt.' 
+            content: 'Si izkušen strokovnjak za analizo sanj z globokim razumevanjem simbolike in psihologije. Odgovarjaj vedno v slovenščini in vrni samo JSON objekt. Tvoja naloga je zagotoviti temeljito, podrobno analizo z obsežnimi, praktičnimi priporočili, ki pomagajo osebi razumeti in uporabiti uvide iz sanj v vsakdanjem življenju. Priporočila naj bodo dolga, podrobna in koristna - ne kratka ali splošna.' 
           },
           { 
             role: 'user', 
@@ -194,7 +203,7 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
           }
         ],
         temperature: 0.7,
-        max_tokens: 1500,
+        max_tokens: 2800,
       }),
     });
 
