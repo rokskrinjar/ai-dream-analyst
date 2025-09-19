@@ -196,8 +196,8 @@ serve(async (req) => {
     });
 
     // Calculate estimated cost based on input size
-    const inputText = JSON.stringify(dreamData);
-    const estimatedTokens = Math.ceil(inputText.length / 4); // Rough estimation: 4 chars per token
+    const finalInputText = JSON.stringify(dreamData);
+    const estimatedTokens = Math.ceil(finalInputText.length / 4); // Rough estimation: 4 chars per token
     const estimatedCost = Math.max(2, Math.ceil(estimatedTokens / 1000)); // Minimum 2 credits, +1 per 1000 tokens
 
     console.log(`Estimated tokens: ${estimatedTokens}, Estimated cost: ${estimatedCost} credits`);
