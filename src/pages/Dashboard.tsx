@@ -284,7 +284,7 @@ const Dashboard = () => {
                 </Button>
                 <Button variant="ghost" size="sm" onClick={() => navigate('/account')}>
                   <Settings className="h-4 w-4 mr-2" />
-                  Račun
+                  Račun {plan ? `(${plan.name})` : ''}
                 </Button>
                 {isAdmin && (
                   <Button variant="ghost" size="sm" onClick={() => navigate('/admin')}>

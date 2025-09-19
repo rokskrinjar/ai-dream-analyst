@@ -16,10 +16,9 @@ export const CompactCreditDisplay: React.FC = () => {
 
   return (
     <div className="flex items-center gap-3">
-      <div className="text-sm">
-        <span className="text-primary font-medium">{plan.name}</span>
-        <span className="text-muted-foreground"> - {remaining}/{totalCredits} na voljo</span>
-      </div>
+      <span className="text-sm text-muted-foreground">
+        AI krediti ({remaining}/{totalCredits} na voljo)
+      </span>
       {!isUnlimited && (
         <Button
           size="sm"
