@@ -657,9 +657,14 @@ const Analytics = () => {
                         🌱 Osebna rast
                       </h4>
                       <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
-                        {patternAnalysis.personal_growth?.split('\n\n').map((paragraph, idx) => (
-                          <p key={idx}>{paragraph}</p>
-                        ))}
+                        {Array.isArray(patternAnalysis.personal_growth) 
+                          ? patternAnalysis.personal_growth.map((paragraph, idx) => (
+                              <p key={idx}>{paragraph}</p>
+                            ))
+                          : patternAnalysis.personal_growth?.split('\n\n').map((paragraph, idx) => (
+                              <p key={idx}>{paragraph}</p>
+                            ))
+                        }
                       </div>
                     </div>
                   )}
@@ -670,9 +675,14 @@ const Analytics = () => {
                         🔄 Predlogi za integracijo
                       </h4>
                       <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
-                        {patternAnalysis.integration_suggestions?.split('\n\n').map((paragraph, idx) => (
-                          <p key={idx}>{paragraph}</p>
-                        ))}
+                        {Array.isArray(patternAnalysis.integration_suggestions) 
+                          ? patternAnalysis.integration_suggestions.map((paragraph, idx) => (
+                              <p key={idx}>{paragraph}</p>
+                            ))
+                          : patternAnalysis.integration_suggestions?.split('\n\n').map((paragraph, idx) => (
+                              <p key={idx}>{paragraph}</p>
+                            ))
+                        }
                       </div>
                     </div>
                   )}
@@ -693,9 +703,14 @@ const Analytics = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
-                        {patternAnalysis.psychological_insights.split('\n\n').map((paragraph, idx) => (
-                          <p key={idx}>{paragraph}</p>
-                        ))}
+                        {Array.isArray(patternAnalysis.psychological_insights) 
+                          ? patternAnalysis.psychological_insights.map((paragraph, idx) => (
+                              <p key={idx}>{paragraph}</p>
+                            ))
+                          : patternAnalysis.psychological_insights?.split('\n\n').map((paragraph, idx) => (
+                              <p key={idx}>{paragraph}</p>
+                            ))
+                        }
                       </div>
                     </CardContent>
                   </Card>
@@ -711,9 +726,14 @@ const Analytics = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
-                        {patternAnalysis.life_stage_analysis.split('\n\n').map((paragraph, idx) => (
-                          <p key={idx}>{paragraph}</p>
-                        ))}
+                        {Array.isArray(patternAnalysis.life_stage_analysis) 
+                          ? patternAnalysis.life_stage_analysis.map((paragraph, idx) => (
+                              <p key={idx}>{paragraph}</p>
+                            ))
+                          : patternAnalysis.life_stage_analysis?.split('\n\n').map((paragraph, idx) => (
+                              <p key={idx}>{paragraph}</p>
+                            ))
+                        }
                       </div>
                     </CardContent>
                   </Card>
@@ -729,9 +749,14 @@ const Analytics = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
-                        {patternAnalysis.temporal_patterns.split('\n\n').map((paragraph, idx) => (
-                          <p key={idx}>{paragraph}</p>
-                        ))}
+                        {Array.isArray(patternAnalysis.temporal_patterns) 
+                          ? patternAnalysis.temporal_patterns.map((paragraph, idx) => (
+                              <p key={idx}>{paragraph}</p>
+                            ))
+                          : patternAnalysis.temporal_patterns?.split('\n\n').map((paragraph, idx) => (
+                              <p key={idx}>{paragraph}</p>
+                            ))
+                        }
                       </div>
                     </CardContent>
                   </Card>
