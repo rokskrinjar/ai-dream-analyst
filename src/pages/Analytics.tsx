@@ -963,16 +963,7 @@ const Analytics = () => {
               <Button onClick={() => navigate('/dream/new')}>Dodaj novo sanje</Button>
             </CardContent>
           </Card>
-        ) : (
-          <Card>
-            <CardContent className="text-center py-12">
-              <Brain className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">Potrebne so analizirane sanje</h3>
-              <p className="text-muted-foreground mb-4">Analizirajte svoje sanje na dashboard strani za vzorčno analizo.</p>
-              <Button onClick={() => navigate('/dashboard')}>Nazaj na Dashboard</Button>
-            </CardContent>
-          </Card>
-        )}
+        ) : null}
       </div>
     </div>
   );
