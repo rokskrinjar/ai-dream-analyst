@@ -144,24 +144,27 @@ const Analytics = () => {
         canAnalyze
       });
       
-      // Calculate estimated cost if requirements are met
-      if (canAnalyze && dreamsData && analysesData.length > 0) {
+      // Calculate estimated cost
+      if (dreamsData && analysesData.length > 0) {
         const recentDreams = dreamsData.slice(0, 30);
         const inputSize = JSON.stringify(recentDreams).length + JSON.stringify(analysesData).length;
         const estimatedTokens = Math.ceil(inputSize / 4);
         const cost = Math.max(2, Math.ceil(estimatedTokens / 2000));
         setEstimatedCost(cost);
+      }
         
-        // Check if there's an existing analysis
-        const existingAnalysisInfo = await checkExistingPatternAnalysis();
-        if (existingAnalysisInfo.exists) {
-          setHasExistingAnalysis(true);
-          setLastAnalysisDate(existingAnalysisInfo.date);
-          setShowChoiceScreen(true);
-        } else {
-          setHasExistingAnalysis(false);
-          setShowCostConfirmation(true);
-        }
+      // Check if there's an existing analysis and always show choice screen
+      const existingAnalysisInfo = await checkExistingPatternAnalysis();
+      if (existingAnalysisInfo.exists) {
+        setHasExistingAnalysis(true);
+        setLastAnalysisDate(existingAnalysisInfo.date);
+      } else {
+        setHasExistingAnalysis(false);
+      }
+      
+      // Always show choice screen unless we have no data at all
+      if (dreamsData && dreamsData.length > 0) {
+        setShowChoiceScreen(true);
       }
       
     } catch (error: any) {
@@ -291,12 +294,21 @@ const Analytics = () => {
   };
 
   const handleViewLastAnalysis = () => {
+    if (!hasExistingAnalysis) return;
     setShowChoiceScreen(false);
     generatePatternAnalysis(dreams, analyses, false);
   };
 
   const handleGenerateNewAnalysis = () => {
     setShowChoiceScreen(false);
+    if (!analysisRequirements.canAnalyze) {
+      toast({
+        title: "Premalo analiziranih sanj",
+        description: `Potrebujete vsaj 10 analiziranih sanj za vzorčno analizo. Trenutno imate ${analysisRequirements.analyzedDreams}.`,
+        variant: "destructive",
+      });
+      return;
+    }
     setShowCostConfirmation(true);
   };
 
@@ -451,7 +463,7 @@ const Analytics = () => {
         />
 
         {/* Choice Screen */}
-        {showChoiceScreen && analysisRequirements.canAnalyze && (
+        {showChoiceScreen && (
           <Card className="mb-8">
             <CardHeader className="text-center">
               <CardTitle className="flex items-center justify-center space-x-2 text-2xl">
@@ -465,50 +477,90 @@ const Analytics = () => {
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* View Last Analysis */}
-                <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer" onClick={handleViewLastAnalysis}>
+                <Card className={cn(
+                  "border-2 transition-colors",
+                  hasExistingAnalysis ? "hover:border-primary/50 cursor-pointer" : "opacity-50 cursor-not-allowed border-muted"
+                )} onClick={hasExistingAnalysis ? handleViewLastAnalysis : undefined}>
                   <CardHeader className="text-center">
                     <Eye className="h-12 w-12 text-primary mx-auto mb-2" />
                     <CardTitle className="text-lg">Prikaži zadnjo analizo</CardTitle>
                     <CardDescription>
-                      Brezplačno si oglejte vašo shranjeno vzorčno analizo
+                      {hasExistingAnalysis ? (
+                        "Brezplačno si oglejte vašo shranjeno vzorčno analizo"
+                      ) : (
+                        <span className="text-muted-foreground">
+                          Nimate še nobene shranjene analize
+                        </span>
+                      )}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="text-center">
-                    <div className="space-y-2">
-                      <Badge variant="secondary" className="mb-2">BREZPLAČNO</Badge>
-                      {lastAnalysisDate && (
-                        <p className="text-sm text-muted-foreground">
-                          Zadnja analiza: {new Date(lastAnalysisDate).toLocaleDateString('sl-SI')}
-                        </p>
-                      )}
-                      <Button className="w-full" onClick={handleViewLastAnalysis}>
-                        <Eye className="h-4 w-4 mr-2" />
-                        Prikaži analizo
-                      </Button>
-                    </div>
+                     <div className="space-y-2">
+                       <Badge variant="secondary" className="mb-2">BREZPLAČNO</Badge>
+                       {hasExistingAnalysis ? (
+                         lastAnalysisDate && (
+                           <p className="text-sm text-muted-foreground">
+                             Zadnja analiza: {new Date(lastAnalysisDate).toLocaleDateString('sl-SI')}
+                           </p>
+                         )
+                       ) : (
+                         <p className="text-sm text-muted-foreground">
+                           Še ni na voljo
+                         </p>
+                       )}
+                       <Button 
+                         className="w-full" 
+                         onClick={handleViewLastAnalysis}
+                         disabled={!hasExistingAnalysis}
+                       >
+                         <Eye className="h-4 w-4 mr-2" />
+                         Prikaži analizo
+                       </Button>
+                     </div>
                   </CardContent>
                 </Card>
 
                 {/* Generate New Analysis */}
-                <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer" onClick={handleGenerateNewAnalysis}>
+                <Card className={cn(
+                  "border-2 hover:border-primary/50 transition-colors cursor-pointer",
+                  !analysisRequirements.canAnalyze && "border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-900/20"
+                )} onClick={handleGenerateNewAnalysis}>
                   <CardHeader className="text-center">
                     <Sparkles className="h-12 w-12 text-primary mx-auto mb-2" />
                     <CardTitle className="text-lg">Ustvari novo analizo</CardTitle>
                     <CardDescription>
-                      Generirajte svežo AI analizo z najnovejšimi uvidi
+                      {analysisRequirements.canAnalyze ? (
+                        "Generirajte svežo AI analizo z najnovejšimi uvidi"
+                      ) : (
+                        <span className="text-orange-700 dark:text-orange-300">
+                          Potrebujete {analysisRequirements.required - analysisRequirements.analyzedDreams} več analiziranih sanj
+                        </span>
+                      )}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="text-center">
-                    <div className="space-y-2">
-                      <Badge variant="outline" className="mb-2">{estimatedCost} KREDITOV</Badge>
-                      <p className="text-sm text-muted-foreground">
-                        Temelji na {Math.min(analysisRequirements.analyzedDreams, 30)} najnovejših analiziranih sanjah
-                      </p>
-                      <Button className="w-full" onClick={handleGenerateNewAnalysis}>
-                        <Sparkles className="h-4 w-4 mr-2" />
-                        Nova analiza
-                      </Button>
-                    </div>
+                     <div className="space-y-2">
+                       <Badge 
+                         variant={analysisRequirements.canAnalyze ? "outline" : "secondary"}
+                         className="mb-2"
+                       >
+                         {analysisRequirements.canAnalyze ? `${estimatedCost} KREDITOV` : "ZAKLENJENO"}
+                       </Badge>
+                       <p className="text-sm text-muted-foreground">
+                         {analysisRequirements.canAnalyze 
+                           ? `Temelji na ${Math.min(analysisRequirements.analyzedDreams, 30)} najnovejših analiziranih sanjah`
+                           : `Potrebujete ${analysisRequirements.required} analiziranih sanj`
+                         }
+                       </p>
+                       <Button 
+                         className="w-full" 
+                         onClick={handleGenerateNewAnalysis}
+                         variant={analysisRequirements.canAnalyze ? "default" : "secondary"}
+                       >
+                         <Sparkles className="h-4 w-4 mr-2" />
+                         Nova analiza
+                       </Button>
+                     </div>
                   </CardContent>
                 </Card>
               </div>
