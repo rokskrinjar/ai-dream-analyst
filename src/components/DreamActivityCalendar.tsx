@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { Calendar } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface DreamActivityData {
   [date: string]: number;
@@ -10,6 +11,7 @@ interface DreamActivityData {
 const DreamActivityCalendar = () => {
   const [activityData, setActivityData] = useState<DreamActivityData>({});
   const [loading, setLoading] = useState(true);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     fetchDreamActivity();
@@ -50,6 +52,7 @@ const DreamActivityCalendar = () => {
     return 'bg-slate-100 dark:bg-slate-800/30';
   };
 
+  // Generate calendar data for the past year (desktop/tablet)
   const generateCalendarData = () => {
     const today = new Date();
     today.setHours(23, 59, 59, 999); // End of today to include full day
@@ -84,6 +87,53 @@ const DreamActivityCalendar = () => {
         
         // Check if date is within our year range
         const isInRange = currentDateOnly >= startDate && currentDateOnly <= today;
+        const activityLevel = isInRange ? getActivityLevel(count) : 'bg-transparent';
+        
+        week.push({
+          date: dateStr,
+          count: isInRange ? count : 0,
+          level: activityLevel,
+          isInRange
+        });
+        
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+      weeks.push(week);
+    }
+    
+    return weeks;
+  };
+
+  // Generate calendar data for the past 30 days (mobile)
+  const generateMobileCalendarData = () => {
+    const today = new Date();
+    today.setHours(23, 59, 59, 999); // End of today to include full day
+    
+    const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
+    thirtyDaysAgo.setHours(0, 0, 0, 0); // Start of day
+    
+    // Find the Monday of the week containing 30 days ago
+    const startDayOfWeek = thirtyDaysAgo.getDay();
+    const mondayOffset = startDayOfWeek === 0 ? 6 : startDayOfWeek - 1;
+    const mondayStart = new Date(thirtyDaysAgo);
+    mondayStart.setDate(thirtyDaysAgo.getDate() - mondayOffset);
+    
+    // Generate weeks data
+    const weeks = [];
+    let currentDate = new Date(mondayStart);
+    
+    while (currentDate <= today) {
+      const week = [];
+      for (let i = 0; i < 7; i++) {
+        const currentDateOnly = new Date(currentDate);
+        currentDateOnly.setHours(0, 0, 0, 0);
+        
+        // Use local date formatting instead of UTC to match database format
+        const dateStr = currentDate.toLocaleDateString('sv-SE'); // YYYY-MM-DD in local time
+        const count = activityData[dateStr] || 0;
+        
+        // Check if date is within our 30-day range
+        const isInRange = currentDateOnly >= thirtyDaysAgo && currentDateOnly <= today;
         const activityLevel = isInRange ? getActivityLevel(count) : 'bg-transparent';
         
         week.push({
@@ -148,8 +198,8 @@ const DreamActivityCalendar = () => {
     const hasSep17 = activityData['2025-09-17'];
     console.log('Calendar generation with data:', activityData, 'Sep 17 count:', hasSep17);
     
-    return generateCalendarData();
-  }, [activityData, loading]);
+    return isMobile ? generateMobileCalendarData() : generateCalendarData();
+  }, [activityData, loading, isMobile]);
 
   const monthLabels = useMemo(() => {
     if (weeksData.length === 0) return {};
@@ -192,7 +242,7 @@ const DreamActivityCalendar = () => {
         <div>
           <h2 className="text-lg font-semibold">Aktivnost sanj</h2>
           <p className="text-sm text-muted-foreground">
-            {Object.values(activityData).reduce((a, b) => a + b, 0)} sanj v zadnjem letu
+            {Object.values(activityData).reduce((a, b) => a + b, 0)} sanj v {isMobile ? 'zadnjih 30 dneh' : 'zadnjem letu'}
           </p>
         </div>
       </div>
@@ -253,4 +303,4 @@ const DreamActivityCalendar = () => {
   );
 };
 
-export default DreamActivityCalendar;
+export { DreamActivityCalendar };

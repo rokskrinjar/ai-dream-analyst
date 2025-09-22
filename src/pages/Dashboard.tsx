@@ -32,7 +32,7 @@ import {
   Heart,
   MessageCircleQuestion
 } from 'lucide-react';
-import DreamActivityCalendar from '@/components/DreamActivityCalendar';
+import { DreamActivityCalendar } from '@/components/DreamActivityCalendar';
 import { CompactCreditDisplay } from '@/components/CompactCreditDisplay';
 import { CreditDisplay } from '@/components/CreditDisplay';
 import { CreditUsageModal } from '@/components/CreditUsageModal';

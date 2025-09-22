@@ -6,12 +6,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Brain, TrendingUp, Calendar, Heart, Eye, Loader2, RefreshCw, Award, Target, Zap, Clock, BookOpen, Sparkles } from 'lucide-react';
+import { ArrowLeft, Brain, TrendingUp, Calendar, Heart, Eye, Loader2, RefreshCw, Award, Target, Zap, Clock, BookOpen, Sparkles, Menu, User, Settings, LogOut } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { CreditUsageModal } from '@/components/CreditUsageModal';
 import { useCreditContext } from '@/contexts/CreditContext';
 import { cn } from '@/lib/utils';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 
 interface Dream {
   id: string;
@@ -72,9 +74,10 @@ interface PatternAnalysis {
 const COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', 'hsl(var(--secondary))', 'hsl(var(--muted))'];
 
 const Analytics = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { credits } = useCreditContext();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   const [dreams, setDreams] = useState<Dream[]>([]);
   const [analyses, setAnalyses] = useState<DreamAnalysis[]>([]);
@@ -378,25 +381,72 @@ const Analytics = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-6 py-8">
         {/* Header */}
-        <div className="flex items-center space-x-4 mb-8">
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={() => navigate('/dashboard')}
-            className="hover:bg-accent"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-              <TrendingUp className="h-5 w-5 text-primary" />
+        <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 -mx-6 -mt-8 mb-8">
+          <div className="container flex h-16 items-center justify-between px-6">
+            <div className="flex items-center space-x-4">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => navigate('/dashboard')}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <div>
+                <h1 className="text-xl font-semibold">Analiza vzorcev</h1>
+                <p className="text-sm text-muted-foreground">Odkrijte skrite pomene svojih sanj</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Analitika sanj</h1>
-              <p className="text-muted-foreground">AI analiza vaših vzorcev sanjanja</p>
-            </div>
+            
+            {user && (
+              <div className="flex items-center space-x-2">
+                {isMobile ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Menu className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem onClick={() => navigate('/account')}>
+                        <User className="h-4 w-4 mr-2" />
+                        Račun
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate('/admin')}>
+                        <Settings className="h-4 w-4 mr-2" />
+                        Admin
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                        {user.email}
+                      </div>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={signOut}>
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Odjava
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <>
+                    <Button variant="outline" size="sm" onClick={() => navigate('/account')}>
+                      Račun
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => navigate('/admin')}>
+                      Admin
+                    </Button>
+                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                      <span>{user.email}</span>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={signOut}>
+                      Odjava
+                    </Button>
+                  </>
+                )}
+              </div>
+            )}
           </div>
-        </div>
+        </header>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
