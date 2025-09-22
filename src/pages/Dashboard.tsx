@@ -4,11 +4,19 @@ import { useCreditContext } from '@/contexts/CreditContext';
 import { useAdmin } from '@/hooks/useAdmin';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { isPremiumUser, truncateRecommendations } from '@/utils/subscriptionUtils';
 import { 
   Calendar, 
@@ -30,7 +38,8 @@ import {
   Loader2,
   Eye,
   Heart,
-  MessageCircleQuestion
+  MessageCircleQuestion,
+  Menu
 } from 'lucide-react';
 import { DreamActivityCalendar } from '@/components/DreamActivityCalendar';
 import { CompactCreditDisplay } from '@/components/CompactCreditDisplay';
@@ -64,6 +73,7 @@ const Dashboard = () => {
   const { credits, plan, refreshCredits, deductCredits, isUnlimited } = useCreditContext();
   const { isAdmin } = useAdmin();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [dreams, setDreams] = useState<Dream[]>([]);
   const [analyses, setAnalyses] = useState<{ [key: string]: DreamAnalysis }>({});
   const [allDreams, setAllDreams] = useState<Dream[]>([]);
@@ -312,31 +322,77 @@ const Dashboard = () => {
             </div>
             
             <div className="flex items-center space-x-4">
-              <nav className="flex items-center space-x-2">
-                <Button variant="ghost" size="sm" onClick={() => navigate('/pricing')}>
-                  <CreditCard className="h-4 w-4 mr-2" />
-                  Cenki
-                </Button>
-                <Button variant="ghost" size="sm" onClick={() => navigate('/account')}>
-                  <Settings className="h-4 w-4 mr-2" />
-                  Račun {plan ? `(${plan.name})` : ''}
-                </Button>
-                {isAdmin && (
-                  <Button variant="ghost" size="sm" onClick={() => navigate('/admin')}>
-                    <Shield className="h-4 w-4 mr-2" />
-                    Admin
+              {isMobile ? (
+                // Mobile navigation dropdown
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <Menu className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent 
+                    align="end" 
+                    className="w-56 bg-popover/95 backdrop-blur-md border border-border/50 shadow-lg"
+                  >
+                    <DropdownMenuItem onClick={() => navigate('/pricing')}>
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      Cenki
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/account')}>
+                      <Settings className="h-4 w-4 mr-2" />
+                      Račun {plan ? `(${plan.name})` : ''}
+                    </DropdownMenuItem>
+                    {isAdmin && (
+                      <DropdownMenuItem onClick={() => navigate('/admin')}>
+                        <Shield className="h-4 w-4 mr-2" />
+                        Admin
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                    <div className="px-2 py-1.5">
+                      <CompactCreditDisplay />
+                    </div>
+                    <DropdownMenuSeparator />
+                    <div className="px-2 py-1.5 text-xs text-muted-foreground flex items-center">
+                      <User className="h-3 w-3 mr-2" />
+                      {user?.email}
+                    </div>
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Odjava
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                // Desktop navigation
+                <>
+                  <nav className="flex items-center space-x-2">
+                    <Button variant="ghost" size="sm" onClick={() => navigate('/pricing')}>
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      Cenki
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => navigate('/account')}>
+                      <Settings className="h-4 w-4 mr-2" />
+                      Račun {plan ? `(${plan.name})` : ''}
+                    </Button>
+                    {isAdmin && (
+                      <Button variant="ghost" size="sm" onClick={() => navigate('/admin')}>
+                        <Shield className="h-4 w-4 mr-2" />
+                        Admin
+                      </Button>
+                    )}
+                  </nav>
+                  <CompactCreditDisplay />
+                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <User className="h-4 w-4" />
+                    <span>{user?.email}</span>
+                  </div>
+                  <Button variant="outline" onClick={handleSignOut}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Odjava
                   </Button>
-                )}
-              </nav>
-              <CompactCreditDisplay />
-              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                <User className="h-4 w-4" />
-                <span>{user?.email}</span>
-              </div>
-              <Button variant="outline" onClick={handleSignOut}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Odjava
-              </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
