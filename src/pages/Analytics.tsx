@@ -105,6 +105,8 @@ const Analytics = () => {
     try {
       setIsLoading(true);
       
+      console.log('🔍 Fetching analytics data for user:', user!.id);
+      
       // Fetch dreams
       const { data: dreamsData, error: dreamsError } = await supabase
         .from('dreams')
@@ -113,6 +115,7 @@ const Analytics = () => {
         .order('created_at', { ascending: false });
 
       if (dreamsError) throw dreamsError;
+      console.log('📚 Fetched dreams:', dreamsData?.length || 0, dreamsData);
 
       // Fetch analyses
       const dreamIds = dreamsData?.map(d => d.id) || [];
@@ -128,6 +131,8 @@ const Analytics = () => {
         analysesData = data || [];
       }
 
+      console.log('🧠 Fetched analyses:', analysesData?.length || 0, analysesData);
+
       setDreams(dreamsData || []);
       setAnalyses(analysesData);
       
@@ -136,7 +141,13 @@ const Analytics = () => {
         analysesData.some(analysis => analysis.dream_id === dream.id)
       ).length || 0;
       
+      console.log('✅ Analyzed dream count calculation:');
+      console.log('  - Total dreams:', dreamsData?.length || 0);
+      console.log('  - Total analyses:', analysesData?.length || 0);  
+      console.log('  - Dreams with analyses:', analyzedDreamCount);
+      
       const canAnalyze = analyzedDreamCount >= 10;
+      console.log('🎯 Can analyze patterns:', canAnalyze, '(need 10+, have', analyzedDreamCount, ')');
       
       setAnalysisRequirements({
         analyzedDreams: analyzedDreamCount,
@@ -153,8 +164,10 @@ const Analytics = () => {
         setEstimatedCost(cost);
       }
         
-      // Check if there's an existing analysis and always show choice screen
+      // Check if there's an existing analysis
       const existingAnalysisInfo = await checkExistingPatternAnalysis();
+      console.log('📊 Existing pattern analysis check:', existingAnalysisInfo);
+      
       if (existingAnalysisInfo.exists) {
         setHasExistingAnalysis(true);
         setLastAnalysisDate(existingAnalysisInfo.date);
@@ -162,9 +175,13 @@ const Analytics = () => {
         setHasExistingAnalysis(false);
       }
       
-      // Always show choice screen unless we have no data at all
-      if (dreamsData && dreamsData.length > 0) {
+      // Show choice screen if user has enough analyzed dreams
+      if (canAnalyze) {
+        console.log('🎉 Showing choice screen - user meets requirements');
         setShowChoiceScreen(true);
+      } else {
+        console.log('⏳ Not showing choice screen - insufficient analyzed dreams');
+        setShowChoiceScreen(false);
       }
       
     } catch (error: any) {
@@ -462,8 +479,8 @@ const Analytics = () => {
           }
         />
 
-        {/* Choice Screen */}
-        {showChoiceScreen && (
+        {/* Choice Screen - Show when user meets requirements */}
+        {showChoiceScreen && analysisRequirements.canAnalyze && (
           <Card className="mb-8">
             <CardHeader className="text-center">
               <CardTitle className="flex items-center justify-center space-x-2 text-2xl">
