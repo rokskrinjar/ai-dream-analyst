@@ -364,11 +364,12 @@ KRITIČNO: Vsak stavek mora biti napisan v DRUGI OSEBI. Uporabite "vi", "vam", "
       console.error('Response content:', analysisContent.substring(0, 500) + '...');
       
       // Return error instead of fallback - force user to try again
+      const errorMessage = parseError instanceof Error ? parseError.message : String(parseError);
       return new Response(JSON.stringify({ 
         success: false, 
         error: `AI analiza ni bila uspešna zaradi tehnične napake. Poskusite znova.`,
         errorCode: 'AI_ANALYSIS_FAILED',
-        details: parseError.message
+        details: errorMessage
       }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -457,8 +458,9 @@ KRITIČNO: Vsak stavek mora biti napisan v DRUGI OSEBI. Uporabite "vi", "vam", "
 
   } catch (error) {
     console.error('Error in pattern analysis function:', error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: errorMessage }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

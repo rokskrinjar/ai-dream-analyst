@@ -250,9 +250,11 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
       
     } catch (parseError) {
       console.error('Error parsing OpenAI JSON response:', parseError);
+      const errorMessage = parseError instanceof Error ? parseError.message : String(parseError);
+      const positionMatch = errorMessage.match(/position (\d+)/);
       console.error('Parse error details:', {
-        message: parseError.message,
-        position: parseError.message.match(/position (\d+)/)?.[1]
+        message: errorMessage,
+        position: positionMatch?.[1]
       });
       console.error('Raw content:', analysisContent);
       
@@ -383,9 +385,10 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
 
   } catch (error) {
     console.error('Error in analyze-dream function:', error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return new Response(JSON.stringify({ 
       success: false, 
-      error: error.message 
+      error: errorMessage 
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
