@@ -107,9 +107,10 @@ serve(async (req) => {
       requestBody = JSON.parse(bodyText);
       console.log('📋 Request body parsed:', requestBody);
     } catch (parseError) {
+      const errorMessage = parseError instanceof Error ? parseError.message : String(parseError);
       console.error('❌ Failed to parse request body:', parseError);
       return new Response(
-        JSON.stringify({ error: 'Invalid JSON in request body', details: parseError.message }),
+        JSON.stringify({ error: 'Invalid JSON in request body', details: errorMessage }),
         { 
           status: 400, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -192,9 +193,10 @@ serve(async (req) => {
         customerId = customer.id;
         console.log('✅ Created new Stripe customer:', customerId);
       } catch (stripeError) {
+        const errorMessage = stripeError instanceof Error ? stripeError.message : String(stripeError);
         console.error('❌ Failed to create Stripe customer:', stripeError);
         return new Response(
-          JSON.stringify({ error: 'Failed to create customer', details: stripeError.message }),
+          JSON.stringify({ error: 'Failed to create customer', details: errorMessage }),
           { 
             status: 500, 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -230,6 +232,18 @@ serve(async (req) => {
         metadata: {
           user_id: user.id,
           plan_id: planId,
+          user_email: user.email,
+          checkout_session_created: new Date().toISOString(),
+          source: 'lovable_app'
+        },
+        subscription_data: {
+          metadata: {
+            user_id: user.id,
+            plan_id: planId,
+            user_email: user.email,
+            subscription_created_via: 'checkout_session',
+            source: 'lovable_app'
+          }
         },
       });
       console.log('✅ Checkout session created:', {
@@ -237,12 +251,14 @@ serve(async (req) => {
         sessionUrl: session.url
       });
     } catch (stripeError) {
+      const errorMessage = stripeError instanceof Error ? stripeError.message : String(stripeError);
+      const errorCode = (stripeError as any)?.code;
       console.error('❌ Failed to create checkout session:', stripeError);
       return new Response(
         JSON.stringify({ 
           error: 'Failed to create checkout session', 
-          details: stripeError.message,
-          code: stripeError.code
+          details: errorMessage,
+          code: errorCode
         }),
         { 
           status: 500, 
@@ -261,16 +277,20 @@ serve(async (req) => {
     );
 
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorName = error instanceof Error ? error.name : 'Unknown';
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    
     console.error('❌ Unexpected error in create-checkout-session:', {
-      name: error.name,
-      message: error.message,
-      stack: error.stack
+      name: errorName,
+      message: errorMessage,
+      stack: errorStack
     });
     return new Response(
       JSON.stringify({ 
         error: 'Internal server error', 
-        details: error.message,
-        name: error.name
+        details: errorMessage,
+        name: errorName
       }),
       { 
         status: 500, 
