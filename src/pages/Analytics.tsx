@@ -306,8 +306,13 @@ const Analytics = () => {
             description: `Nova analiza vzorcev je pripravljena! Porabili ste ${estimatedCost} kreditov.`,
           });
         }
+        
+        // CRITICAL: Set loading to false AFTER analysis is set
+        setIsAnalyzing(false);
       } else {
         console.error('⚠️ No analysis data in response!');
+        setIsAnalyzing(false);
+        setShowChoiceScreen(true);
         toast({
           title: "Napaka",
           description: "Analiza ni bila najdena. Poskusite ponovno.",
@@ -317,9 +322,13 @@ const Analytics = () => {
       
     } catch (error: any) {
       console.error('Error generating pattern analysis:', error);
-      // Error handling is done above
-    } finally {
       setIsAnalyzing(false);
+      setShowChoiceScreen(true);
+      toast({
+        title: "Napaka",
+        description: "Prišlo je do napake pri analizi. Poskusite ponovno.",
+        variant: "destructive",
+      });
     }
   };
 
