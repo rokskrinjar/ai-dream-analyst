@@ -82,32 +82,26 @@ serve(async (req) => {
 
     let event: Stripe.Event;
 
-    // Verify webhook signature if secret is available
-    if (webhookSecret && signature) {
-      try {
-        event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-        console.log('✅ Webhook signature verified');
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : String(err);
-        console.error('❌ Webhook signature verification failed:', errorMessage);
-        return new Response(
-          JSON.stringify({ error: 'Invalid signature' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-    } else {
-      // Parse without verification (for development)
-      console.log('⚠️ No webhook secret - parsing without verification (development mode)');
-      try {
-        event = JSON.parse(body);
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : String(err);
-        console.error('❌ Failed to parse webhook body:', errorMessage);
-        return new Response(
-          JSON.stringify({ error: 'Invalid JSON' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
+    // Verify webhook signature - REQUIRED for security
+    if (!webhookSecret || !signature) {
+      console.error('❌ Missing webhook secret or signature - cannot verify webhook');
+      return new Response(
+        JSON.stringify({ error: 'Webhook verification required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    try {
+      // CRITICAL: Must use async version for Deno edge runtime
+      event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
+      console.log('✅ Webhook signature verified');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      console.error('❌ Webhook signature verification failed:', errorMessage);
+      return new Response(
+        JSON.stringify({ error: 'Invalid signature', details: errorMessage }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     console.log(`🎭 [${requestId}] Event details:`, {
