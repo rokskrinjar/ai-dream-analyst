@@ -228,12 +228,22 @@ const Analytics = () => {
 
   const generatePatternAnalysis = async (dreams: Dream[], analyses: DreamAnalysis[], forceRefresh = false) => {
     try {
-      setIsAnalyzing(true);
+      // Only set loading if not already set
+      if (!isAnalyzing) {
+        setIsAnalyzing(true);
+      }
       setShowCostConfirmation(false);
+      
+      console.log('🔄 Calling analyze-dream-patterns edge function...');
+      console.log('  - forceRefresh:', forceRefresh);
+      console.log('  - dreams count:', dreams.length);
+      console.log('  - analyses count:', analyses.length);
       
       const { data, error } = await supabase.functions.invoke('analyze-dream-patterns', {
         body: { dreams, analyses, forceRefresh }
       });
+
+      console.log('📥 Edge function response:', { data, error });
 
       if (error) {
         if (error.message?.includes('INSUFFICIENT_CREDITS')) {
@@ -265,6 +275,7 @@ const Analytics = () => {
       }
       
       if (data?.analysis) {
+        console.log('✅ Setting pattern analysis data:', data.analysis);
         setPatternAnalysis(data.analysis);
         
         // Check if upgrade is available
@@ -276,7 +287,7 @@ const Analytics = () => {
         }
         
         if (data.cached && !forceRefresh) {
-          console.log('Loaded cached pattern analysis');
+          console.log('📦 Loaded cached pattern analysis');
           if (data.upgradeAvailable) {
             toast({
               title: "Analiza naložena",
@@ -289,12 +300,19 @@ const Analytics = () => {
             });
           }
         } else {
-          console.log('Generated fresh pattern analysis');
+          console.log('✨ Generated fresh pattern analysis');
           toast({
             title: "Analiza končana",
             description: `Nova analiza vzorcev je pripravljena! Porabili ste ${estimatedCost} kreditov.`,
           });
         }
+      } else {
+        console.error('⚠️ No analysis data in response!');
+        toast({
+          title: "Napaka",
+          description: "Analiza ni bila najdena. Poskusite ponovno.",
+          variant: "destructive",
+        });
       }
       
     } catch (error: any) {
@@ -313,10 +331,25 @@ const Analytics = () => {
     setShowUpgradeOption(false);
   };
 
-  const handleViewLastAnalysis = () => {
+  const handleViewLastAnalysis = async () => {
     if (!hasExistingAnalysis) return;
+    
+    console.log('👁️ View Last Analysis clicked');
+    console.log('  - hasExistingAnalysis:', hasExistingAnalysis);
+    console.log('  - lastAnalysisDate:', lastAnalysisDate);
+    
+    // Set loading state FIRST to prevent blank screen
+    setIsAnalyzing(true);
     setShowChoiceScreen(false);
-    generatePatternAnalysis(dreams, analyses, false);
+    
+    try {
+      await generatePatternAnalysis(dreams, analyses, false);
+    } catch (error) {
+      console.error('Error loading analysis:', error);
+      // If error, show choice screen again
+      setShowChoiceScreen(true);
+      setIsAnalyzing(false);
+    }
   };
 
   const handleGenerateNewAnalysis = () => {
@@ -648,6 +681,7 @@ const Analytics = () => {
           </Card>
         ) : patternAnalysis ? (
           <>
+            {console.log('🎨 Rendering pattern analysis UI')}
             {/* Overall Insights */}
             <Card className="mb-8">
               <CardHeader>
