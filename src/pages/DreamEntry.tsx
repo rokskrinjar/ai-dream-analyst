@@ -10,6 +10,32 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { ArrowLeft, Save, Calendar, Heart, Tag } from 'lucide-react';
 import { EmotionWheel } from '@/components/EmotionWheel';
+import { z } from 'zod';
+
+const dreamSchema = z.object({
+  title: z.string()
+    .trim()
+    .min(3, 'Naslov mora vsebovati vsaj 3 znake')
+    .max(200, 'Naslov ne sme presegati 200 znakov'),
+  content: z.string()
+    .trim()
+    .min(10, 'Vsebina mora vsebovati vsaj 10 znakov')
+    .max(5000, 'Vsebina ne sme presegati 5000 znakov za optimalno AI analizo'),
+  tags: z.string()
+    .max(200, 'Oznake ne smejo presegati 200 znakov')
+    .refine(
+      (tags) => {
+        if (!tags) return true;
+        const tagArray = tags.split(',').map(t => t.trim());
+        return tagArray.length <= 10;
+      },
+      'Maksimalno 10 oznak dovoljeno'
+    )
+    .optional(),
+  primary_emotion: z.string().max(50).optional(),
+  secondary_emotion: z.string().max(50).optional(),
+  dream_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Neveljaven format datuma')
+});
 
 const DreamEntry = () => {
   const { user } = useAuth();
@@ -42,15 +68,6 @@ const DreamEntry = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.title || !formData.content) {
-      toast({
-        title: "Napaka",
-        description: "Prosimo, vnesite naslov in opis sanje.",
-        variant: "destructive",
-      });
-      return;
-    }
 
     if (!user) {
       toast({
@@ -64,21 +81,31 @@ const DreamEntry = () => {
     setIsLoading(true);
 
     try {
-      const tagsArray = formData.tags 
-        ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
+      // Validate input with zod schema
+      const validated = dreamSchema.parse({
+        title: formData.title,
+        content: formData.content,
+        tags: formData.tags,
+        primary_emotion: formData.primary_emotion,
+        secondary_emotion: formData.secondary_emotion,
+        dream_date: formData.dream_date
+      });
+
+      const tagsArray = validated.tags 
+        ? validated.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
         : [];
 
-        const { error } = await supabase
-          .from('dreams')
-          .insert({
-            title: formData.title,
-            content: formData.content,
-            dream_date: formData.dream_date,
-            primary_emotion: formData.primary_emotion || null,
-            secondary_emotion: formData.secondary_emotion || null,
-            tags: tagsArray.length > 0 ? tagsArray : null,
-            user_id: user.id,
-          });
+      const { error } = await supabase
+        .from('dreams')
+        .insert({
+          title: validated.title,
+          content: validated.content,
+          dream_date: validated.dream_date,
+          primary_emotion: validated.primary_emotion || null,
+          secondary_emotion: validated.secondary_emotion || null,
+          tags: tagsArray.length > 0 ? tagsArray : null,
+          user_id: user.id,
+        });
 
       if (error) throw error;
 
@@ -88,8 +115,17 @@ const DreamEntry = () => {
       });
 
       navigate('/dashboard');
-    } catch (error) {
-      console.error('Error saving dream:', error);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        toast({
+          title: "Neveljavni podatki",
+          description: err.issues[0].message,
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      console.error('Error saving dream:', err);
       toast({
         title: "Napaka",
         description: "Napaka pri shranjevanju sanje.",
@@ -143,8 +179,12 @@ const DreamEntry = () => {
                   placeholder="Kratko povzemite svojo sanje..."
                   value={formData.title}
                   onChange={(e) => handleInputChange('title', e.target.value)}
+                  maxLength={200}
                   required
                 />
+                <p className="text-xs text-muted-foreground">
+                  {formData.title.length}/200 znakov
+                </p>
               </div>
 
               {/* Date */}
@@ -171,9 +211,16 @@ const DreamEntry = () => {
                   placeholder="Opišite svojo sanje s čim več podrobnostmi... Kje ste bili? Kdo je bil z vami? Kaj se je dogajalo? Kako ste se počutili?"
                   value={formData.content}
                   onChange={(e) => handleInputChange('content', e.target.value)}
+                  maxLength={5000}
                   rows={8}
                   required
                 />
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Min. 10 znakov</span>
+                  <span className={formData.content.length > 5000 ? 'text-destructive' : ''}>
+                    {formData.content.length}/5000
+                  </span>
+                </div>
               </div>
 
               {/* Emotions */}

@@ -6,6 +6,30 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+async function logFailedAdminAttempt(
+  supabase: any,
+  userId: string | null,
+  reason: string,
+  req: Request
+) {
+  try {
+    await supabase
+      .from('admin_audit_log')
+      .insert({
+        admin_user_id: userId || '00000000-0000-0000-0000-000000000000',
+        action: 'admin_access_denied',
+        details: { 
+          reason, 
+          timestamp: new Date().toISOString(),
+          ip_address: req.headers.get('x-forwarded-for') || 'unknown',
+          user_agent: req.headers.get('user-agent') || 'unknown'
+        }
+      });
+  } catch (error) {
+    console.error('Failed to log admin attempt:', error);
+  }
+}
+
 serve(async (req) => {
   console.log('🛠️ Admin credit fix utility accessed');
 
@@ -28,6 +52,8 @@ serve(async (req) => {
     // Authentication and admin check
     const authHeader = req.headers.get('authorization');
     if (!authHeader) {
+      console.warn('⚠️ Admin access attempt without auth header');
+      await logFailedAdminAttempt(supabase, null, 'no_auth_header', req);
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -38,15 +64,29 @@ serve(async (req) => {
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     
     if (authError || !user) {
+      console.error('❌ Auth error:', authError);
+      await logFailedAdminAttempt(supabase, null, 'authentication_failed', req);
       return new Response(
-        JSON.stringify({ error: 'Invalid token' }),
+        JSON.stringify({ error: 'Authentication failed' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     // Check if user is admin
-    const { data: isAdminData } = await supabase.rpc('is_admin');
+    const { data: isAdminData, error: adminCheckError } = await supabase.rpc('is_admin');
+    
+    if (adminCheckError) {
+      console.error('❌ Admin check failed:', adminCheckError);
+      await logFailedAdminAttempt(supabase, user.id, 'admin_check_error', req);
+      return new Response(
+        JSON.stringify({ error: 'Authorization check failed' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     if (!isAdminData) {
+      console.warn('⚠️ Non-admin access attempt:', user.id);
+      await logFailedAdminAttempt(supabase, user.id, 'insufficient_privileges', req);
       return new Response(
         JSON.stringify({ error: 'Admin access required' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

@@ -53,6 +53,32 @@ serve(async (req) => {
 
     console.log('🔄 Syncing subscription for user:', user.id);
 
+    // Rate limiting: Check recent syncs (cooldown of 5 minutes)
+    const { data: recentSync } = await supabaseAdmin
+      .from('usage_logs')
+      .select('created_at')
+      .eq('user_id', user.id)
+      .eq('action_type', 'subscription_manual_sync')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (recentSync) {
+      const lastSync = new Date(recentSync.created_at);
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+      
+      if (lastSync > fiveMinutesAgo) {
+        console.warn('⚠️ Sync cooldown active:', user.id);
+        return new Response(
+          JSON.stringify({ 
+            success: false,
+            error: 'Prosimo, počakajte 5 minut med poskusi sinhronizacije.'
+          }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+
     // Get user's Stripe customer ID
     const { data: existingSubscription } = await supabaseAdmin
       .from('user_subscriptions')

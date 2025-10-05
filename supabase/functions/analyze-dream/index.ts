@@ -127,6 +127,60 @@ serve(async (req) => {
 
     console.log('Dream fetched successfully:', dream.title);
 
+    // Validate content length to prevent cost abuse
+    if (dream.content.length > 5000) {
+      console.error('Dream content too long:', dream.content.length);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Vsebina sanje je predolga za analizo. Prosimo, skrajšajte na 5000 znakov.',
+          errorCode: 'CONTENT_TOO_LONG'
+        }), 
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Rate limiting: Check recent analyses (5 per minute, 50 per day)
+    const oneMinuteAgo = new Date(Date.now() - 60000).toISOString();
+    const { count: recentCount } = await supabaseAdmin
+      .from('usage_logs')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('action_type', 'dream_analysis')
+      .gte('created_at', oneMinuteAgo);
+
+    if (recentCount && recentCount >= 5) {
+      console.warn('Rate limit exceeded (per minute):', user.id);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Omejitev hitrosti: Maksimalno 5 analiz na minuto.',
+          errorCode: 'RATE_LIMIT_EXCEEDED'
+        }), 
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const oneDayAgo = new Date(Date.now() - 86400000).toISOString();
+    const { count: dailyCount } = await supabaseAdmin
+      .from('usage_logs')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('action_type', 'dream_analysis')
+      .gte('created_at', oneDayAgo);
+
+    if (dailyCount && dailyCount >= 50) {
+      console.warn('Rate limit exceeded (per day):', user.id);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Omejitev hitrosti: Maksimalno 50 analiz na dan.',
+          errorCode: 'RATE_LIMIT_EXCEEDED'
+        }), 
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Get OpenAI API key
     const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
     if (!openAIApiKey) {
