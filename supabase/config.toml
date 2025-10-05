@@ -18,5 +18,5 @@ verify_jwt = true
 [functions.sync-stripe-subscription]
 verify_jwt = true
 
-[functions.fix-user-subscription]
+[functions.admin-fix-premium-subscription]
 verify_jwt = true

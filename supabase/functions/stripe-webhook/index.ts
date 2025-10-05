@@ -114,6 +114,15 @@ serve(async (req) => {
 
     // Log webhook to database for monitoring
     await logWebhookEvent(supabase, requestId, event, 'received');
+    
+    // Log to webhook_events table
+    await supabase
+      .from('webhook_events')
+      .insert({
+        event_type: event.type,
+        event_data: event,
+        processed: false,
+      });
 
     // Handle different event types
     switch (event.type) {
@@ -152,6 +161,12 @@ serve(async (req) => {
 
     await logWebhookEvent(supabase, requestId, event, 'processed');
     
+    // Mark webhook as processed
+    await supabase
+      .from('webhook_events')
+      .update({ processed: true })
+      .eq('event_data->id', event.id);
+    
     const processingTime = Date.now() - startTime;
     console.log(`✅ [${requestId}] Webhook processed successfully in ${processingTime}ms`);
     
@@ -177,6 +192,15 @@ serve(async (req) => {
     try {
       if (supabase) {
         await logWebhookEvent(supabase, requestId, null, 'error', errorMessage);
+        
+        // Mark webhook as failed in webhook_events table
+        await supabase
+          .from('webhook_events')
+          .update({
+            processed: false,
+            error_message: errorMessage,
+          })
+          .eq('event_data->id', requestId);
       }
     } catch (logError) {
       console.error(`❌ [${requestId}] Failed to log error:`, logError);

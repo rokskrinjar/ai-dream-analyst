@@ -7,9 +7,8 @@ import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { User, CreditCard, Calendar, Settings, LogOut, RefreshCw } from "lucide-react";
+import { User, CreditCard, Calendar, Settings, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { syncStripeSubscription } from "@/utils/syncSubscription";
 
 interface UserSubscription {
   plan_id: string;
@@ -35,7 +34,6 @@ export default function Account() {
   const [subscription, setSubscription] = useState<UserSubscription | null>(null);
   const [subscriptionPlan, setSubscriptionPlan] = useState<SubscriptionPlan | null>(null);
   const [loading, setLoading] = useState(true);
-  const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -102,31 +100,6 @@ export default function Account() {
     });
   };
 
-  const handleSyncSubscription = async () => {
-    setSyncing(true);
-    try {
-      await syncStripeSubscription();
-      
-      toast({
-        title: "Uspešno sinhronizirano",
-        description: "Vaša naročnina in krediti so bili posodobljeni.",
-      });
-      
-      // Refresh the data
-      await fetchSubscriptionData();
-      window.location.reload(); // Reload to update credits context
-      
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Neznana napaka';
-      toast({
-        title: "Napaka pri sinhronizaciji",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    } finally {
-      setSyncing(false);
-    }
-  };
 
   if (!user) {
     return null;
@@ -262,14 +235,6 @@ export default function Account() {
                   </Button>
                   <Button variant="outline">
                     Upravljaj plačila
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={handleSyncSubscription}
-                    disabled={syncing}
-                  >
-                    <RefreshCw className={`w-4 h-4 mr-2 ${syncing ? 'animate-spin' : ''}`} />
-                    Sinhroniziraj
                   </Button>
                 </div>
               </div>
