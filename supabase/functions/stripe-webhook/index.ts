@@ -261,8 +261,12 @@ async function handleSubscriptionEvent(supabase: any, subscription: Stripe.Subsc
       stripe_subscription_id: subscription.id,
       stripe_customer_id: subscription.customer as string,
       status: subscription.status,
-      current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-      current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+      current_period_start: subscription.current_period_start 
+        ? new Date(subscription.current_period_start * 1000).toISOString()
+        : null,
+      current_period_end: subscription.current_period_end 
+        ? new Date(subscription.current_period_end * 1000).toISOString()
+        : null,
     };
 
     const { error: subscriptionError } = await supabase
