@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Brain, TrendingUp, Calendar, Heart, Eye, Loader2, RefreshCw, Award, Target, Zap, Clock, BookOpen, Sparkles, Menu, User, Settings, LogOut } from 'lucide-react';
+import { ArrowLeft, Brain, TrendingUp, Calendar, Heart, Eye, Loader2, RefreshCw, Award, Target, Zap, Clock, BookOpen, Sparkles, Menu, User, Settings, LogOut, AlertCircle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { CreditUsageModal } from '@/components/CreditUsageModal';
 import { useCreditContext } from '@/contexts/CreditContext';
@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 interface Dream {
   id: string;
@@ -696,8 +697,32 @@ const Analytics = () => {
               </div>
             </CardContent>
           </Card>
-        ) : patternAnalysis ? (
-          <>
+        ) : patternAnalysis && !showChoiceScreen ? (
+          <ErrorBoundary
+            fallback={
+              <Card className="mb-8 border-destructive">
+                <CardContent className="py-12 text-center">
+                  <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+                  <h3 className="text-lg font-medium mb-2">Napaka pri prikazu analize</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Analiza ni mogla biti prikazana. Poskusite ponovno.
+                  </p>
+                  <Button onClick={() => {
+                    setPatternAnalysis(null);
+                    setShowChoiceScreen(true);
+                  }}>
+                    Nazaj na izbire
+                  </Button>
+                </CardContent>
+              </Card>
+            }
+            onError={(error) => {
+              console.error('Pattern analysis rendering error:', error);
+              setPatternAnalysis(null);
+              setShowChoiceScreen(true);
+            }}
+          >
+            <>
             {console.log('🎨 Rendering pattern analysis UI', patternAnalysis)}
             {/* Overall Insights */}
             <Card className="mb-8">
@@ -1054,8 +1079,27 @@ const Analytics = () => {
                 </CardContent>
               </Card>
             )}
-          </>
-        ) : !analysisRequirements.canAnalyze ? (
+            </>
+          </ErrorBoundary>
+        ) : null}
+
+        {/* Fallback: Show choice screen if nothing else is showing */}
+        {!isAnalyzing && !patternAnalysis && analysisRequirements.canAnalyze && !showChoiceScreen ? (
+          <Card className="mb-8">
+            <CardContent className="py-12 text-center">
+              <Brain className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium mb-2">Pripravljen za analizo</h3>
+              <p className="text-muted-foreground mb-4">
+                Kliknite spodnji gumb za prikaz možnosti analize.
+              </p>
+              <Button onClick={() => setShowChoiceScreen(true)}>
+                Prikaži možnosti
+              </Button>
+            </CardContent>
+          </Card>
+        ) : null}
+        
+        {!analysisRequirements.canAnalyze ? (
           <Card>
             <CardContent className="text-center py-12">
               <Brain className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
