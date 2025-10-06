@@ -23,7 +23,7 @@ export const useLanguage = () => {
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
   const { i18n } = useTranslation();
-  const [language, setLanguageState] = useState<string>('sl');
+  const [language, setLanguageState] = useState<string>('en');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

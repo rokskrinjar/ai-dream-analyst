@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { CompactCreditDisplay } from "@/components/CompactCreditDisplay";
 import { Menu, X, ChevronLeft, User, CreditCard, BarChart3, Settings, LogOut } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +20,7 @@ interface AppHeaderProps {
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({ showBackButton, title, subtitle }) => {
+  const { t } = useTranslation(['common']);
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signOut } = useAuth();
@@ -32,9 +34,9 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ showBackButton, title, sub
   const isActiveRoute = (path: string) => location.pathname === path;
 
   const navigationItems = [
-    { path: '/dashboard', label: 'Nadzorna plošča', icon: BarChart3 },
-    { path: '/pricing', label: 'Naročnine', icon: CreditCard },
-    { path: '/account', label: 'Račun', icon: User },
+    { path: '/dashboard', label: t('dashboard:title'), icon: BarChart3 },
+    { path: '/pricing', label: t('pricing:title'), icon: CreditCard },
+    { path: '/account', label: t('account:title'), icon: User },
   ];
 
   return (
@@ -63,7 +65,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ showBackButton, title, sub
               </div>
               <div className="flex flex-col">
                 <span className="text-lg font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent group-hover:from-primary group-hover:to-primary/70 transition-all">
-                  Lovilec Sanj
+                  {t('common:appName')}
                 </span>
                 {title && (
                   <span className="text-xs text-muted-foreground">{title}</span>
@@ -111,12 +113,12 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ showBackButton, title, sub
               <DropdownMenuContent align="end" className="w-56 bg-background/95 backdrop-blur-xl border-border/50">
                 <DropdownMenuItem onClick={() => navigate('/account')} className="cursor-pointer">
                   <Settings className="mr-2 h-4 w-4" />
-                  Nastavitve računa
+                  {t('account:title')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive focus:text-destructive">
                   <LogOut className="mr-2 h-4 w-4" />
-                  Odjava
+                  {t('auth:signOut')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

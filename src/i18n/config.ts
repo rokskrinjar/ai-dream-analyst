@@ -48,7 +48,7 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'sl',
+    fallbackLng: 'en',
     defaultNS: 'common',
     interpolation: {
       escapeValue: false,

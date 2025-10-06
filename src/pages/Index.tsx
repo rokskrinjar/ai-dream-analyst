@@ -7,12 +7,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { TestimonialSection } from "@/components/TestimonialSection";
 import { FAQSection } from "@/components/FAQSection";
 import { InteractiveDreamJournal } from "@/components/InteractiveDreamJournal";
-
-// Force cache refresh
+import { useTranslation } from 'react-i18next';
 
 const Index = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation(['index', 'common']);
 
   useEffect(() => {
     if (user) {
@@ -23,75 +23,75 @@ const Index = () => {
   const features = [
     {
       icon: <BookOpen className="h-6 w-6" />,
-      title: "Dnevnik sanj",
-      description: "Enostavno beležite in organizirajte svoje sanje z intuitivnim vmesnikom"
+      title: t('features.dreamJournal.title'),
+      description: t('features.dreamJournal.description')
     },
     {
       icon: <Brain className="h-6 w-6" />,
-      title: "AI analiza",
-      description: "Napredne algoritme prepoznajo vzorce in vam nudijo osebne vpoglede"
+      title: t('features.aiAnalysis.title'),
+      description: t('features.aiAnalysis.description')
     },
     {
       icon: <TrendingUp className="h-6 w-6" />,
-      title: "Osebni vpogledi",
-      description: "Odkrijte povezave med vašimi sanjami in vsakodnevnim življenjem"
+      title: t('features.personalInsights.title'),
+      description: t('features.personalInsights.description')
     },
     {
       icon: <Moon className="h-6 w-6" />,
-      title: "REM analiza",
-      description: "Razumejte različne faze spanja in kako vplivajo na vaše sanje"
+      title: t('features.remAnalysis.title'),
+      description: t('features.remAnalysis.description')
     },
     {
       icon: <Eye className="h-6 w-6" />,
-      title: "Simbolika sanj",
-      description: "Odkrijte pomen simbolov v vaših sanjah z arhetipskim pristopom"
+      title: t('features.symbolism.title'),
+      description: t('features.symbolism.description')
     },
     {
       icon: <Heart className="h-6 w-6" />,
-      title: "Čustvena analiza",
-      description: "Analizirajte čustvene vzorce in njihov vpliv na vsakdanje življenje"
+      title: t('features.emotionalAnalysis.title'),
+      description: t('features.emotionalAnalysis.description')
     }
   ];
 
   const dreamFacts = [
     {
-      title: "Vsi sanjamo",
-      description: "Kljub temu da 7% ljudi trdi, da ne sanja, znanost potrjuje, da vsi sanjamo med REM fazo spanja"
+      title: t('aboutDreams.facts.everyoneDreams.title'),
+      description: t('aboutDreams.facts.everyoneDreams.description')
     },
     {
-      title: "Freudova teorija",
-      description: "Sanje so ventili za nepotešene želje in omogočajo sprostitev nezavednih potreb"
+      title: t('aboutDreams.facts.freud.title'),
+      description: t('aboutDreams.facts.freud.description')
     },
     {
-      title: "Jungovi arhetipi", 
-      description: "Vsak posameznik shranjuje simbole in vzorce v kolektivnem nezavednem"
+      title: t('aboutDreams.facts.jung.title'), 
+      description: t('aboutDreams.facts.jung.description')
     },
     {
-      title: "Čustveno procesiranje",
-      description: "Možgani med spanjem bolj delujejo na čustveni ravni in ustvarijo povezave"
+      title: t('aboutDreams.facts.emotionalProcessing.title'),
+      description: t('aboutDreams.facts.emotionalProcessing.description')
     }
   ];
 
   const steps = [
     {
       icon: <Lightbulb className="h-8 w-8" />,
-      title: "Beležite sanje",
-      description: "Takoj po prebujenju zapišite svoje sanje v dnevnik"
+      title: t('howItWorks.steps.record.title'),
+      description: t('howItWorks.steps.record.description')
     },
     {
       icon: <Brain className="h-8 w-8" />,
-      title: "AI analiza",
-      description: "Naša umetna inteligenca analizira vzorce in simboliko"
+      title: t('howItWorks.steps.analyze.title'),
+      description: t('howItWorks.steps.analyze.description')
     },
     {
       icon: <Users className="h-8 w-8" />,
-      title: "Osebni vpogledi",
-      description: "Prejmite personalizirane interpretacije na podlagi psiholoških teorij"
+      title: t('howItWorks.steps.insights.title'),
+      description: t('howItWorks.steps.insights.description')
     },
     {
       icon: <Shield className="h-8 w-8" />,
-      title: "Sledite napredku",
-      description: "Opazujte dolgoročne vzorce in čustvene spremembe"
+      title: t('howItWorks.steps.track.title'),
+      description: t('howItWorks.steps.track.description')
     }
   ];
 
@@ -109,29 +109,28 @@ const Index = () => {
                   <div className="flex items-center justify-center lg:justify-start gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                      <span>4.9/5 ocena</span>
+                      <span>{t('hero.rating')}</span>
                     </div>
                     <div className="w-px h-4 bg-border"></div>
                     <div className="flex items-center gap-1">
                       <Users className="h-4 w-4" />
-                      <span>10,000+ uporabnikov</span>
+                      <span>{t('hero.users')}</span>
                     </div>
                     <div className="w-px h-4 bg-border"></div>
                     <div className="flex items-center gap-1">
                       <Shield className="h-4 w-4" />
-                      <span>100% zasebno</span>
+                      <span>{t('hero.privacy')}</span>
                     </div>
                   </div>
 
                   <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-foreground animate-glow-pulse">
                     <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                      Lovilec Sanj
+                      {t('common:appName')}
                     </span>
                   </h1>
                   
                   <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                    Odkrijte skrita sporočila svojih sanj z močjo umetne inteligence. 
-                    Analizirajte vzorce, razumejte simboliko in pridobite osebne vpoglede v svoj notranji svet.
+                    {t('hero.subtitle')}
                   </p>
 
                   {/* Social proof */}
@@ -139,8 +138,8 @@ const Index = () => {
                     <div className="flex items-center gap-3">
                       <Zap className="h-5 w-5 text-primary" />
                       <div className="text-sm">
-                        <span className="font-semibold text-foreground">Nova AI analiza</span>
-                        <span className="text-muted-foreground"> • Posodobljena z GPT-4o</span>
+                        <span className="font-semibold text-foreground">{t('hero.newAiUpdate')}</span>
+                        <span className="text-muted-foreground"> • {t('hero.updatedWith')}</span>
                       </div>
                     </div>
                   </div>
@@ -151,7 +150,7 @@ const Index = () => {
                       className="font-semibold px-8 py-4 text-lg hover:shadow-lg transition-all duration-300 animate-glow-pulse"
                       onClick={() => navigate('/auth')}
                     >
-                      Začni brezplačno
+                      {t('hero.ctaFree')}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                     
@@ -162,7 +161,7 @@ const Index = () => {
                       onClick={() => navigate('/pricing')}
                     >
                       <TrendingUp className="mr-2 h-5 w-5" />
-                      Poglej cene
+                      {t('hero.viewPricing')}
                     </Button>
                   </div>
                 </div>
@@ -180,11 +179,10 @@ const Index = () => {
         <section id="about-dreams" className="container mx-auto px-4 py-16 bg-muted/30">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Zakaj so sanje pomembne?
+              {t('aboutDreams.title')}
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Sanje so fiziološko in psihološko zavestno stanje, ki se pojavi med spanjem. 
-              Vključujejo slike, misli in čustva, ki odražajo naša doživljanja, izkušnje in nezavedne procese.
+              {t('aboutDreams.description')}
             </p>
           </div>
 
@@ -212,7 +210,7 @@ const Index = () => {
               onClick={() => navigate('/auth')}
             >
               <Brain className="mr-2 h-5 w-5" />
-              Analiziraj svoje sanje zdaj
+              {t('aboutDreams.cta')}
             </Button>
           </div>
         </section>
@@ -221,10 +219,10 @@ const Index = () => {
         <section className="container mx-auto px-4 py-16">
           <div className="text-center mb-12 animate-fade-in-up">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Napredne funkcije za analizo sanj
+              {t('features.title')}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Kombiniramo najnovejše dosežke umetne inteligence z globokimi psihološkimi teorijami Freuda in Junga
+              {t('features.subtitle')}
             </p>
           </div>
 
@@ -262,10 +260,10 @@ const Index = () => {
         <section className="container mx-auto px-4 py-16 gradient-bg">
           <div className="text-center mb-12 animate-fade-in-up">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Kako deluje analiza sanj?
+              {t('howItWorks.title')}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Preprost proces v štirih korakih za globlje razumevanje vaših sanj
+              {t('howItWorks.subtitle')}
             </p>
           </div>
 
@@ -303,10 +301,10 @@ const Index = () => {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12 animate-fade-in-up">
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Znanstvena podlaga
+                {t('science.title')}
               </h2>
               <p className="text-lg text-muted-foreground">
-                Naša analiza temelji na priznajih psiholoških teorijah in modernih raziskavah spanja
+                {t('science.subtitle')}
               </p>
             </div>
 
@@ -316,16 +314,14 @@ const Index = () => {
                   <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
                     <Brain className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="text-2xl font-semibold text-foreground">Freudova teorija</h3>
+                  <h3 className="text-2xl font-semibold text-foreground">{t('science.freud.title')}</h3>
                 </div>
                 <p className="text-muted-foreground mb-6 leading-relaxed">
-                  Sigmund Freud je opredelil sanje kot "ventile" za nepotešene želje in nezavedne impulze. 
-                  Sanje nam omogočajo, da potešimo nagone, zaradi katerih smo nemirni, in razkrijejo 
-                  potlačene misli ter spomini.
+                  {t('science.freud.description')}
                 </p>
                 <div className="glass-card p-3 flex items-center gap-2">
                   <Brain className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-medium text-foreground">Nezavedno procesiranje</span>
+                  <span className="text-sm font-medium text-foreground">{t('science.freud.tag')}</span>
                 </div>
               </Card>
 
@@ -334,16 +330,14 @@ const Index = () => {
                   <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
                     <Eye className="h-6 w-6 text-accent" />
                   </div>
-                  <h3 className="text-2xl font-semibold text-foreground">Jungovi arhetipi</h3>
+                  <h3 className="text-2xl font-semibold text-foreground">{t('science.jung.title')}</h3>
                 </div>
                 <p className="text-muted-foreground mb-6 leading-relaxed">
-                  Carl Gustav Jung je predstavil teorijo kolektivnega nezavednega in arhetipov. 
-                  Vsak posameznik shranjuje simbole in vzorce, ki se izražajo skozi sanje in 
-                  nosijo pomembna sporočila podzavesti.
+                  {t('science.jung.description')}
                 </p>
                 <div className="glass-card p-3 flex items-center gap-2">
                   <Eye className="h-4 w-4 text-accent" />
-                  <span className="text-sm font-medium text-foreground">Simbolika in vzorci</span>
+                  <span className="text-sm font-medium text-foreground">{t('science.jung.tag')}</span>
                 </div>
               </Card>
             </div>
@@ -355,7 +349,7 @@ const Index = () => {
                 className="font-semibold px-8 py-4 text-lg glass-card hover:bg-primary/5 animate-glow-pulse"
                 onClick={() => navigate('/auth')}
               >
-                Odkrijte svojo simboliko sanj
+                {t('science.cta')}
                 <Sparkles className="ml-2 h-5 w-5" />
               </Button>
             </div>
@@ -374,19 +368,18 @@ const Index = () => {
                 <div className="mb-8">
                   <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-6">
                     <Sparkles className="h-4 w-4 text-primary" />
-                    <span className="text-sm font-medium text-foreground">Začni danes brezplačno</span>
+                    <span className="text-sm font-medium text-foreground">{t('cta.badge')}</span>
                   </div>
                   
                   <h3 className="text-3xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-                    Pripravljen odkrivati 
+                    {t('cta.title')}
                     <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"> 
-                      {" "}skrivnosti svojih sanj?
+                      {t('cta.titleHighlight')}
                     </span>
                   </h3>
                   
                   <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-                    Pridruži se več kot 10,000 uporabnikom, ki že raziskujejo vzorce svojih sanj in izboljšujejo 
-                    razumevanje svojega notranjega sveta z znanstveno podprto AI analizo.
+                    {t('cta.description')}
                   </p>
                 </div>
 
@@ -397,7 +390,7 @@ const Index = () => {
                     onClick={() => navigate('/auth')}
                   >
                     <Brain className="mr-3 h-6 w-6" />
-                    Registriraj se brezplačno
+                    {t('cta.ctaButton')}
                   </Button>
                   <Button 
                     variant="outline"
@@ -409,7 +402,7 @@ const Index = () => {
                       });
                     }}
                   >
-                    Preberi več o sanjah
+                    {t('cta.learnMore')}
                   </Button>
                 </div>
 
@@ -417,15 +410,15 @@ const Index = () => {
                 <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <Shield className="h-4 w-4" />
-                    <span>100% zasebno in varno</span>
+                    <span>{t('cta.trustPrivate')}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span>4.9/5 povprečna ocena</span>
+                    <span>{t('cta.trustRating')}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Zap className="h-4 w-4 text-primary" />
-                    <span>Takojšnja analiza</span>
+                    <span>{t('cta.trustInstant')}</span>
                   </div>
                 </div>
               </CardContent>
@@ -439,38 +432,38 @@ const Index = () => {
         <div className="container mx-auto px-4 py-12">
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
-              <h4 className="text-lg font-semibold text-foreground mb-4">Lovilec Sanj</h4>
+              <h4 className="text-lg font-semibold text-foreground mb-4">{t('common:appName')}</h4>
               <p className="text-muted-foreground text-sm">
-                Analizirajte svoje sanje z umetno inteligenco in odkrijte vzorce svojega nezavednega.
+                {t('footer.tagline')}
               </p>
             </div>
             <div>
-              <h4 className="text-lg font-semibold text-foreground mb-4">O sanjah</h4>
+              <h4 className="text-lg font-semibold text-foreground mb-4">{t('footer.aboutDreamsTitle')}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• REM faza spanja</li>
-                <li>• Simbolika in arhetipi</li>
-                <li>• Čustveno procesiranje</li>
-                <li>• Psihološka interpretacija</li>
+                <li>• {t('footer.dreamItem1')}</li>
+                <li>• {t('footer.dreamItem2')}</li>
+                <li>• {t('footer.dreamItem3')}</li>
+                <li>• {t('footer.dreamItem4')}</li>
               </ul>
             </div>
             <div>
-              <h4 className="text-lg font-semibold text-foreground mb-4">Začnite</h4>
+              <h4 className="text-lg font-semibold text-foreground mb-4">{t('footer.getStartedTitle')}</h4>
               <Button 
                 className="w-full mb-4"
                 onClick={() => navigate('/auth')}
               >
-                Raziskuj svoje sanje
+                {t('footer.exploreButton')}
               </Button>
               <p className="text-xs text-muted-foreground">
-                Brezplačna registracija • Zaupne analize
+                {t('footer.signupInfo')}
               </p>
             </div>
           </div>
           
           <div className="border-t border-border/30 pt-8 text-center text-muted-foreground">
-            <p>© 2024 Lovilec Sanj. Vse pravice pridržane.</p>
+            <p>{t('footer.copyright')}</p>
             <p className="mt-2 text-sm">
-              Bazirana na Freudovih in Jungovih teorijah • Podprta z AI tehnologijo
+              {t('footer.foundation')}
             </p>
           </div>
         </div>
