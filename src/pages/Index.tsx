@@ -1,14 +1,16 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen, Brain, Sparkles, ArrowRight, TrendingUp, Moon, Eye, Heart, Lightbulb, Users, Shield, Star, Zap, CheckCircle2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
+import { Brain, Sparkles, TrendingUp, Moon, Activity, Eye, BookOpen, Heart, Lightbulb, Shield, Check, Users, CheckCircle2, Star, Zap } from "lucide-react";
 import { TestimonialSection } from "@/components/TestimonialSection";
 import { FAQSection } from "@/components/FAQSection";
-import { InteractiveDreamJournal } from "@/components/InteractiveDreamJournal";
-import { useTranslation } from 'react-i18next';
+import { LandingHeader } from "@/components/LandingHeader";
+import { useTranslation } from "react-i18next";
+import heroImage from "@/assets/modern-dream-hero.jpg";
 
 const Index = () => {
   const { user } = useAuth();
@@ -98,99 +100,48 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <LandingHeader />
       <main>
-        {/* Enhanced Hero Section */}
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Animated Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0a0118] via-[#1a0b2e] to-[#0a0118]">
-          {/* Radial gradient spotlight */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(139,92,246,0.15),transparent_50%)]" />
-          
-          {/* Floating particles */}
-          <div className="absolute inset-0">
-            {[...Array(20)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute rounded-full bg-primary/10 blur-xl animate-float-particles"
-                style={{
-                  width: `${Math.random() * 100 + 50}px`,
-                  height: `${Math.random() * 100 + 50}px`,
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 10}s`,
-                  animationDuration: `${Math.random() * 10 + 10}s`,
-                }}
-              />
-            ))}
-          </div>
+        {/* Hero Section */}
+        <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-background/90 z-10" />
+          <img 
+            src={heroImage} 
+            alt="Dream" 
+            className="w-full h-full object-cover opacity-20"
+          />
         </div>
 
         {/* Content */}
-        <div className="container relative z-10 mx-auto px-4 py-32 text-center">
-          {/* Trust Badge */}
-          <div className="mb-8 animate-fade-in">
-            <p className="text-sm text-muted-foreground/80">
-              {t('index:hero.trustBadge')}
-            </p>
-          </div>
-
+        <div className="relative z-20 container mx-auto px-6 py-32 text-center">
           {/* Headline */}
-          <h1 className="mx-auto mb-8 max-w-4xl text-5xl font-bold leading-tight text-white md:text-6xl lg:text-7xl animate-fade-in drop-shadow-2xl" style={{ animationDelay: '0.2s' }}>
-            {t('index:hero.title')}
+          <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 max-w-5xl mx-auto leading-tight animate-fade-in">
+            {t("hero.title")}
           </h1>
 
           {/* Subtext */}
-          <p className="mx-auto mb-12 max-w-2xl text-lg leading-relaxed text-muted-foreground/90 md:text-xl animate-fade-in" style={{ animationDelay: '0.4s' }}>
-            {t('index:hero.subtitle')}
+          <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed animate-fade-in">
+            {t("hero.subtitle")}
           </p>
 
-          {/* CTA Buttons */}
-          <div className="mb-16 flex flex-col items-center justify-center gap-4 sm:flex-row animate-fade-in" style={{ animationDelay: '0.6s' }}>
-            <Button
-              size="lg"
-              className="h-14 px-8 text-lg shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 transition-all"
-              onClick={() => navigate('/auth')}
+          {/* CTA Button */}
+          <div className="animate-fade-in">
+            <Button 
+              size="lg" 
+              className="text-lg px-10 py-7 bg-primary hover:bg-primary/90 text-primary-foreground"
+              onClick={() => navigate("/auth")}
             >
-              {t('index:hero.cta.primary')}
+              {t("hero.cta")}
             </Button>
-            <Button
-              size="lg"
-              variant="ghost"
-              className="h-14 px-8 text-lg text-white hover:bg-white/10"
-              onClick={() => document.getElementById('science-behind-dreams')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              {t('index:hero.cta.secondary')}
-            </Button>
-          </div>
-
-          {/* Floating Insight Cards */}
-          <div className="mx-auto grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-3 animate-fade-in" style={{ animationDelay: '0.8s' }}>
-            {[
-              { key: 'flying', icon: '✈️' },
-              { key: 'water', icon: '💧' },
-              { key: 'shadow', icon: '🌙' },
-            ].map((card, index) => (
-              <div
-                key={card.key}
-                className="group rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl transition-all hover:bg-white/10 hover:scale-105 hover:border-primary/30"
-                style={{
-                  animationDelay: `${1 + index * 0.2}s`,
-                }}
-              >
-                <div className="mb-2 text-3xl">{card.icon}</div>
-                <p className="text-sm text-white/80 group-hover:text-white transition-colors">
-                  {t(`index:hero.insightCards.${card.key}`)}
-                </p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
 
 
-        {/* Science Behind Dreams Section */}
-        <section id="science-behind-dreams" className="container mx-auto px-4 py-16 bg-muted/30">
+      {/* Science Behind Dreams Section */}
+      <section id="science-behind-dreams" className="container mx-auto px-4 py-16 bg-muted/30">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">{t("index:scienceBehindDreams.title")}</h2>
             <p className="text-lg text-muted-foreground">{t("index:scienceBehindDreams.subtitle")}</p>
@@ -347,8 +298,8 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Enhanced Features Section */}
-        <section className="container mx-auto px-4 py-16">
+      {/* Enhanced Features Section */}
+      <section className="container mx-auto px-4 py-16">
           <div className="text-center mb-12 animate-fade-in-up">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               {t('features.title')}
@@ -385,48 +336,128 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Testimonials Section */}
-        <TestimonialSection />
+      {/* Testimonials Section */}
+      <TestimonialSection />
 
-        {/* Enhanced How It Works Section */}
-        <section className="container mx-auto px-4 py-16 gradient-bg">
-          <div className="text-center mb-12 animate-fade-in-up">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              {t('howItWorks.title')}
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              {t('howItWorks.subtitle')}
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-20 px-4 bg-card">
+        <div className="container mx-auto max-w-6xl">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-foreground">
+            {t("howItWorks.title")}
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
             {steps.map((step, index) => (
-              <div 
-                key={index} 
-                className="text-center group animate-fade-in-up"
-                style={{ animationDelay: `${index * 0.2}s` }}
-              >
-                <div className="relative mb-6">
-                  {/* Step number */}
-                  <div className="absolute -top-2 -left-2 w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center">
+              <div key={index} className="relative">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary">
                     {index + 1}
                   </div>
-                  <div className="mx-auto w-20 h-20 rounded-full glass-card flex items-center justify-center group-hover:scale-110 transition-all duration-300">
-                    <div className="text-primary group-hover:scale-110 transition-transform duration-300">
-                      {step.icon}
-                    </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2 text-foreground">{step.title}</h3>
+                    <p className="text-muted-foreground">{step.description}</p>
                   </div>
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
-                  {step.title}
-                </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  {step.description}
-                </p>
+                {index < steps.length - 1 && (
+                  <div className="hidden md:block absolute top-6 left-full w-full h-0.5 bg-primary/20 -translate-x-1/2" 
+                       style={{ width: 'calc(100% - 3rem)' }} />
+                )}
               </div>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
+
+      {/* Pricing Preview Section */}
+      <section id="pricing-preview" className="py-20 px-4 bg-background">
+        <div className="container mx-auto max-w-6xl">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-foreground">
+            {t("pricingPreview.title")}
+          </h2>
+          <p className="text-muted-foreground text-center mb-12 text-lg">
+            {t("pricingPreview.subtitle")}
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            {/* Free Plan */}
+            <Card className="bg-card border-border">
+              <CardContent className="p-8">
+                <h3 className="text-2xl font-bold mb-2">{t("pricingPreview.free.name")}</h3>
+                <p className="text-muted-foreground mb-4">{t("pricingPreview.free.description")}</p>
+                <div className="mb-6">
+                  <span className="text-4xl font-bold">{t("pricingPreview.free.price")}</span>
+                  <span className="text-muted-foreground">{t("pricingPreview.free.period")}</span>
+                </div>
+                <ul className="space-y-3 mb-6">
+                  {(t("pricingPreview.free.features", { returnObjects: true }) as string[]).map((feature, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-sm">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link to="/auth">
+                  <Button variant="outline" className="w-full">Get Started</Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Basic Plan */}
+            <Card className="bg-card border-border">
+              <CardContent className="p-8">
+                <h3 className="text-2xl font-bold mb-2">{t("pricingPreview.basic.name")}</h3>
+                <p className="text-muted-foreground mb-4">{t("pricingPreview.basic.description")}</p>
+                <div className="mb-6">
+                  <span className="text-4xl font-bold">{t("pricingPreview.basic.price")}</span>
+                  <span className="text-muted-foreground">{t("pricingPreview.basic.period")}</span>
+                </div>
+                <ul className="space-y-3 mb-6">
+                  {(t("pricingPreview.basic.features", { returnObjects: true }) as string[]).map((feature, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-sm">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link to="/pricing">
+                  <Button variant="outline" className="w-full">Select Plan</Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Premium Plan */}
+            <Card className="bg-card border-primary relative">
+              <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
+                {t("pricingPreview.premium.popular")}
+              </Badge>
+              <CardContent className="p-8">
+                <h3 className="text-2xl font-bold mb-2">{t("pricingPreview.premium.name")}</h3>
+                <p className="text-muted-foreground mb-4">{t("pricingPreview.premium.description")}</p>
+                <div className="mb-6">
+                  <span className="text-4xl font-bold">{t("pricingPreview.premium.price")}</span>
+                  <span className="text-muted-foreground">{t("pricingPreview.premium.period")}</span>
+                </div>
+                <ul className="space-y-3 mb-6">
+                  {(t("pricingPreview.premium.features", { returnObjects: true }) as string[]).map((feature, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-sm">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link to="/pricing">
+                  <Button className="w-full bg-primary hover:bg-primary/90">Select Plan</Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center">
+            <Link to="/pricing" className="text-primary hover:underline text-lg">
+              {t("pricingPreview.viewFullPricing")}
+            </Link>
+          </div>
+        </div>
+      </section>
 
         {/* Enhanced Scientific Background Section */}
         <section className="container mx-auto px-4 py-16">
@@ -488,8 +519,10 @@ const Index = () => {
           </div>
         </section>
 
-        {/* FAQ Section */}
+      {/* FAQ Section */}
+      <div id="faq">
         <FAQSection />
+      </div>
 
         {/* Enhanced CTA Section */}
         <section className="relative py-24 overflow-hidden">

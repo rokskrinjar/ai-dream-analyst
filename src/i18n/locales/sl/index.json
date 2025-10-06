@@ -1,16 +1,61 @@
 {
-  "hero": {
-    "title": "Vaše sanje niso naključne. So sporočila vašega uma.",
-    "subtitle": "Podprte z nevroznanostjo in psihologijo, sanje razkrivajo vaše čustvene vzorce, ustvarjalnost in notranjo rast. Njihovo beleženje in analiza vam pomaga razumeti sebe — noč za nočjo.",
-    "trustBadge": "Zaupajo nam 10.000+ sanjačev  •  Temelji na nevroznanosti  •  100% zasebno",
-    "cta": {
-      "primary": "Začni dnevnik sanj →",
-      "secondary": "Poglej, kako deluje"
+  "header": {
+    "appName": "Dream Catcher",
+    "nav": {
+      "home": "Domov",
+      "howItWorks": "Kako deluje",
+      "pricing": "Cenik",
+      "contact": "Kontakt"
     },
-    "insightCards": {
-      "flying": "Letenje: Svoboda in beg",
-      "water": "Voda: Čustveno stanje",
-      "shadow": "Jungovski arhetip: Senca"
+    "auth": {
+      "login": "Prijava",
+      "signup": "Registracija"
+    }
+  },
+  "hero": {
+    "title": "Odkrijte skrivnosti svojih sanj z AI",
+    "subtitle": "Raziščite skrite pomene svojih sanj z našo napredno AI analizo. Pridobite vpogled v svoje podzavest in se odpravite na potovanje samoodkrivanja.",
+    "cta": "Začnite svoje potovanje sanj"
+  },
+  "pricingPreview": {
+    "title": "Izberite svoj paket",
+    "subtitle": "Začnite brezplačno, nadgradite ko ste pripravljeni",
+    "viewFullPricing": "Oglejte si celoten cenik →",
+    "free": {
+      "name": "Brezplačno",
+      "price": "$0",
+      "period": "/mesec",
+      "description": "Popolno za začetnike",
+      "features": [
+        "5 AI analiz na mesec",
+        "Osnovni vpogledi v sanje",
+        "Sledenje razpoloženju"
+      ]
+    },
+    "basic": {
+      "name": "Osnovno",
+      "price": "$9",
+      "period": "/mesec",
+      "description": "Za redno uporabo",
+      "features": [
+        "50 AI analiz na mesec",
+        "Napredni vpogledi",
+        "Analiza vzorcev",
+        "Prednostna podpora"
+      ]
+    },
+    "premium": {
+      "name": "Premium",
+      "price": "$19",
+      "period": "/mesec",
+      "description": "Za strokovnjake",
+      "popular": "Najbolj priljubljen",
+      "features": [
+        "Neomejene AI analize",
+        "Vsi premium vpogledi",
+        "Personalizirani trendi",
+        "Individualna podpora"
+      ]
     }
   },
   "scienceBehindDreams": {

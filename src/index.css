@@ -8,61 +8,45 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Modern Dream Journal Design System */
-    
-    /* Core Background - Clean whites and light grays */
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-
-    /* Card surfaces - Clean white with subtle borders */
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-
-    /* Popover surfaces */
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-
-    /* Primary - Enhanced gradient purple */
-    --primary: 262 83% 58%;
+    --background: 220 17% 22%;
+    --foreground: 210 40% 98%;
+    --card: 217 19% 27%;
+    --card-foreground: 210 40% 98%;
+    --popover: 217 19% 27%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 330 81% 60%;
     --primary-foreground: 0 0% 100%;
-    --primary-light: 262 83% 70%;
-    --primary-dark: 262 83% 45%;
-
-    /* Secondary - Light gray */
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-
-    /* Muted - Very light gray */
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-
-    /* Accent - Enhanced blue */
-    --accent: 220 50% 70%;
-    --accent-foreground: 220 8.9% 46.1%;
-    --accent-light: 220 50% 85%;
-
-    /* Destructive */
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-
-    /* Interactive elements */
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 262 83% 58%;
-
-    /* Modern Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
-    --gradient-hero: linear-gradient(135deg, hsl(262 83% 58% / 0.1), hsl(220 50% 70% / 0.1));
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100% / 0.8), hsl(240 4.8% 95.9% / 0.4));
-    --gradient-glass: linear-gradient(145deg, hsl(0 0% 100% / 0.1), hsl(0 0% 100% / 0.05));
-
-    /* Shadows for depth */
-    --shadow-soft: 0 4px 20px hsl(240 5.9% 10% / 0.05);
-    --shadow-medium: 0 8px 30px hsl(240 5.9% 10% / 0.1);
-    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.2);
-    --shadow-glass: 0 8px 32px hsl(240 5.9% 10% / 0.08);
-
+    --primary-light: 330 81% 70%;
+    --primary-dark: 330 81% 50%;
+    --secondary: 215 16% 47%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 19% 35%;
+    --muted-foreground: 215 20% 70%;
+    --accent: 330 81% 60%;
+    --accent-foreground: 0 0% 100%;
+    --accent-light: 330 81% 70%;
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 215 16% 35%;
+    --input: 215 16% 35%;
+    --ring: 330 81% 60%;
+    --chart-1: 330 81% 60%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
     --radius: 0.5rem;
+    
+    /* Gradient variables */
+    --gradient-primary: linear-gradient(135deg, hsl(330, 81%, 60%), hsl(340, 75%, 55%));
+    --gradient-secondary: linear-gradient(180deg, hsl(220, 17%, 22%), hsl(217, 19%, 27%));
+    --gradient-accent: linear-gradient(90deg, hsl(330, 81%, 60%), hsl(215, 16%, 47%));
+    
+    /* Shadow variables */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 
     /* Sidebar - keeping original structure but adapting colors */
     --sidebar-background: 228 25% 10%;
@@ -136,20 +120,24 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground min-h-screen;
   }
 
   /* Glassmorphism utilities */
   .glass-card {
-    background: var(--gradient-glass);
+    background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(12px);
-    border: 1px solid hsl(0 0% 100% / 0.1);
-    box-shadow: var(--shadow-glass);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
 
   .gradient-bg {
-    background: var(--gradient-hero);
+    background: var(--gradient-secondary);
   }
 
   .floating-animation {
@@ -159,24 +147,5 @@ All colors MUST be HSL.
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-10px); }
-  }
-
-  @keyframes float-particles {
-    0%, 100% {
-      transform: translateY(0) translateX(0);
-    }
-    25% {
-      transform: translateY(-20px) translateX(10px);
-    }
-    50% {
-      transform: translateY(-10px) translateX(-10px);
-    }
-    75% {
-      transform: translateY(-30px) translateX(5px);
-    }
-  }
-
-  .animate-float-particles {
-    animation: float-particles 15s ease-in-out infinite;
   }
 }

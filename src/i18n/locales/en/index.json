@@ -1,16 +1,61 @@
 {
-  "hero": {
-    "title": "Your Dreams Aren't Random. They're Messages from Your Mind.",
-    "subtitle": "Backed by neuroscience and psychology, dreams reveal your emotional patterns, creativity, and inner growth. Recording and analyzing them helps you understand yourself — one night at a time.",
-    "trustBadge": "Trusted by 10,000+ dreamers  •  Based on neuroscience  •  100% private",
-    "cta": {
-      "primary": "Start Your Dream Journal →",
-      "secondary": "Watch how it works"
+  "header": {
+    "appName": "Dream Catcher",
+    "nav": {
+      "home": "Home",
+      "howItWorks": "How it works",
+      "pricing": "Pricing",
+      "contact": "Contact"
     },
-    "insightCards": {
-      "flying": "Flying: Freedom & escape",
-      "water": "Water: Emotional state",
-      "shadow": "Jungian archetype: The Shadow"
+    "auth": {
+      "login": "Log in",
+      "signup": "Sign up"
+    }
+  },
+  "hero": {
+    "title": "Unlock the Secrets of Your Dreams with AI",
+    "subtitle": "Explore the hidden meanings behind your dreams with our advanced AI-powered analysis. Gain insights into your subconscious and embark on a journey of self-discovery.",
+    "cta": "Start Your Dream Journey"
+  },
+  "pricingPreview": {
+    "title": "Choose Your Plan",
+    "subtitle": "Start for free, upgrade when you're ready",
+    "viewFullPricing": "View full pricing →",
+    "free": {
+      "name": "Free",
+      "price": "$0",
+      "period": "/month",
+      "description": "Perfect for beginners",
+      "features": [
+        "5 AI analyses per month",
+        "Basic dream insights",
+        "Mood tracking"
+      ]
+    },
+    "basic": {
+      "name": "Basic",
+      "price": "$9",
+      "period": "/month",
+      "description": "For regular users",
+      "features": [
+        "50 AI analyses per month",
+        "Advanced insights",
+        "Pattern analysis",
+        "Priority support"
+      ]
+    },
+    "premium": {
+      "name": "Premium",
+      "price": "$19",
+      "period": "/month",
+      "description": "For professionals",
+      "popular": "Most Popular",
+      "features": [
+        "Unlimited AI analyses",
+        "All premium insights",
+        "Personalized trends",
+        "Dedicated support"
+      ]
     }
   },
   "scienceBehindDreams": {
