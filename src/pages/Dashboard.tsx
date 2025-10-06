@@ -458,20 +458,20 @@ const Dashboard = () => {
               </CardContent>
             </Card>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {dreams.slice(0, 4).map((dream, index) => {
-                  const analysis = analyses[dream.id];
-                  const isAnalyzing = analyzingDreams.has(dream.id);
-                  const backgroundImages = [dreamBg1, dreamBg2, dreamBg3, dreamBg4];
-                  const bgImage = backgroundImages[index % 4];
-                  const isExpanded = expandedDreamId === dream.id;
-                  
-                  return (
-                    <>
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {dreams.slice(0, 4).map((dream, index) => {
+                    const analysis = analyses[dream.id];
+                    const isAnalyzing = analyzingDreams.has(dream.id);
+                    const backgroundImages = [dreamBg1, dreamBg2, dreamBg3, dreamBg4];
+                    const bgImage = backgroundImages[index % 4];
+                    const isExpanded = expandedDreamId === dream.id;
+                    
+                    return (
                       <Card 
                         key={dream.id}
                         className={cn(
-                          "border-none overflow-hidden group hover:shadow-xl transition-all cursor-pointer h-[320px] flex flex-col",
+                          "h-[320px] relative overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl",
                           isExpanded && "ring-2 ring-primary shadow-2xl"
                         )}
                         onClick={() => {
@@ -484,163 +484,161 @@ const Dashboard = () => {
                           }
                         }}
                       >
-                        {/* Image Section */}
-                        <div 
-                          className="relative w-full h-48 bg-cover bg-center flex-shrink-0"
+                        {/* Full Height Background Image */}
+                        <div
+                          className="absolute inset-0 bg-cover bg-center"
                           style={{ backgroundImage: `url(${bgImage})` }}
                         >
-                          <div className="absolute inset-0 bg-gradient-to-br from-black/60 to-black/30" />
+                          {/* Dark gradient overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+                          
+                          {/* Analyzed badge - top right */}
                           {analysis && (
-                            <Badge className="absolute top-3 right-3 bg-white/20 backdrop-blur-sm text-white border-white/30">
-                              <CheckCircle2 className="h-3 w-3 mr-1" />
+                            <Badge className="absolute top-3 right-3 bg-green-500/90 text-white border-0">
+                              <CheckCircle2 className="w-3 h-3 mr-1" />
                               Analyzed
                             </Badge>
                           )}
-                        </div>
-                        
-                        {/* Content Section */}
-                        <div className="flex-1 flex flex-col p-5 bg-card">
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-foreground text-lg mb-2 line-clamp-2">
-                              {dream.title}
-                            </h3>
-                            <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                              {dream.content}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {new Date(dream.created_at).toLocaleDateString()}
-                            </p>
+                          
+                          {/* Content overlay - bottom */}
+                          <div className="absolute inset-x-0 bottom-0 p-5 text-white flex flex-col gap-2">
+                            <h3 className="font-semibold text-lg line-clamp-2 text-white">{dream.title}</h3>
+                            <p className="text-sm text-white/80 line-clamp-2">{dream.content}</p>
+                            <div className="flex items-center justify-between mt-2">
+                              <span className="text-xs text-white/60">
+                                {new Date(dream.created_at).toLocaleDateString()}
+                              </span>
+                              {!analysis && !isAnalyzing && (
+                                <Button
+                                  size="sm"
+                                  variant="secondary"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    analyzeDream(dream.id);
+                                  }}
+                                >
+                                  <Brain className="w-3 h-3 mr-1" />
+                                  Analyze
+                                </Button>
+                              )}
+                              {isAnalyzing && (
+                                <Button
+                                  size="sm"
+                                  disabled
+                                >
+                                  <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                                  Analyzing...
+                                </Button>
+                              )}
+                            </div>
                           </div>
-                          
-                          {!analysis && !isAnalyzing && (
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                analyzeDream(dream.id);
-                              }}
-                              className="mt-4 w-full"
-                            >
-                              <Brain className="h-3 w-3 mr-2" />
-                              Analyze Dream
-                            </Button>
-                          )}
-                          
-                          {isAnalyzing && (
-                            <Button 
-                              size="sm" 
-                              disabled
-                              className="mt-4 w-full"
-                            >
-                              <Loader2 className="h-3 w-3 mr-2 animate-spin" />
-                              Analyzing...
-                            </Button>
-                          )}
                         </div>
                       </Card>
+                    );
+                  })}
+                </div>
 
-                      {/* Collapsible Analysis Section */}
-                      {analysis && isExpanded && (
-                        <Card key={`analysis-${dream.id}`} className="col-span-full border-l-4 border-l-primary bg-muted/30 animate-in slide-in-from-top-4 duration-300">
-                          <CardContent className="p-6 space-y-6">
-                            {/* Header */}
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <Sparkles className="h-5 w-5 text-primary" />
-                                <h3 className="text-lg font-semibold">
-                                  {t('dashboard.analysisSection.viewAnalysis')}
-                                </h3>
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setExpandedDreamId(null);
-                                }}
-                              >
-                                <ChevronDown className="h-4 w-4" />
-                              </Button>
+                {/* Analysis Section - Separate, Below All Cards */}
+                {expandedDreamId && analyses[expandedDreamId] && (() => {
+                  const dream = dreams.find(d => d.id === expandedDreamId);
+                  const analysis = analyses[expandedDreamId];
+                  if (!dream) return null;
+
+                  return (
+                    <Card className="mt-6 border-l-4 border-l-primary bg-muted/30 animate-in slide-in-from-top-4 duration-300">
+                      <CardContent className="p-6 space-y-6">
+                        {/* Header */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Sparkles className="h-5 w-5 text-primary" />
+                            <h3 className="text-lg font-semibold">
+                              {t('dashboard.analysisSection.viewAnalysis')} - {dream.title}
+                            </h3>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setExpandedDreamId(null)}
+                          >
+                            <ChevronDown className="h-4 w-4" />
+                          </Button>
+                        </div>
+
+                        <Separator />
+
+                        {/* Themes */}
+                        {analysis.themes && analysis.themes.length > 0 && (
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <Heart className="h-4 w-4 text-primary" />
+                              <h4 className="font-semibold text-foreground">
+                                {t('dashboard.analysisSection.themes')}
+                              </h4>
                             </div>
+                            <div className="flex flex-wrap gap-2">
+                              {analysis.themes.map((theme, idx) => (
+                                <Badge key={idx} variant="secondary">
+                                  {theme}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
 
-                            <Separator />
+                        {/* Symbols */}
+                        {analysis.symbols && analysis.symbols.length > 0 && (
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <Sparkles className="h-4 w-4 text-primary" />
+                              <h4 className="font-semibold text-foreground">
+                                {t('dashboard.analysisSection.symbols')}
+                              </h4>
+                            </div>
+                            <ul className="space-y-2">
+                              {analysis.symbols.map((symbol, idx) => (
+                                <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
+                                  <span className="text-primary mt-0.5">•</span>
+                                  <span>{formatSymbol(symbol)}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
 
-                            {/* Themes */}
-                            {analysis.themes && analysis.themes.length > 0 && (
-                              <div className="space-y-3">
-                                <div className="flex items-center gap-2">
-                                  <Heart className="h-4 w-4 text-primary" />
-                                  <h4 className="font-semibold text-foreground">
-                                    {t('dashboard.analysisSection.themes')}
-                                  </h4>
-                                </div>
-                                <div className="flex flex-wrap gap-2">
-                                  {analysis.themes.map((theme, idx) => (
-                                    <Badge key={idx} variant="secondary">
-                                      {theme}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
+                        {/* Analysis Text */}
+                        {analysis.analysis_text && (
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <Brain className="h-4 w-4 text-primary" />
+                              <h4 className="font-semibold text-foreground">
+                                {t('dashboard.analysisSection.analysis')}
+                              </h4>
+                            </div>
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                              {analysis.analysis_text}
+                            </p>
+                          </div>
+                        )}
 
-                            {/* Symbols */}
-                            {analysis.symbols && analysis.symbols.length > 0 && (
-                              <div className="space-y-3">
-                                <div className="flex items-center gap-2">
-                                  <Sparkles className="h-4 w-4 text-primary" />
-                                  <h4 className="font-semibold text-foreground">
-                                    {t('dashboard.analysisSection.symbols')}
-                                  </h4>
-                                </div>
-                                <ul className="space-y-2">
-                                  {analysis.symbols.map((symbol, idx) => (
-                                    <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
-                                      <span className="text-primary mt-0.5">•</span>
-                                      <span>{formatSymbol(symbol)}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-
-                            {/* Analysis Text */}
-                            {analysis.analysis_text && (
-                              <div className="space-y-3">
-                                <div className="flex items-center gap-2">
-                                  <Brain className="h-4 w-4 text-primary" />
-                                  <h4 className="font-semibold text-foreground">
-                                    {t('dashboard.analysisSection.analysis')}
-                                  </h4>
-                                </div>
-                                <p className="text-sm text-muted-foreground leading-relaxed">
-                                  {analysis.analysis_text}
-                                </p>
-                              </div>
-                            )}
-
-                            {/* Recommendations */}
-                            {analysis.recommendations && (
-                              <div className="space-y-3">
-                                <div className="flex items-center gap-2">
-                                  <Lightbulb className="h-4 w-4 text-primary" />
-                                  <h4 className="font-semibold text-foreground">
-                                    {t('dashboard.analysisSection.recommendations')}
-                                  </h4>
-                                </div>
-                                <p className="text-sm text-muted-foreground leading-relaxed">
-                                  {analysis.recommendations}
-                                </p>
-                              </div>
-                            )}
-                          </CardContent>
-                        </Card>
-                      )}
-                    </>
+                        {/* Recommendations */}
+                        {analysis.recommendations && (
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <Lightbulb className="h-4 w-4 text-primary" />
+                              <h4 className="font-semibold text-foreground">
+                                {t('dashboard.analysisSection.recommendations')}
+                              </h4>
+                            </div>
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                              {analysis.recommendations}
+                            </p>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
                   );
-                })}
-              </div>
+                })()}
+              </>
             )}
         </div>
       </div>
