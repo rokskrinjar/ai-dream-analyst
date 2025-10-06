@@ -75,6 +75,44 @@ interface PatternAnalysis {
 
 const COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', 'hsl(var(--secondary))', 'hsl(var(--muted))'];
 
+// Helper function to safely render text content from various formats
+const renderTextContent = (content: any): React.ReactNode => {
+  if (!content) return <p className="text-muted-foreground">Ni podatkov.</p>;
+  
+  // If it's already a string, split by paragraphs
+  if (typeof content === 'string') {
+    return content.trim().split('\n\n').map((para, idx) => (
+      <p key={idx}>{para}</p>
+    ));
+  }
+  
+  // If it's an array, handle each element
+  if (Array.isArray(content)) {
+    return content.map((item, idx) => {
+      if (typeof item === 'string') {
+        return <p key={idx}>{item}</p>;
+      }
+      if (typeof item === 'object' && item.paragraph) {
+        return <p key={idx}>{item.paragraph}</p>;
+      }
+      // Fallback for other object types
+      if (typeof item === 'object') {
+        const text = item.text || item.content || JSON.stringify(item);
+        return <p key={idx}>{text}</p>;
+      }
+      return null;
+    });
+  }
+  
+  // If it's an object, try to extract text
+  if (typeof content === 'object') {
+    const text = content.paragraph || content.text || content.content || JSON.stringify(content);
+    return <p>{text}</p>;
+  }
+  
+  return <p className="text-muted-foreground">Napaka pri prikazu vsebine.</p>;
+};
+
 const Analytics = () => {
   const { user, signOut } = useAuth();
   const { credits } = useCreditContext();
@@ -285,6 +323,12 @@ const Analytics = () => {
           hasEmotionalJourney: !!data.analysis.emotional_journey,
           themeCount: data.analysis.theme_patterns?.length || 0,
           emotionCount: data.analysis.emotional_journey?.length || 0
+        });
+        console.log('📊 Analysis structure sample:', {
+          executive_summary_type: typeof data.analysis.executive_summary,
+          executive_summary_sample: data.analysis.executive_summary?.slice?.(0, 200),
+          is_array: Array.isArray(data.analysis.executive_summary),
+          first_element: data.analysis.executive_summary?.[0]
         });
         setPatternAnalysis(data.analysis);
         
@@ -653,8 +697,7 @@ const Analytics = () => {
             }
             onError={(error) => {
               console.error('Pattern analysis rendering error:', error);
-              setPatternAnalysis(null);
-              setShowChoiceScreen(true);
+              // DON'T reset state - let ErrorBoundary fallback handle it
             }}
           >
             <>
@@ -703,16 +746,7 @@ const Analytics = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-sm text-muted-foreground leading-relaxed space-y-3">
-                  {(() => {
-                    const summary = patternAnalysis.executive_summary || patternAnalysis.overall_insights;
-                    if (!summary) {
-                      return <p className="text-orange-600">Povzetek ni na voljo za to analizo.</p>;
-                    }
-                    if (Array.isArray(summary)) {
-                      return summary.map((paragraph, idx) => <p key={idx}>{paragraph}</p>);
-                    }
-                    return summary.split('\n\n').map((paragraph, idx) => <p key={idx}>{paragraph}</p>);
-                  })()}
+                  {renderTextContent(patternAnalysis.executive_summary || patternAnalysis.overall_insights)}
                 </div>
               </CardContent>
             </Card>
@@ -845,16 +879,21 @@ const Analytics = () => {
                         💡 Ključna priporočila
                       </h4>
                       <div className="space-y-2">
-                        {patternAnalysis.recommendations.slice(0, 3).map((rec, index) => (
-                          <div key={index} className="p-3 rounded-lg bg-muted/30">
-                            <h4 className="font-medium flex items-center space-x-1">
-                              <span>• {typeof rec === 'string' ? rec : rec.action || rec}</span>
-                            </h4>
-                            {typeof rec === 'object' && rec.rationale && (
-                              <p className="text-sm text-muted-foreground mt-1">{rec.rationale}</p>
-                            )}
-                          </div>
-                        ))}
+                        {patternAnalysis.recommendations.slice(0, 3).map((rec, index) => {
+                          const text = typeof rec === 'string' ? rec : (rec.action || rec.text || JSON.stringify(rec));
+                          const rationale = typeof rec === 'object' ? rec.rationale : null;
+                          
+                          return (
+                            <div key={index} className="p-3 rounded-lg bg-muted/30">
+                              <h4 className="font-medium flex items-center space-x-1">
+                                <span>• {text}</span>
+                              </h4>
+                              {rationale && (
+                                <p className="text-sm text-muted-foreground mt-1">{rationale}</p>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -865,16 +904,7 @@ const Analytics = () => {
                         🌱 Osebna rast
                       </h4>
                       <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
-                        {(() => {
-                          const growth = patternAnalysis.personal_growth;
-                          if (Array.isArray(growth)) {
-                            return growth.map((paragraph, idx) => <p key={idx}>{paragraph}</p>);
-                          }
-                          if (typeof growth === 'string' && growth.trim()) {
-                            return growth.split('\n\n').map((paragraph, idx) => <p key={idx}>{paragraph}</p>);
-                          }
-                          return <p>Ni podatkov o osebni rasti.</p>;
-                        })()}
+                        {renderTextContent(patternAnalysis.personal_growth)}
                       </div>
                     </div>
                   )}
@@ -885,16 +915,7 @@ const Analytics = () => {
                         🔄 Predlogi za integracijo
                       </h4>
                       <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
-                        {(() => {
-                          const suggestions = patternAnalysis.integration_suggestions;
-                          if (Array.isArray(suggestions)) {
-                            return suggestions.map((paragraph, idx) => <p key={idx}>{paragraph}</p>);
-                          }
-                          if (typeof suggestions === 'string' && suggestions.trim()) {
-                            return suggestions.split('\n\n').map((paragraph, idx) => <p key={idx}>{paragraph}</p>);
-                          }
-                          return <p>Ni predlogov za integracijo.</p>;
-                        })()}
+                        {renderTextContent(patternAnalysis.integration_suggestions)}
                       </div>
                     </div>
                   )}
@@ -915,16 +936,7 @@ const Analytics = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
-                        {(() => {
-                          const insights = patternAnalysis.psychological_insights;
-                          if (Array.isArray(insights)) {
-                            return insights.map((paragraph, idx) => <p key={idx}>{paragraph}</p>);
-                          }
-                          if (typeof insights === 'string' && insights.trim()) {
-                            return insights.split('\n\n').map((paragraph, idx) => <p key={idx}>{paragraph}</p>);
-                          }
-                          return <p>Ni psiholoških uvidov.</p>;
-                        })()}
+                        {renderTextContent(patternAnalysis.psychological_insights)}
                       </div>
                     </CardContent>
                   </Card>
@@ -940,16 +952,7 @@ const Analytics = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
-                        {(() => {
-                          const analysis = patternAnalysis.life_stage_analysis;
-                          if (Array.isArray(analysis)) {
-                            return analysis.map((paragraph, idx) => <p key={idx}>{paragraph}</p>);
-                          }
-                          if (typeof analysis === 'string' && analysis.trim()) {
-                            return analysis.split('\n\n').map((paragraph, idx) => <p key={idx}>{paragraph}</p>);
-                          }
-                          return <p>Ni analize življenjske faze.</p>;
-                        })()}
+                        {renderTextContent(patternAnalysis.life_stage_analysis)}
                       </div>
                     </CardContent>
                   </Card>
@@ -965,16 +968,7 @@ const Analytics = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
-                        {(() => {
-                          const patterns = patternAnalysis.temporal_patterns;
-                          if (Array.isArray(patterns)) {
-                            return patterns.map((paragraph, idx) => <p key={idx}>{paragraph}</p>);
-                          }
-                          if (typeof patterns === 'string' && patterns.trim()) {
-                            return patterns.split('\n\n').map((paragraph, idx) => <p key={idx}>{paragraph}</p>);
-                          }
-                          return <p>Ni časovnih vzorcev.</p>;
-                        })()}
+                        {renderTextContent(patternAnalysis.temporal_patterns)}
                       </div>
                     </CardContent>
                   </Card>
