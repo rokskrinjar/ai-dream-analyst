@@ -49,6 +49,10 @@ import { CompactCreditDisplay } from '@/components/CompactCreditDisplay';
 import { CreditDisplay } from '@/components/CreditDisplay';
 import { CreditUsageModal } from '@/components/CreditUsageModal';
 import { useToast } from "@/hooks/use-toast";
+import dreamBg1 from '@/assets/dream-bg-1.jpg';
+import dreamBg2 from '@/assets/dream-bg-2.jpg';
+import dreamBg3 from '@/assets/dream-bg-3.jpg';
+import dreamBg4 from '@/assets/dream-bg-4.jpg';
 
 interface Dream {
   id: string;
@@ -450,85 +454,81 @@ const Dashboard = () => {
               </CardContent>
             </Card>
             ) : (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {dreams.slice(0, showAllDreams ? dreams.length : 8).map((dream) => {
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {dreams.slice(0, 4).map((dream, index) => {
                   const analysis = analyses[dream.id];
                   const isAnalyzing = analyzingDreams.has(dream.id);
+                  const backgroundImages = [dreamBg1, dreamBg2, dreamBg3, dreamBg4];
+                  const bgImage = backgroundImages[index % 4];
                   
                   return (
                     <Card 
                       key={dream.id} 
-                      className="border-border/50 overflow-hidden group hover:shadow-lg transition-all cursor-pointer"
+                      className="border-none overflow-hidden group hover:shadow-xl transition-all cursor-pointer h-[280px]"
                       onClick={() => !isAnalyzing && navigate(`/dream/${dream.id}`)}
                     >
-                      {/* Background with gradient overlay */}
-                      <div className="relative h-32 bg-gradient-to-br from-primary/20 via-primary/10 to-background">
-                        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cmVjdCB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2Utd2lkdGg9IjAuNSIgb3BhY2l0eT0iMC4xIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30" />
-                        {analysis && (
-                          <div className="absolute top-3 right-3">
-                            <Badge className="bg-primary/90 backdrop-blur-sm">
-                              <CheckCircle2 className="h-3 w-3 mr-1" />
-                              Analyzed
-                            </Badge>
+                      {/* Background image with overlay */}
+                      <div 
+                        className="relative h-full bg-cover bg-center"
+                        style={{ backgroundImage: `url(${bgImage})` }}
+                      >
+                        {/* Dark overlay for better text readability */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+                        
+                        {/* Content */}
+                        <div className="relative h-full flex flex-col justify-between p-5">
+                          {/* Top section with badge */}
+                          <div className="flex justify-end">
+                            {analysis && (
+                              <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30">
+                                <CheckCircle2 className="h-3 w-3 mr-1" />
+                                Analyzed
+                              </Badge>
+                            )}
                           </div>
-                        )}
+                          
+                          {/* Bottom section with text and button */}
+                          <div className="space-y-3">
+                            <div>
+                              <h3 className="font-semibold text-white text-lg mb-1 line-clamp-1">
+                                {dream.title}
+                              </h3>
+                              <p className="text-white/80 text-sm line-clamp-2">
+                                {dream.content}
+                              </p>
+                            </div>
+                            
+                            {!analysis && !isAnalyzing && (
+                              <Button 
+                                size="sm" 
+                                variant="secondary"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  analyzeDream(dream.id);
+                                }}
+                                className="w-full bg-white/20 backdrop-blur-sm text-white border-white/30 hover:bg-white/30"
+                              >
+                                <Brain className="h-3 w-3 mr-2" />
+                                Analyze Dream
+                              </Button>
+                            )}
+                            
+                            {isAnalyzing && (
+                              <Button 
+                                size="sm" 
+                                disabled
+                                className="w-full bg-white/20 backdrop-blur-sm text-white"
+                              >
+                                <Loader2 className="h-3 w-3 mr-2 animate-spin" />
+                                Analyzing...
+                              </Button>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                      
-                      {/* Content */}
-                      <CardContent className="p-4">
-                        <h3 className="font-semibold text-foreground mb-1 line-clamp-1">
-                          {dream.title}
-                        </h3>
-                        <p className="text-xs text-muted-foreground mb-3">
-                          {new Date(dream.dream_date).toLocaleDateString('sl-SI', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric'
-                          })}
-                        </p>
-                        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                          {dream.content}
-                        </p>
-                        
-                        {!analysis && !isAnalyzing && (
-                          <Button 
-                            size="sm" 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              analyzeDream(dream.id);
-                            }}
-                            className="w-full"
-                          >
-                            <Brain className="h-3 w-3 mr-2" />
-                            Analyze Dream
-                          </Button>
-                        )}
-                        
-                        {isAnalyzing && (
-                          <Button 
-                            size="sm" 
-                            disabled
-                            className="w-full"
-                          >
-                            <Loader2 className="h-3 w-3 mr-2 animate-spin" />
-                            Analyzing...
-                          </Button>
-                        )}
-                      </CardContent>
                     </Card>
                   );
                 })}
-              </div>
-            )}
-            
-            {dreams.length > 8 && (
-              <div className="mt-6 text-center">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowAllDreams(!showAllDreams)}
-                >
-                  {showAllDreams ? 'Show less' : 'Show all dreams'}
-                </Button>
               </div>
             )}
         </div>
