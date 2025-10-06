@@ -220,7 +220,7 @@ const Analytics = () => {
         const recentDreams = dreamsData.slice(0, 30);
         const inputSize = JSON.stringify(recentDreams).length + JSON.stringify(analysesData).length;
         const estimatedTokens = Math.ceil(inputSize / 4);
-        const cost = Math.max(2, Math.ceil(estimatedTokens / 2000));
+        const cost = Math.max(2, Math.ceil(estimatedTokens / 15000)); // Realistic cost: ~5-10 credits for 30 dreams
         setEstimatedCost(cost);
       }
         
