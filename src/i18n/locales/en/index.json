@@ -10,28 +10,76 @@
     "startFree": "Start Free",
     "viewPricing": "View Pricing"
   },
-  "aboutDreams": {
-    "title": "Why are dreams important?",
-    "subtitle": "Dreams are a physiological and psychological conscious state that occurs during sleep. They include images, thoughts, and emotions that reflect our experiences and unconscious processes.",
-    "analyzeNow": "Analyze your dreams now",
-    "facts": {
-      "everyoneDreams": {
-        "title": "Everyone Dreams",
-        "description": "Although 7% of people claim they don't dream, science confirms that everyone dreams during REM sleep"
-      },
-      "freud": {
-        "title": "Freud's Theory",
-        "description": "Dreams are outlets for unfulfilled desires and allow release of unconscious needs"
-      },
-      "jung": {
-        "title": "Jungian Archetypes",
-        "description": "Each individual stores symbols and patterns in the collective unconscious"
-      },
+  "scienceBehindDreams": {
+    "title": "🧠 The Science Behind Dreams",
+    "subtitle": "Modern neuroscience reveals how dreams shape our mental health, creativity, and self-awareness",
+    "tabs": {
       "emotional": {
-        "title": "Emotional Processing",
-        "description": "The brain works more on an emotional level during sleep and creates connections"
+        "title": "Emotional Regulator",
+        "heading": "Dreams Are the Mind's Emotional Regulator",
+        "description": "Modern neuroscience shows that dreaming plays a critical role in emotional processing. During REM sleep, your brain replays emotional experiences in a safe, simulated environment — helping you process fear, sadness, and stress without waking stress hormones.",
+        "quote": "Dreaming is like overnight therapy — it takes the sting out of painful memories.",
+        "quoteAuthor": "Dr. Matthew Walker, neuroscientist, UC Berkeley",
+        "points": [
+          "Brain replays emotional experiences in a safe, simulated environment",
+          "Helps process fear, sadness, and stress without waking stress hormones",
+          "REM dreaming reduces emotional intensity of past experiences",
+          "Improves mood stability over time"
+        ],
+        "research": "Studies from Harvard Medical School (Matthew Walker, Robert Stickgold)"
+      },
+      "creativity": {
+        "title": "Memory & Creativity",
+        "heading": "Dreams Connect Memory, Learning, and Creativity",
+        "description": "Dreams weave together fragments of memory, forming new associations that boost problem-solving and creativity. The sleeping brain links old and new memories, allowing for intuitive leaps that waking logic might miss.",
+        "points": [
+          "Brain links old and new memories during sleep",
+          "Better insight and creative performance after dream recall",
+          "Intuitive leaps that waking logic might miss",
+          "Artists and scientists credit dreams for breakthroughs"
+        ],
+        "examples": "Paul McCartney's 'Yesterday', discovery of the benzene ring",
+        "research": "MIT and University of Helsinki studies"
+      },
+      "mentalHealth": {
+        "title": "Mental Health",
+        "heading": "Patterns in Dreams Reflect Mental Health",
+        "description": "Clinical research links recurring dream themes and emotional tone to mental health states. Nightmares or repetitive conflict themes often correlate with unresolved stress or anxiety, while positive, coherent dream narratives indicate emotional integration and resilience.",
+        "points": [
+          "Nightmares correlate with unresolved stress or anxiety",
+          "Positive dream narratives indicate emotional resilience",
+          "Dream tracking acts as psychological early-warning system",
+          "Long-term patterns reveal mental health trends"
+        ],
+        "research": "Clinical research in dream psychology"
+      },
+      "recall": {
+        "title": "Dream Journaling",
+        "heading": "Recording Dreams Strengthens Recall and Insight",
+        "description": "Keeping a dream journal increases dream recall frequency and depth of detail. Neuroscientific studies show that journaling activates the hippocampus, improving memory consolidation. Writing down dreams turns fleeting subconscious patterns into tangible data you can explore and learn from.",
+        "points": [
+          "Journaling activates the hippocampus",
+          "Improves memory consolidation",
+          "Turns fleeting patterns into tangible data",
+          "The more you record, the more you recall"
+        ],
+        "research": "Neuroscientific studies on dream journaling"
+      },
+      "selfAwareness": {
+        "title": "Self-Awareness",
+        "heading": "Analyzing Dreams Promotes Self-Awareness and Growth",
+        "description": "Reflecting on dream patterns provides a unique perspective on personal evolution. Psychologists from the Jungian and cognitive schools agree that dreams reveal core motivations, fears, and values in symbolic form.",
+        "points": [
+          "Dreams reveal core motivations, fears, and values",
+          "Pattern analysis uncovers recurring life themes",
+          "Tracks emotional journey and growth arcs",
+          "Shows personal transitions over time"
+        ],
+        "summary": "Dreams are the language of your subconscious. Recording and analyzing them is how you learn to listen.",
+        "research": "Jungian and cognitive psychology schools"
       }
-    }
+    },
+    "cta": "Start Your Dream Journey"
   },
   "features": {
     "title": "Advanced features for dream analysis",

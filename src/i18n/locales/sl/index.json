@@ -10,28 +10,76 @@
     "startFree": "Začni brezplačno",
     "viewPricing": "Poglej cene"
   },
-  "aboutDreams": {
-    "title": "Zakaj so sanje pomembne?",
-    "subtitle": "Sanje so fiziološko in psihološko zavestno stanje, ki se pojavi med spanjem. Vključujejo slike, misli in čustva, ki odražajo naša doživljanja, izkušnje in nezavedne procese.",
-    "analyzeNow": "Analiziraj svoje sanje zdaj",
-    "facts": {
-      "everyoneDreams": {
-        "title": "Vsi sanjamo",
-        "description": "Kljub temu da 7% ljudi trdi, da ne sanja, znanost potrjuje, da vsi sanjamo med REM fazo spanja"
-      },
-      "freud": {
-        "title": "Freudova teorija",
-        "description": "Sanje so ventili za nepotešene želje in omogočajo sprostitev nezavednih potreb"
-      },
-      "jung": {
-        "title": "Jungovi arhetipi",
-        "description": "Vsak posameznik shranjuje simbole in vzorce v kolektivnem nezavednem"
-      },
+  "scienceBehindDreams": {
+    "title": "🧠 Znanost o Sanjah",
+    "subtitle": "Moderna nevroznanost razkriva, kako sanje oblikujejo naše duševno zdravje, ustvarjalnost in samozavedanje",
+    "tabs": {
       "emotional": {
-        "title": "Čustveno procesiranje",
-        "description": "Možgani med spanjem bolj delujejo na čustveni ravni in ustvarijo povezave"
+        "title": "Čustveni Regulator",
+        "heading": "Sanje so Čustveni Regulator Uma",
+        "description": "Moderna nevroznanost kaže, da sanjanje igra ključno vlogo pri čustvenem procesiranju. Med REM spanjem možgani ponovno predvajajo čustvene izkušnje v varnem, simuliranem okolju — pomagajo vam obdelati strah, žalost in stres brez aktivacije stresnih hormonov.",
+        "quote": "Sanjanje je kot nočna terapija — odvzame ostrino bolečih spominov.",
+        "quoteAuthor": "Dr. Matthew Walker, nevroznanstvenik, UC Berkeley",
+        "points": [
+          "Možgani ponovno predvajajo čustvene izkušnje v varnem okolju",
+          "Pomaga obdelati strah, žalost in stres brez stresnih hormonov",
+          "REM sanjanje zmanjšuje čustveno intenzivnost preteklih izkušenj",
+          "Izboljšuje stabilnost razpoloženja skozi čas"
+        ],
+        "research": "Študije Harvardske medicinske fakultete (Matthew Walker, Robert Stickgold)"
+      },
+      "creativity": {
+        "title": "Spomin in Kreativnost",
+        "heading": "Sanje Povezujejo Spomin, Učenje in Ustvarjalnost",
+        "description": "Sanje prepletajo fragmente spomina in oblikujejo nove povezave, ki izboljšujejo reševanje problemov in kreativnost. Možgani med spanjem povezujejo stare in nove spomine, omogočajo intuitivne skoke, ki jih budna logika ne zmore.",
+        "points": [
+          "Možgani med spanjem povezujejo stare in nove spomine",
+          "Boljši vpogled in kreativna uspešnost po spominjanju sanj",
+          "Intuitivni skoki, ki jih budna logika ne zmore",
+          "Umetniki in znanstveniki pripisujejo sanjam preboje"
+        ],
+        "examples": "Paul McCartney 'Yesterday', odkritje benzenskega obroča",
+        "research": "Študije MIT in Univerze v Helsinkih"
+      },
+      "mentalHealth": {
+        "title": "Duševno Zdravje",
+        "heading": "Vzorci v Sanjah Odražajo Duševno Zdravje",
+        "description": "Klinične raziskave povezujejo ponavljajoče se teme sanj in čustveni ton s stanji duševnega zdravja. Nočne more ali ponavljajoče se konfliktne teme pogosto korelirajo z nerešenim stresom ali tesnobo, medko pozitivne, koherentne sanje kažejo na čustveno integracijo in odpornost.",
+        "points": [
+          "Nočne more korelirajo z nerešenim stresom ali tesnobo",
+          "Pozitivne sanje kažejo na čustveno odpornost",
+          "Sledenje sanjam deluje kot psihološki sistem zgodnjega opozarjanja",
+          "Dolgoročni vzorci razkrivajo trende duševnega zdravja"
+        ],
+        "research": "Klinične raziskave v psihologiji sanj"
+      },
+      "recall": {
+        "title": "Dnevnik Sanj",
+        "heading": "Beleženje Sanj Krepi Spomin in Vpogled",
+        "description": "Vodenje dnevnika sanj povečuje pogostost in globino spominjanja sanj. Nevroznanstvene študije kažejo, da beleženje aktivira hipokampus in izboljšuje konsolidacijo spomina. Zapisovanje sanj spremeni minljive vzorce v otipljive podatke, ki jih lahko raziskujete.",
+        "points": [
+          "Beleženje aktivira hipokampus",
+          "Izboljšuje konsolidacijo spomina",
+          "Spremeni minljive vzorce v otipljive podatke",
+          "Več kot beležite, več si zapomnite"
+        ],
+        "research": "Nevroznanstvene študije o beleženju sanj"
+      },
+      "selfAwareness": {
+        "title": "Samozavedanje",
+        "heading": "Analiza Sanj Spodbuja Samozavedanje in Rast",
+        "description": "Razmišljanje o vzorcih sanj ponuja edinstveno perspektivo na osebno evolucijo. Psihologi iz Jungove in kognitivne šole se strinjajo, da sanje razkrivajo osnovne motivacije, strahove in vrednote v simbolični obliki.",
+        "points": [
+          "Sanje razkrivajo osnovne motivacije, strahove in vrednote",
+          "Analiza vzorcev odkrije ponavljajoče se življenjske teme",
+          "Sledi čustveni poti in rastnim lokom",
+          "Prikazuje osebne prehode skozi čas"
+        ],
+        "summary": "Sanje so jezik vaše podzavesti. Beleženje in analiza je način, kako se naučite poslušati.",
+        "research": "Jungova in kognitivna psihološka šola"
       }
-    }
+    },
+    "cta": "Začni Svojo Pot Sanj"
   },
   "features": {
     "title": "Napredne funkcije za analizo sanj",

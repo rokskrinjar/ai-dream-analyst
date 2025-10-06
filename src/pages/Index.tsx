@@ -2,7 +2,8 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Brain, Sparkles, ArrowRight, TrendingUp, Moon, Eye, Heart, Lightbulb, Users, Shield, Star, Zap } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BookOpen, Brain, Sparkles, ArrowRight, TrendingUp, Moon, Eye, Heart, Lightbulb, Users, Shield, Star, Zap, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { TestimonialSection } from "@/components/TestimonialSection";
 import { FAQSection } from "@/components/FAQSection";
@@ -175,42 +176,160 @@ const Index = () => {
         </section>
 
 
-        {/* About Dreams Section */}
-        <section id="about-dreams" className="container mx-auto px-4 py-16 bg-muted/30">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              {t('aboutDreams.title')}
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              {t('aboutDreams.description')}
-            </p>
+        {/* Science Behind Dreams Section */}
+        <section id="science-behind-dreams" className="container mx-auto px-4 py-16 bg-muted/30">
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t("index:scienceBehindDreams.title")}</h2>
+            <p className="text-lg text-muted-foreground">{t("index:scienceBehindDreams.subtitle")}</p>
           </div>
+          
+          <Tabs defaultValue="emotional" className="max-w-6xl mx-auto">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-2 h-auto bg-background/60 backdrop-blur-sm p-2">
+              <TabsTrigger value="emotional" className="flex flex-col items-center gap-2 py-3 data-[state=active]:bg-primary/10">
+                <Brain className="h-5 w-5" />
+                <span className="text-xs md:text-sm">{t("index:scienceBehindDreams.tabs.emotional.title")}</span>
+              </TabsTrigger>
+              <TabsTrigger value="creativity" className="flex flex-col items-center gap-2 py-3 data-[state=active]:bg-primary/10">
+                <Sparkles className="h-5 w-5" />
+                <span className="text-xs md:text-sm">{t("index:scienceBehindDreams.tabs.creativity.title")}</span>
+              </TabsTrigger>
+              <TabsTrigger value="mentalHealth" className="flex flex-col items-center gap-2 py-3 data-[state=active]:bg-primary/10">
+                <TrendingUp className="h-5 w-5" />
+                <span className="text-xs md:text-sm">{t("index:scienceBehindDreams.tabs.mentalHealth.title")}</span>
+              </TabsTrigger>
+              <TabsTrigger value="recall" className="flex flex-col items-center gap-2 py-3 data-[state=active]:bg-primary/10">
+                <BookOpen className="h-5 w-5" />
+                <span className="text-xs md:text-sm">{t("index:scienceBehindDreams.tabs.recall.title")}</span>
+              </TabsTrigger>
+              <TabsTrigger value="selfAwareness" className="flex flex-col items-center gap-2 py-3 data-[state=active]:bg-primary/10">
+                <Eye className="h-5 w-5" />
+                <span className="text-xs md:text-sm">{t("index:scienceBehindDreams.tabs.selfAwareness.title")}</span>
+              </TabsTrigger>
+            </TabsList>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-            {dreamFacts.map((fact, index) => (
-              <Card key={index} className="border-border/50 hover:shadow-lg transition-all duration-300">
-                <CardHeader className="text-center pb-4">
-                  <CardTitle className="text-lg text-foreground">
-                    {fact.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-center text-muted-foreground">
-                    {fact.description}
-                  </CardDescription>
-                </CardContent>
+            {/* Emotional Tab */}
+            <TabsContent value="emotional" className="mt-8 space-y-6">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold mb-4">{t("index:scienceBehindDreams.tabs.emotional.heading")}</h3>
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">{t("index:scienceBehindDreams.tabs.emotional.description")}</p>
+              </div>
+
+              <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-l-4 border-primary p-6 max-w-3xl mx-auto">
+                <p className="text-lg italic mb-2">"{t("index:scienceBehindDreams.tabs.emotional.quote")}"</p>
+                <p className="text-sm text-muted-foreground">— {t("index:scienceBehindDreams.tabs.emotional.quoteAuthor")}</p>
               </Card>
-            ))}
-          </div>
 
-          <div className="text-center">
-            <Button 
-              size="lg"
-              className="font-semibold px-8 py-3"
-              onClick={() => navigate('/auth')}
-            >
-              <Brain className="mr-2 h-5 w-5" />
-              {t('aboutDreams.cta')}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+                {(t("index:scienceBehindDreams.tabs.emotional.points", { returnObjects: true }) as string[]).map((point, idx) => (
+                  <Card key={idx} className="p-4 hover-scale">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                      <p className="text-sm">{point}</p>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+
+              <p className="text-sm text-center text-muted-foreground italic">{t("index:scienceBehindDreams.tabs.emotional.research")}</p>
+            </TabsContent>
+
+            {/* Creativity Tab */}
+            <TabsContent value="creativity" className="mt-8 space-y-6">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold mb-4">{t("index:scienceBehindDreams.tabs.creativity.heading")}</h3>
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">{t("index:scienceBehindDreams.tabs.creativity.description")}</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+                {(t("index:scienceBehindDreams.tabs.creativity.points", { returnObjects: true }) as string[]).map((point, idx) => (
+                  <Card key={idx} className="p-4 hover-scale">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                      <p className="text-sm">{point}</p>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+
+              <Card className="bg-accent/50 p-6 max-w-3xl mx-auto">
+                <p className="text-center"><span className="font-semibold">Famous breakthroughs: </span>{t("index:scienceBehindDreams.tabs.creativity.examples")}</p>
+              </Card>
+
+              <p className="text-sm text-center text-muted-foreground italic">{t("index:scienceBehindDreams.tabs.creativity.research")}</p>
+            </TabsContent>
+
+            {/* Mental Health Tab */}
+            <TabsContent value="mentalHealth" className="mt-8 space-y-6">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold mb-4">{t("index:scienceBehindDreams.tabs.mentalHealth.heading")}</h3>
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">{t("index:scienceBehindDreams.tabs.mentalHealth.description")}</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+                {(t("index:scienceBehindDreams.tabs.mentalHealth.points", { returnObjects: true }) as string[]).map((point, idx) => (
+                  <Card key={idx} className="p-4 hover-scale">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                      <p className="text-sm">{point}</p>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+
+              <p className="text-sm text-center text-muted-foreground italic">{t("index:scienceBehindDreams.tabs.mentalHealth.research")}</p>
+            </TabsContent>
+
+            {/* Recall Tab */}
+            <TabsContent value="recall" className="mt-8 space-y-6">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold mb-4">{t("index:scienceBehindDreams.tabs.recall.heading")}</h3>
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">{t("index:scienceBehindDreams.tabs.recall.description")}</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+                {(t("index:scienceBehindDreams.tabs.recall.points", { returnObjects: true }) as string[]).map((point, idx) => (
+                  <Card key={idx} className="p-4 hover-scale">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                      <p className="text-sm">{point}</p>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+
+              <p className="text-sm text-center text-muted-foreground italic">{t("index:scienceBehindDreams.tabs.recall.research")}</p>
+            </TabsContent>
+
+            {/* Self-Awareness Tab */}
+            <TabsContent value="selfAwareness" className="mt-8 space-y-6">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold mb-4">{t("index:scienceBehindDreams.tabs.selfAwareness.heading")}</h3>
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">{t("index:scienceBehindDreams.tabs.selfAwareness.description")}</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+                {(t("index:scienceBehindDreams.tabs.selfAwareness.points", { returnObjects: true }) as string[]).map((point, idx) => (
+                  <Card key={idx} className="p-4 hover-scale">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                      <p className="text-sm">{point}</p>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+
+              <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-l-4 border-primary p-6 max-w-3xl mx-auto">
+                <p className="text-lg font-semibold text-center">{t("index:scienceBehindDreams.tabs.selfAwareness.summary")}</p>
+              </Card>
+
+              <p className="text-sm text-center text-muted-foreground italic">{t("index:scienceBehindDreams.tabs.selfAwareness.research")}</p>
+            </TabsContent>
+          </Tabs>
+
+          <div className="text-center mt-12">
+            <Button size="lg" onClick={() => navigate('/auth')} className="gap-2">
+              <Sparkles className="h-5 w-5" />
+              {t("index:scienceBehindDreams.cta")}
             </Button>
           </div>
         </section>
@@ -397,7 +516,7 @@ const Index = () => {
                     size="lg"
                     className="font-semibold px-8 py-4 text-xl glass-card hover:bg-primary/5"
                     onClick={() => {
-                      document.getElementById('about-dreams')?.scrollIntoView({ 
+                      document.getElementById('science-behind-dreams')?.scrollIntoView({ 
                         behavior: 'smooth' 
                       });
                     }}
