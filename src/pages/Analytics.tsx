@@ -34,6 +34,7 @@ interface DreamAnalysis {
   emotions?: string[];
   symbols?: string[];
   analysis_text: string;
+  image_url?: string;
   created_at: string;
 }
 
@@ -296,8 +297,10 @@ const Analytics = () => {
       console.log('  - dreams count:', dreams.length);
       console.log('  - analyses count:', analyses.length);
       
+      // Strip out image_url to avoid sending massive base64 images
+      const analysesWithoutImages = analyses.map(({ image_url, ...rest }) => rest);
       const { data, error } = await supabase.functions.invoke('analyze-dream-patterns', {
-        body: { dreams, analyses, forceRefresh }
+        body: { dreams, analyses: analysesWithoutImages, forceRefresh }
       });
 
       console.log('📥 Edge function response:', { data, error });
