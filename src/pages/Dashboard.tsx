@@ -229,6 +229,24 @@ const Dashboard = () => {
     });
 
     try {
+      // Validate session before calling edge function
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session) {
+        console.log('Session invalid, attempting refresh...');
+        // Try to refresh the session
+        const { data: { session: newSession }, error: refreshError } = await supabase.auth.refreshSession();
+        if (refreshError || !newSession) {
+          toast({
+            title: "Session expired",
+            description: "Please log in again.",
+            variant: "destructive",
+          });
+          navigate('/auth');
+          return;
+        }
+        console.log('Session refreshed successfully');
+      }
+
       // Deduct credits first (optimistic update)
       const success = await deductCredits(1);
       if (!success && !isUnlimited) {
@@ -245,6 +263,16 @@ const Dashboard = () => {
       });
 
       if (error) {
+        // Handle session expiry specifically
+        if (error.message?.includes('SESSION_EXPIRED') || error.message?.includes('Auth session missing')) {
+          toast({
+            title: "Session expired",
+            description: "Please log in again.",
+            variant: "destructive",
+          });
+          navigate('/auth');
+          return;
+        }
         if (error.message?.includes('402')) {
           toast({
             title: "Ni dovolj kreditov",

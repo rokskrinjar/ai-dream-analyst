@@ -54,7 +54,36 @@ serve(async (req) => {
     const { data: { user }, error: userError } = await supabaseAuth.auth.getUser();
     
     if (userError || !user) {
-      console.error('Auth error:', userError);
+      console.error('Auth error details:', {
+        error: userError?.message,
+        errorName: userError?.name,
+        hasAuthHeader: !!authHeader,
+        authHeaderLength: authHeader?.length || 0
+      });
+      
+      // Distinguish between different auth error types
+      if (userError?.message?.includes('expired') || userError?.name === 'AuthSessionMissingError') {
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: 'Session expired. Please refresh the page and log in again.',
+          errorCode: 'SESSION_EXPIRED'
+        }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
+      if (!authHeader) {
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: 'Missing authentication. Please log in.',
+          errorCode: 'AUTH_MISSING'
+        }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
       throw new Error('Invalid authentication token');
     }
 
