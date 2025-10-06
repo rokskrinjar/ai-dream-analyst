@@ -48,6 +48,7 @@ export type Database = {
           dream_id: string
           emotions: string[] | null
           id: string
+          language: string
           recommendations: string | null
           reflection_questions: string[] | null
           symbols: string[] | null
@@ -59,6 +60,7 @@ export type Database = {
           dream_id: string
           emotions?: string[] | null
           id?: string
+          language?: string
           recommendations?: string | null
           reflection_questions?: string[] | null
           symbols?: string[] | null
@@ -70,6 +72,7 @@ export type Database = {
           dream_id?: string
           emotions?: string[] | null
           id?: string
+          language?: string
           recommendations?: string | null
           reflection_questions?: string[] | null
           symbols?: string[] | null
@@ -142,6 +145,7 @@ export type Database = {
           created_at: string
           dreams_count: number
           id: string
+          language: string
           last_dream_date: string
           updated_at: string
           user_id: string
@@ -152,6 +156,7 @@ export type Database = {
           created_at?: string
           dreams_count: number
           id?: string
+          language?: string
           last_dream_date: string
           updated_at?: string
           user_id: string
@@ -162,6 +167,7 @@ export type Database = {
           created_at?: string
           dreams_count?: number
           id?: string
+          language?: string
           last_dream_date?: string
           updated_at?: string
           user_id?: string
@@ -173,6 +179,7 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          preferred_language: string
           updated_at: string
           user_id: string
         }
@@ -180,6 +187,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          preferred_language?: string
           updated_at?: string
           user_id: string
         }
@@ -187,6 +195,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          preferred_language?: string
           updated_at?: string
           user_id?: string
         }

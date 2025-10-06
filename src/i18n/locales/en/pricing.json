@@ -1,0 +1,41 @@
+{
+  "title": "Choose Your Plan",
+  "subtitle": "Select the plan that fits your needs",
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "yearlyDiscount": "2 months free",
+  "perMonth": "per month",
+  "perYear": "per year",
+  "currentPlan": "Current Plan",
+  "selectPlan": "Select Plan",
+  "processing": "Processing...",
+  "free": {
+    "name": "Free",
+    "description": "Perfect for beginners",
+    "feature1": "5 AI analyses per month",
+    "feature2": "Basic dream insights",
+    "feature3": "Mood tracking",
+    "feature4": "Dream search"
+  },
+  "premium": {
+    "name": "Premium",
+    "description": "For regular users",
+    "feature1": "50 AI analyses per month",
+    "feature2": "Advanced dream insights",
+    "feature3": "Pattern analysis",
+    "feature4": "Priority support",
+    "feature5": "Data export"
+  },
+  "unlimited": {
+    "name": "Unlimited",
+    "description": "For professionals",
+    "feature1": "Unlimited AI analyses",
+    "feature2": "All premium insights",
+    "feature3": "Personalized trends",
+    "feature4": "Dedicated support",
+    "feature5": "Early access to features"
+  },
+  "errors": {
+    "checkoutFailed": "Failed to create checkout session"
+  }
+}

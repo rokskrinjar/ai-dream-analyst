@@ -1,0 +1,28 @@
+{
+  "title": "Moj račun",
+  "profile": "Profil",
+  "displayName": "Prikazno ime",
+  "displayNamePlaceholder": "Vaše ime",
+  "email": "Email",
+  "updateProfile": "Posodobi profil",
+  "updating": "Posodabljam...",
+  "subscription": "Naročnina",
+  "currentPlan": "Trenutni paket",
+  "status": "Status",
+  "creditsRemaining": "Preostali krediti",
+  "creditsUsed": "Uporabljeni krediti ta mesec",
+  "lastReset": "Zadnja ponastavitev",
+  "unlimited": "Neomejeno",
+  "viewPlans": "Prikaži pakete",
+  "manageSubscription": "Upravljaj naročnino",
+  "active": "Aktiven",
+  "inactive": "Neaktiven",
+  "errors": {
+    "fetchFailed": "Napaka pri nalaganju podatkov",
+    "updateFailed": "Napaka pri posodabljanju profila",
+    "portalFailed": "Napaka pri odpiranju portala"
+  },
+  "success": {
+    "updated": "Profil uspešno posodobljen!"
+  }
+}

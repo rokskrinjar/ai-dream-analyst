@@ -1,0 +1,111 @@
+{
+  "hero": {
+    "rating": "4.9/5 ocena",
+    "users": "10,000+ uporabnikov",
+    "private": "100% zasebno",
+    "title": "Lovilec Sanj",
+    "subtitle": "Odkrijte skrita sporočila svojih sanj z močjo umetne inteligence. Analizirajte vzorce, razumejte simboliko in pridobite osebne vpoglede v svoj notranji svet.",
+    "newFeature": "Nova AI analiza",
+    "newFeatureDesc": "Posodobljena z GPT-4o",
+    "startFree": "Začni brezplačno",
+    "viewPricing": "Poglej cene"
+  },
+  "aboutDreams": {
+    "title": "Zakaj so sanje pomembne?",
+    "subtitle": "Sanje so fiziološko in psihološko zavestno stanje, ki se pojavi med spanjem. Vključujejo slike, misli in čustva, ki odražajo naša doživljanja, izkušnje in nezavedne procese.",
+    "analyzeNow": "Analiziraj svoje sanje zdaj",
+    "facts": {
+      "everyoneDreams": {
+        "title": "Vsi sanjamo",
+        "description": "Kljub temu da 7% ljudi trdi, da ne sanja, znanost potrjuje, da vsi sanjamo med REM fazo spanja"
+      },
+      "freud": {
+        "title": "Freudova teorija",
+        "description": "Sanje so ventili za nepotešene želje in omogočajo sprostitev nezavednih potreb"
+      },
+      "jung": {
+        "title": "Jungovi arhetipi",
+        "description": "Vsak posameznik shranjuje simbole in vzorce v kolektivnem nezavednem"
+      },
+      "emotional": {
+        "title": "Čustveno procesiranje",
+        "description": "Možgani med spanjem bolj delujejo na čustveni ravni in ustvarijo povezave"
+      }
+    }
+  },
+  "features": {
+    "title": "Napredne funkcije za analizo sanj",
+    "subtitle": "Kombiniramo najnovejše dosežke umetne inteligence z globokimi psihološkimi teorijami Freuda in Junga",
+    "journal": {
+      "title": "Dnevnik sanj",
+      "description": "Enostavno beležite in organizirajte svoje sanje z intuitivnim vmesnikom"
+    },
+    "aiAnalysis": {
+      "title": "AI analiza",
+      "description": "Napredne algoritme prepoznajo vzorce in vam nudijo osebne vpoglede"
+    },
+    "insights": {
+      "title": "Osebni vpogledi",
+      "description": "Odkrijte povezave med vašimi sanjami in vsakodnevnim življenjem"
+    },
+    "rem": {
+      "title": "REM analiza",
+      "description": "Razumejte različne faze spanja in kako vplivajo na vaše sanje"
+    },
+    "symbolism": {
+      "title": "Simbolika sanj",
+      "description": "Odkrijte pomen simbolov v vaših sanjah z arhetipskim pristopom"
+    },
+    "emotional": {
+      "title": "Čustvena analiza",
+      "description": "Analizirajte čustvene vzorce in njihov vpliv na vsakdanje življenje"
+    }
+  },
+  "howItWorks": {
+    "title": "Kako deluje analiza sanj?",
+    "subtitle": "Preprost proces v štirih korakih za globlje razumevanje vaših sanj",
+    "steps": {
+      "record": {
+        "title": "Beležite sanje",
+        "description": "Takoj po prebujenju zapišite svoje sanje v dnevnik"
+      },
+      "analyze": {
+        "title": "AI analiza",
+        "description": "Naša umetna inteligenca analizira vzorce in simboliko"
+      },
+      "insights": {
+        "title": "Osebni vpogledi",
+        "description": "Prejmite personalizirane interpretacije na podlagi psiholoških teorij"
+      },
+      "track": {
+        "title": "Sledite napredku",
+        "description": "Opazujte dolgoročne vzorce in čustvene spremembe"
+      }
+    }
+  },
+  "science": {
+    "title": "Znanstvena podlaga",
+    "subtitle": "Naša analiza temelji na priznajih psiholoških teorijah in modernih raziskavah spanja",
+    "freud": {
+      "title": "Freudova teorija",
+      "description": "Sigmund Freud je opredelil sanje kot \"ventile\" za nepotešene želje in nezavedne impulze. Sanje nam omogočajo, da potešimo nagone, zaradi katerih smo nemirni, in razkrijejo potlačene misli ter spomini.",
+      "tag": "Nezavedno procesiranje"
+    },
+    "jung": {
+      "title": "Jungovi arhetipi",
+      "description": "Carl Gustav Jung je predstavil teorijo kolektivnega nezavednega in arhetipov. Vsak posameznik shranjuje simbole in vzorce, ki se izražajo skozi sanje in nosijo pomembna sporočila podzavesti.",
+      "tag": "Simbolika in vzorci"
+    },
+    "discover": "Odkrijte svojo simboliko sanj"
+  },
+  "cta": {
+    "badge": "Začni danes brezplačno",
+    "title": "Pripravljen odkrivati",
+    "titleHighlight": "skrivnosti svojih sanj?",
+    "description": "Pridruži se več kot 10,000 uporabnikom, ki že raziskujejo vzorce svojih sanj in izboljšujejo razumevanje svojega notranjega sveta z znanstveno podprto AI analizo.",
+    "register": "Registriraj se brezplačno",
+    "noCreditCard": "Brez kreditne kartice",
+    "fullAccess": "Popoln dostop do osnovnih funkcij",
+    "cancel": "Prekličite kadarkoli"
+  }
+}

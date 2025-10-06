@@ -1,17 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, Brain, Mail, Lock } from 'lucide-react';
+import { ArrowLeft, Brain, Mail, Lock, Globe } from 'lucide-react';
 
 const Auth = () => {
+  const { t, i18n } = useTranslation(['auth', 'common']);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState('sl');
   const [isLoading, setIsLoading] = useState(false);
   const { signUp, signIn, user } = useAuth();
   const navigate = useNavigate();
@@ -26,26 +30,27 @@ const Auth = () => {
     e.preventDefault();
     if (!email || !password) {
       toast({
-        title: "Napaka",
-        description: "Prosimo, vnesite email in geslo.",
+        title: t('common:error'),
+        description: t('auth:errors.emptyFields'),
         variant: "destructive",
       });
       return;
     }
 
     setIsLoading(true);
-    const { error } = await signUp(email, password);
+    await i18n.changeLanguage(selectedLanguage);
+    const { error } = await signUp(email, password, selectedLanguage);
     
     if (error) {
       toast({
-        title: "Napaka pri registraciji",
+        title: t('auth:errors.signUpFailed'),
         description: error.message,
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Uspešna registracija!",
-        description: "Dobrodošli v aplikaciji Lovilec Sanj.",
+        title: t('auth:success.signUpComplete'),
+        description: t('auth:success.signUpMessage'),
       });
     }
     setIsLoading(false);
@@ -55,8 +60,8 @@ const Auth = () => {
     e.preventDefault();
     if (!email || !password) {
       toast({
-        title: "Napaka",
-        description: "Prosimo, vnesite email in geslo.",
+        title: t('common:error'),
+        description: t('auth:errors.emptyFields'),
         variant: "destructive",
       });
       return;
@@ -67,14 +72,14 @@ const Auth = () => {
     
     if (error) {
       toast({
-        title: "Napaka pri prijavi",
+        title: t('auth:errors.signInFailed'),
         description: error.message,
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Uspešna prijava!",
-        description: "Dobrodošli nazaj.",
+        title: t('auth:success.signInComplete'),
+        description: t('auth:success.signInMessage'),
       });
     }
     setIsLoading(false);
@@ -90,32 +95,32 @@ const Auth = () => {
             className="mb-4 p-2"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Nazaj
+            {t('common:back')}
           </Button>
           
           <div className="text-center">
             <div className="flex items-center justify-center mb-4">
               <Brain className="h-8 w-8 text-primary mr-2" />
-              <h1 className="text-2xl font-bold text-foreground">Lovilec Sanj</h1>
+              <h1 className="text-2xl font-bold text-foreground">{t('common:appName')}</h1>
             </div>
             <p className="text-muted-foreground">
-              Pridružite se in začnite analizirati svoje sanje
+              {t('auth:joinMessage')}
             </p>
           </div>
         </div>
 
         <Card className="border-border/50">
           <CardHeader className="text-center pb-4">
-            <CardTitle>Dobrodošli</CardTitle>
+            <CardTitle>{t('auth:welcome')}</CardTitle>
             <CardDescription>
-              Prijavite se ali ustvarite nov račun
+              {t('auth:welcomeMessage')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="signin" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="signin">Prijava</TabsTrigger>
-                <TabsTrigger value="signup">Registracija</TabsTrigger>
+                <TabsTrigger value="signin">{t('auth:signIn')}</TabsTrigger>
+                <TabsTrigger value="signup">{t('auth:signUp')}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="signin">
@@ -123,12 +128,12 @@ const Auth = () => {
                   <div className="space-y-2">
                     <Label htmlFor="signin-email" className="flex items-center">
                       <Mail className="h-4 w-4 mr-2" />
-                      Email
+                      {t('auth:email')}
                     </Label>
                     <Input
                       id="signin-email"
                       type="email"
-                      placeholder="vas.email@example.com"
+                      placeholder={t('auth:emailPlaceholder')}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
@@ -137,12 +142,12 @@ const Auth = () => {
                   <div className="space-y-2">
                     <Label htmlFor="signin-password" className="flex items-center">
                       <Lock className="h-4 w-4 mr-2" />
-                      Geslo
+                      {t('auth:password')}
                     </Label>
                     <Input
                       id="signin-password"
                       type="password"
-                      placeholder="Vnesite geslo"
+                      placeholder={t('auth:passwordPlaceholder')}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
@@ -153,7 +158,7 @@ const Auth = () => {
                     className="w-full"
                     disabled={isLoading}
                   >
-                    {isLoading ? "Prijavljam..." : "Prijavi se"}
+                    {isLoading ? t('auth:signingIn') : t('auth:signInButton')}
                   </Button>
                 </form>
               </TabsContent>
@@ -161,14 +166,32 @@ const Auth = () => {
               <TabsContent value="signup">
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <div className="space-y-2">
+                    <Label htmlFor="language-select" className="flex items-center">
+                      <Globe className="h-4 w-4 mr-2" />
+                      {t('auth:selectLanguage')}
+                    </Label>
+                    <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
+                      <SelectTrigger id="language-select">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background z-50">
+                        <SelectItem value="sl">🇸🇮 Slovenščina</SelectItem>
+                        <SelectItem value="en">🇬🇧 English</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                      {t('auth:languageDescription')}
+                    </p>
+                  </div>
+                  <div className="space-y-2">
                     <Label htmlFor="signup-email" className="flex items-center">
                       <Mail className="h-4 w-4 mr-2" />
-                      Email
+                      {t('auth:email')}
                     </Label>
                     <Input
                       id="signup-email"
                       type="email"
-                      placeholder="vas.email@example.com"
+                      placeholder={t('auth:emailPlaceholder')}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
@@ -177,12 +200,12 @@ const Auth = () => {
                   <div className="space-y-2">
                     <Label htmlFor="signup-password" className="flex items-center">
                       <Lock className="h-4 w-4 mr-2" />
-                      Geslo
+                      {t('auth:password')}
                     </Label>
                     <Input
                       id="signup-password"
                       type="password"
-                      placeholder="Ustvarite varno geslo"
+                      placeholder={t('auth:createPassword')}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
@@ -194,7 +217,7 @@ const Auth = () => {
                     className="w-full"
                     disabled={isLoading}
                   >
-                    {isLoading ? "Registriram..." : "Ustvari račun"}
+                    {isLoading ? t('auth:signingUp') : t('auth:signUpButton')}
                   </Button>
                 </form>
               </TabsContent>

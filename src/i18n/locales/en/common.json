@@ -1,0 +1,21 @@
+{
+  "appName": "Dream Catcher",
+  "back": "Back",
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "edit": "Edit",
+  "loading": "Loading...",
+  "error": "Error",
+  "success": "Success",
+  "confirm": "Confirm",
+  "close": "Close",
+  "next": "Next",
+  "previous": "Previous",
+  "search": "Search",
+  "filter": "Filter",
+  "sort": "Sort",
+  "noData": "No data",
+  "yes": "Yes",
+  "no": "No"
+}

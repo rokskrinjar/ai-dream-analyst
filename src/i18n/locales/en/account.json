@@ -1,0 +1,28 @@
+{
+  "title": "My Account",
+  "profile": "Profile",
+  "displayName": "Display Name",
+  "displayNamePlaceholder": "Your name",
+  "email": "Email",
+  "updateProfile": "Update Profile",
+  "updating": "Updating...",
+  "subscription": "Subscription",
+  "currentPlan": "Current Plan",
+  "status": "Status",
+  "creditsRemaining": "Credits Remaining",
+  "creditsUsed": "Credits Used This Month",
+  "lastReset": "Last Reset",
+  "unlimited": "Unlimited",
+  "viewPlans": "View Plans",
+  "manageSubscription": "Manage Subscription",
+  "active": "Active",
+  "inactive": "Inactive",
+  "errors": {
+    "fetchFailed": "Failed to load data",
+    "updateFailed": "Failed to update profile",
+    "portalFailed": "Failed to open portal"
+  },
+  "success": {
+    "updated": "Profile successfully updated!"
+  }
+}

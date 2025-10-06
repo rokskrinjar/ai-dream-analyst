@@ -1,0 +1,111 @@
+{
+  "hero": {
+    "rating": "4.9/5 rating",
+    "users": "10,000+ users",
+    "private": "100% private",
+    "title": "Dream Catcher",
+    "subtitle": "Discover hidden messages in your dreams with the power of artificial intelligence. Analyze patterns, understand symbolism, and gain personal insights into your inner world.",
+    "newFeature": "New AI Analysis",
+    "newFeatureDesc": "Updated with GPT-4o",
+    "startFree": "Start Free",
+    "viewPricing": "View Pricing"
+  },
+  "aboutDreams": {
+    "title": "Why are dreams important?",
+    "subtitle": "Dreams are a physiological and psychological conscious state that occurs during sleep. They include images, thoughts, and emotions that reflect our experiences and unconscious processes.",
+    "analyzeNow": "Analyze your dreams now",
+    "facts": {
+      "everyoneDreams": {
+        "title": "Everyone Dreams",
+        "description": "Although 7% of people claim they don't dream, science confirms that everyone dreams during REM sleep"
+      },
+      "freud": {
+        "title": "Freud's Theory",
+        "description": "Dreams are outlets for unfulfilled desires and allow release of unconscious needs"
+      },
+      "jung": {
+        "title": "Jungian Archetypes",
+        "description": "Each individual stores symbols and patterns in the collective unconscious"
+      },
+      "emotional": {
+        "title": "Emotional Processing",
+        "description": "The brain works more on an emotional level during sleep and creates connections"
+      }
+    }
+  },
+  "features": {
+    "title": "Advanced features for dream analysis",
+    "subtitle": "We combine the latest artificial intelligence achievements with deep psychological theories of Freud and Jung",
+    "journal": {
+      "title": "Dream Journal",
+      "description": "Easily record and organize your dreams with an intuitive interface"
+    },
+    "aiAnalysis": {
+      "title": "AI Analysis",
+      "description": "Advanced algorithms recognize patterns and provide personal insights"
+    },
+    "insights": {
+      "title": "Personal Insights",
+      "description": "Discover connections between your dreams and everyday life"
+    },
+    "rem": {
+      "title": "REM Analysis",
+      "description": "Understand different sleep phases and how they affect your dreams"
+    },
+    "symbolism": {
+      "title": "Dream Symbolism",
+      "description": "Discover the meaning of symbols in your dreams with an archetypal approach"
+    },
+    "emotional": {
+      "title": "Emotional Analysis",
+      "description": "Analyze emotional patterns and their impact on everyday life"
+    }
+  },
+  "howItWorks": {
+    "title": "How does dream analysis work?",
+    "subtitle": "Simple four-step process for deeper understanding of your dreams",
+    "steps": {
+      "record": {
+        "title": "Record Dreams",
+        "description": "Write down your dreams in the journal immediately after waking"
+      },
+      "analyze": {
+        "title": "AI Analysis",
+        "description": "Our artificial intelligence analyzes patterns and symbolism"
+      },
+      "insights": {
+        "title": "Personal Insights",
+        "description": "Receive personalized interpretations based on psychological theories"
+      },
+      "track": {
+        "title": "Track Progress",
+        "description": "Observe long-term patterns and emotional changes"
+      }
+    }
+  },
+  "science": {
+    "title": "Scientific Foundation",
+    "subtitle": "Our analysis is based on recognized psychological theories and modern sleep research",
+    "freud": {
+      "title": "Freud's Theory",
+      "description": "Sigmund Freud defined dreams as \"outlets\" for unfulfilled desires and unconscious impulses. Dreams allow us to satisfy instincts that make us restless and reveal repressed thoughts and memories.",
+      "tag": "Unconscious Processing"
+    },
+    "jung": {
+      "title": "Jungian Archetypes",
+      "description": "Carl Gustav Jung introduced the theory of the collective unconscious and archetypes. Each individual stores symbols and patterns that are expressed through dreams and carry important messages from the subconscious.",
+      "tag": "Symbolism and Patterns"
+    },
+    "discover": "Discover your dream symbolism"
+  },
+  "cta": {
+    "badge": "Start today for free",
+    "title": "Ready to discover",
+    "titleHighlight": "the secrets of your dreams?",
+    "description": "Join more than 10,000 users who are already exploring patterns in their dreams and improving understanding of their inner world with scientifically supported AI analysis.",
+    "register": "Register for free",
+    "noCreditCard": "No credit card required",
+    "fullAccess": "Full access to basic features",
+    "cancel": "Cancel anytime"
+  }
+}

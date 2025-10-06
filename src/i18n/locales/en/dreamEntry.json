@@ -1,0 +1,24 @@
+{
+  "title": "Record Dream",
+  "dreamTitle": "Dream Title",
+  "dreamTitlePlaceholder": "e.g. Flying over the city",
+  "dreamContent": "Describe your dream",
+  "dreamContentPlaceholder": "Describe your dream in as much detail as possible...",
+  "dreamDate": "Dream Date",
+  "primaryEmotion": "Primary Emotion",
+  "secondaryEmotion": "Secondary Emotion (optional)",
+  "selectEmotion": "Select emotion",
+  "tags": "Tags (optional)",
+  "tagsPlaceholder": "e.g. flying, city, fear",
+  "saveDream": "Save Dream",
+  "saving": "Saving...",
+  "errors": {
+    "titleRequired": "Title is required",
+    "contentRequired": "Dream description is required",
+    "saveFailed": "Failed to save dream"
+  },
+  "success": {
+    "saved": "Dream successfully saved!",
+    "savedMessage": "Your dream has been successfully saved."
+  }
+}

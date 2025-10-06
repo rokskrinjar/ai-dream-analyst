@@ -1,0 +1,41 @@
+{
+  "title": "Izberite svoj paket",
+  "subtitle": "Izberite paket, ki ustreza vašim potrebam",
+  "monthly": "Mesečno",
+  "yearly": "Letno",
+  "yearlyDiscount": "2 meseca gratis",
+  "perMonth": "na mesec",
+  "perYear": "na leto",
+  "currentPlan": "Trenutni paket",
+  "selectPlan": "Izberi paket",
+  "processing": "Obdelavam...",
+  "free": {
+    "name": "Brezplačno",
+    "description": "Popoln za začetnike",
+    "feature1": "5 AI analiz na mesec",
+    "feature2": "Osnovni vpogledi v sanje",
+    "feature3": "Sledenje razpoloženju",
+    "feature4": "Iskanje sanj"
+  },
+  "premium": {
+    "name": "Premium",
+    "description": "Za redno uporabo",
+    "feature1": "50 AI analiz na mesec",
+    "feature2": "Napredni vpogledi v sanje",
+    "feature3": "Analiza vzorcev",
+    "feature4": "Prednostna podpora",
+    "feature5": "Izvoz podatkov"
+  },
+  "unlimited": {
+    "name": "Neomejeno",
+    "description": "Za strokovnjake",
+    "feature1": "Neomejene AI analize",
+    "feature2": "Vsi premium vpogledi",
+    "feature3": "Personalizirani trendi",
+    "feature4": "Individualna podpora",
+    "feature5": "Zgodnji dostop do funkcij"
+  },
+  "errors": {
+    "checkoutFailed": "Napaka pri ustvarjanju plačila"
+  }
+}

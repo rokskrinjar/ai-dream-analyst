@@ -1,0 +1,21 @@
+{
+  "appName": "Lovilec Sanj",
+  "back": "Nazaj",
+  "save": "Shrani",
+  "cancel": "Prekliči",
+  "delete": "Izbriši",
+  "edit": "Uredi",
+  "loading": "Nalaganje...",
+  "error": "Napaka",
+  "success": "Uspeh",
+  "confirm": "Potrdi",
+  "close": "Zapri",
+  "next": "Naprej",
+  "previous": "Nazaj",
+  "search": "Iskanje",
+  "filter": "Filter",
+  "sort": "Razvrsti",
+  "noData": "Ni podatkov",
+  "yes": "Da",
+  "no": "Ne"
+}

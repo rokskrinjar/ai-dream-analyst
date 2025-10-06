@@ -1,0 +1,30 @@
+{
+  "title": "Analytics",
+  "dreamPatterns": "Dream Patterns",
+  "noDreamsYet": "Not enough dreams yet for pattern analysis",
+  "noDreamsDescription": "Record at least 3 dreams to discover deeper patterns and insights.",
+  "recordMoreDreams": "Record More Dreams",
+  "analyzing": "Analyzing patterns...",
+  "viewLastAnalysis": "View Last Analysis",
+  "analyzeDreamPatterns": "Analyze Dream Patterns",
+  "analysisDate": "Analysis Date",
+  "dreamsAnalyzed": "Dreams Analyzed",
+  "thematicPatterns": "Thematic Patterns",
+  "emotionalLandscape": "Emotional Landscape",
+  "symbolRecurrence": "Symbol Recurrence",
+  "recommendations": "Recommendations",
+  "deeperInsights": "Deeper Insights",
+  "analysisVersion": "Analysis Version",
+  "remainingCredits": "credits remaining",
+  "creditsInfo": "Need more credits?",
+  "upgradePlan": "Upgrade Plan",
+  "errors": {
+    "fetchFailed": "Failed to load analyses",
+    "analyzeFailed": "Failed to analyze patterns",
+    "noCredits": "You've run out of credits. Please upgrade your plan.",
+    "notEnoughDreams": "You need at least 3 dreams for analysis."
+  },
+  "success": {
+    "analyzed": "Dream patterns successfully analyzed"
+  }
+}

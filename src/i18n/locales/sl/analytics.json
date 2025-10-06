@@ -1,0 +1,30 @@
+{
+  "title": "Analitika",
+  "dreamPatterns": "Vzorci sanj",
+  "noDreamsYet": "Še nimate dovolj sanj za analizo vzorcev",
+  "noDreamsDescription": "Zapišite vsaj 3 sanje, da odkrijete globlje vzorce in vpoglede.",
+  "recordMoreDreams": "Zapiši več sanj",
+  "analyzing": "Analiziram vzorce...",
+  "viewLastAnalysis": "Prikaži zadnjo analizo",
+  "analyzeDreamPatterns": "Analiziraj vzorce sanj",
+  "analysisDate": "Datum analize",
+  "dreamsAnalyzed": "Analiziranih sanj",
+  "thematicPatterns": "Tematski vzorci",
+  "emotionalLandscape": "Čustvena pokrajina",
+  "symbolRecurrence": "Ponavljajoči se simboli",
+  "recommendations": "Priporočila",
+  "deeperInsights": "Globji vpogledi",
+  "analysisVersion": "Različica analize",
+  "remainingCredits": "preostalih kreditov",
+  "creditsInfo": "Potrebujete več kreditov?",
+  "upgradePlan": "Nadgradi paket",
+  "errors": {
+    "fetchFailed": "Napaka pri nalaganju analiz",
+    "analyzeFailed": "Napaka pri analizi vzorcev",
+    "noCredits": "Zmanjkalo vam je kreditov. Prosim, nadgradite svoj paket.",
+    "notEnoughDreams": "Za analizo potrebujete vsaj 3 sanje."
+  },
+  "success": {
+    "analyzed": "Vzorci sanj uspešno analizirani"
+  }
+}
