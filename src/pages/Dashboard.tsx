@@ -40,7 +40,9 @@ import {
   Eye,
   Heart,
   MessageCircleQuestion,
-  Menu
+  Menu,
+  Pencil,
+  CheckCircle2
 } from 'lucide-react';
 import { DreamActivityCalendar } from '@/components/DreamActivityCalendar';
 import { CompactCreditDisplay } from '@/components/CompactCreditDisplay';
@@ -311,326 +313,226 @@ const Dashboard = () => {
     );
   }
 
+  const userName = user?.email?.split('@')[0] || 'User';
+
   return (
     <div className="min-h-screen bg-background">
       <AppHeader />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 space-y-8">
 
         {/* Dream Activity Calendar */}
-        <div className="mb-8">
-          <DreamActivityCalendar />
+        <DreamActivityCalendar />
+
+        {/* Welcome Header */}
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-bold text-foreground">
+            Welcome back, {userName}!
+          </h1>
+          <p className="text-muted-foreground">
+            Your dream journey continues. Explore your recent entries or start a new one.
+          </p>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <Card className="border-border/50">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Skupaj sanj
-                </CardTitle>
-                <BookOpen className="h-4 w-4 text-muted-foreground" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-foreground">{allDreams.length}</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Vaš osebni dnevnik
-              </p>
-            </CardContent>
-          </Card>
+        {/* Action Cards Section */}
+        <div className="grid md:grid-cols-3 gap-6">
+          {/* Left Column - Action Cards */}
+          <div className="md:col-span-2 space-y-4">
+            {/* Record Dream Card */}
+            <Card className="border-border/50 bg-gradient-to-br from-primary/5 via-primary/10 to-background">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-2 flex-1">
+                    <h3 className="text-xl font-semibold text-foreground">
+                      Ready to explore your mind?
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Capture your dreams and unlock their hidden meanings
+                    </p>
+                  </div>
+                  <Pencil className="h-8 w-8 text-primary ml-4" />
+                </div>
+                <Button 
+                  onClick={() => navigate('/dream/new')}
+                  className="mt-4 w-full sm:w-auto"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Record New Dream
+                </Button>
+              </CardContent>
+            </Card>
 
-          <Card className="border-border/50">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Ta mesec
-                </CardTitle>
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-foreground">
-                {allDreams.filter(dream => {
-                  const dreamDate = new Date(dream.created_at);
-                  const now = new Date();
-                  return dreamDate.getMonth() === now.getMonth() && 
-                         dreamDate.getFullYear() === now.getFullYear();
-                }).length}
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Novih vnosov
-              </p>
-            </CardContent>
-          </Card>
+            {/* Multiple Analysis Card */}
+            <Card className="border-border/50 bg-gradient-to-br from-primary/5 via-primary/10 to-background">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-2 flex-1">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-5 w-5 text-primary" />
+                      <h3 className="text-xl font-semibold text-foreground">
+                        Multiple Dream Analysis
+                      </h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Unlock deeper insights by analyzing patterns across your dreams
+                    </p>
+                  </div>
+                </div>
+                <Button 
+                  onClick={() => navigate('/analytics')}
+                  className="mt-4 w-full sm:w-auto"
+                >
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  Analyze Multiple Dreams
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
 
+          {/* Right Column - Credit Balance */}
           <Card className="border-border/50">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  AI analiz
-                </CardTitle>
-                <Sparkles className="h-4 w-4 text-muted-foreground" />
+            <CardContent className="p-6 h-full flex flex-col justify-between">
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                  Credit Balance
+                </h3>
+                <div className="text-5xl font-bold text-primary mb-2">
+                  {isUnlimited ? '∞' : credits?.credits_remaining || 0}
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Credits for AI analysis
+                </p>
+                {!isUnlimited && (
+                  <div className="text-xs text-muted-foreground">
+                    {credits?.credits_used_this_month || 0} used this month
+                  </div>
+                )}
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-foreground">
-                {Object.keys(allAnalyses).length}
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Opravljenih
-              </p>
+              <Button 
+                variant="outline" 
+                onClick={() => navigate('/pricing')}
+                className="w-full mt-4"
+              >
+                <CreditCard className="h-4 w-4 mr-2" />
+                Buy more
+              </Button>
             </CardContent>
           </Card>
         </div>
 
-        {/* Main Actions */}
-        <div className="grid md:grid-cols-2 gap-8">
+        {/* Recent Dreams Section */}
+        <div>
           {/* Recent Dreams */}
           <div>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-foreground">Nedavne sanje</h2>
-              <Button onClick={() => navigate('/dream/new')}>
-                <Plus className="h-4 w-4 mr-2" />
-                Nove sanje
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-semibold text-foreground">Recent Dreams</h2>
+            {dreams.length > 0 && (
+              <Button variant="link" onClick={() => navigate('/analytics')}>
+                View all →
               </Button>
-            </div>
+            )}
+          </div>
 
-            {dreams.length === 0 ? (
-              <Card className="border-border/50">
-                <CardContent className="p-8 text-center">
-                  <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-foreground mb-2">
-                    Še ni sanj
-                  </h3>
-                  <p className="text-muted-foreground mb-4">
-                    Začnite z beleženja vaše prve sanje in odkrijte skrite vzorce.
-                  </p>
-                  <Button onClick={() => navigate('/dream/new')}>
-                    Dodaj prvo sanje
-                  </Button>
-                </CardContent>
-              </Card>
+          {dreams.length === 0 ? (
+            <Card className="border-border/50">
+              <CardContent className="p-12 text-center">
+                <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-xl font-medium text-foreground mb-2">
+                  No dreams yet
+                </h3>
+                <p className="text-muted-foreground mb-6">
+                  Start recording your first dream and discover hidden patterns.
+                </p>
+                <Button onClick={() => navigate('/dream/new')} size="lg">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add First Dream
+                </Button>
+              </CardContent>
+            </Card>
             ) : (
-              <div className="space-y-4">
-                {dreams.map((dream) => {
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {dreams.slice(0, showAllDreams ? dreams.length : 8).map((dream) => {
                   const analysis = analyses[dream.id];
                   const isAnalyzing = analyzingDreams.has(dream.id);
                   
                   return (
-                    <Card key={dream.id} className="border-border/50 hover:shadow-md transition-shadow">
-                      <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                          <CardTitle className="text-base text-foreground">
-                            {dream.title}
-                          </CardTitle>
-                          <span className="text-xs text-muted-foreground">
-                            {new Date(dream.dream_date).toLocaleDateString('sl-SI')}
-                          </span>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-muted-foreground mb-3">
+                    <Card 
+                      key={dream.id} 
+                      className="border-border/50 overflow-hidden group hover:shadow-lg transition-all cursor-pointer"
+                      onClick={() => !isAnalyzing && navigate(`/dream/${dream.id}`)}
+                    >
+                      {/* Background with gradient overlay */}
+                      <div className="relative h-32 bg-gradient-to-br from-primary/20 via-primary/10 to-background">
+                        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cmVjdCB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2Utd2lkdGg9IjAuNSIgb3BhY2l0eT0iMC4xIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30" />
+                        {analysis && (
+                          <div className="absolute top-3 right-3">
+                            <Badge className="bg-primary/90 backdrop-blur-sm">
+                              <CheckCircle2 className="h-3 w-3 mr-1" />
+                              Analyzed
+                            </Badge>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Content */}
+                      <CardContent className="p-4">
+                        <h3 className="font-semibold text-foreground mb-1 line-clamp-1">
+                          {dream.title}
+                        </h3>
+                        <p className="text-xs text-muted-foreground mb-3">
+                          {new Date(dream.dream_date).toLocaleDateString('sl-SI', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                        </p>
+                        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
                           {dream.content}
                         </p>
                         
-                        <div className="flex items-center justify-between mb-3">
-                          {dream.mood && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-primary/10 text-primary">
-                              {dream.mood}
-                            </span>
-                          )}
-                          
-                          <div className="ml-auto">
-                            {analysis ? (
-                              <Badge variant="secondary" className="text-xs">
-                                <Sparkles className="h-3 w-3 mr-1" />
-                                Analizirano
-                              </Badge>
-                            ) : (
-                              <Button 
-                                size="sm" 
-                                variant="outline"
-                                onClick={() => analyzeDream(dream.id)}
-                                disabled={isAnalyzing}
-                                className="text-xs"
-                              >
-                                {isAnalyzing ? (
-                                  <>
-                                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                                    Analiziram...
-                                  </>
-                                ) : (
-                                  <>
-                                    <Brain className="h-3 w-3 mr-1" />
-                                    Analiziraj
-                                  </>
-                                )}
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-
-                        {analysis && (
-                          <Collapsible className="mt-4">
-                            <CollapsibleTrigger asChild>
-                              <Button variant="ghost" size="sm" className="w-full justify-between p-2 h-auto">
-                                <span className="text-sm font-medium">Poglej AI analizo</span>
-                                <ChevronDown className="h-4 w-4" />
-                              </Button>
-                            </CollapsibleTrigger>
-                            <CollapsibleContent className="mt-3 space-y-3">
-                              {analysis.themes && analysis.themes.length > 0 && (
-                                <div>
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <Eye className="h-4 w-4 text-blue-500" />
-                                    <span className="text-sm font-medium">Teme</span>
-                                  </div>
-                                  <div className="flex flex-wrap gap-1">
-                                    {analysis.themes.map((theme, index) => (
-                                      <Badge key={index} variant="outline" className="text-xs">
-                                        {theme}
-                                      </Badge>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-
-                              {analysis.emotions && analysis.emotions.length > 0 && (
-                                <div>
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <Heart className="h-4 w-4 text-red-500" />
-                                    <span className="text-sm font-medium">Čustva</span>
-                                  </div>
-                                  <div className="flex flex-wrap gap-1">
-                                    {analysis.emotions.map((emotion, index) => (
-                                      <Badge key={index} variant="outline" className="text-xs">
-                                        {emotion}
-                                      </Badge>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-
-                              {analysis.symbols && analysis.symbols.length > 0 && (
-                                <div>
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <Sparkles className="h-4 w-4 text-purple-500" />
-                                    <span className="text-sm font-medium">Simboli</span>
-                                  </div>
-                                  <div className="flex flex-wrap gap-1">
-                                    {analysis.symbols.map((symbol, index) => (
-                                       <Badge key={index} variant="outline" className="text-xs">
-                                         {formatSymbol(symbol)}
-                                       </Badge>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-
-                              {analysis.analysis_text && (
-                                <div>
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <Brain className="h-4 w-4 text-green-500" />
-                                    <span className="text-sm font-medium">Analiza</span>
-                                  </div>
-                                  <p className="text-sm text-muted-foreground leading-relaxed">
-                                    {analysis.analysis_text}
-                                  </p>
-                                </div>
-                              )}
-
-                              {analysis.recommendations && (
-                                <div className="mt-4">
-                                  <div className="flex items-center gap-2 mb-3">
-                                    <Lightbulb className="h-4 w-4 text-yellow-500" />
-                                    <h4 className="font-medium">Priporočila</h4>
-                                  </div>
-                                  <p className="text-muted-foreground text-sm whitespace-pre-line">
-                                    {analysis.recommendations}
-                                  </p>
-                                </div>
-                              )}
-
-                              {analysis.reflection_questions && analysis.reflection_questions.length > 0 && (
-                                <div className="mt-4">
-                                  <div className="flex items-center gap-2 mb-3">
-                                    <MessageCircleQuestion className="h-4 w-4 text-blue-500" />
-                                    <h4 className="font-medium">Razmislite</h4>
-                                  </div>
-                                  <div className="space-y-2">
-                                    {analysis.reflection_questions.map((question, index) => (
-                                      <div key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                                        <span className="text-primary font-medium">{index + 1}.</span>
-                                        <p>{question}</p>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-                            </CollapsibleContent>
-                          </Collapsible>
+                        {!analysis && !isAnalyzing && (
+                          <Button 
+                            size="sm" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              analyzeDream(dream.id);
+                            }}
+                            className="w-full"
+                          >
+                            <Brain className="h-3 w-3 mr-2" />
+                            Analyze Dream
+                          </Button>
+                        )}
+                        
+                        {isAnalyzing && (
+                          <Button 
+                            size="sm" 
+                            disabled
+                            className="w-full"
+                          >
+                            <Loader2 className="h-3 w-3 mr-2 animate-spin" />
+                            Analyzing...
+                          </Button>
                         )}
                       </CardContent>
                     </Card>
                   );
                 })}
-                
-                {dreams.length >= 5 && (
-                  <Button 
-                    variant="outline" 
-                    className="w-full"
-                    onClick={() => setShowAllDreams(!showAllDreams)}
-                  >
-                    {showAllDreams ? 'Prikaži manj sanj' : 'Prikaži vse sanje'}
-                  </Button>
-                )}
               </div>
             )}
-          </div>
-
-          {/* Quick Actions & Tips */}
-          <div>
-            <h2 className="text-xl font-semibold text-foreground mb-6">
-              Hitri dostop
-            </h2>
             
-            <div className="space-y-4">
-              <Card 
-                className="border-border/50 hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => navigate('/analytics')}
-              >
-                <CardHeader>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <TrendingUp className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-base">Analitika</CardTitle>
-                      <CardDescription>Preglejte vzorce sanj</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-              </Card>
-
-              <Card className="border-border/50 bg-gradient-to-br from-primary/5 to-primary/10">
-                <CardHeader>
-                  <div className="flex items-center space-x-3">
-                    <Brain className="h-6 w-6 text-primary" />
-                    <div>
-                      <CardTitle className="text-base">Nasvet dneva</CardTitle>
-                      <CardDescription className="text-sm mt-2">
-                        Beležite sanje takoj po prebujanju za najboljše rezultate. 
-                        Spomin na sanje hitro zbledi.
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-              </Card>
-            </div>
-          </div>
+            {dreams.length > 8 && (
+              <div className="mt-6 text-center">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowAllDreams(!showAllDreams)}
+                >
+                  {showAllDreams ? 'Show less' : 'Show all dreams'}
+                </Button>
+              </div>
+            )}
         </div>
+      </div>
       </div>
 
       {/* Credit Usage Modal */}

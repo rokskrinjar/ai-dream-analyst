@@ -1,5 +1,26 @@
 {
   "title": "Nadzorna plošča",
+  "welcome": {
+    "title": "Dobrodošli nazaj, {name}!",
+    "subtitle": "Vaše potovanje po sanjah se nadaljuje. Raziščite svoje nedavne vnose ali začnite novega."
+  },
+  "quickActions": {
+    "recordDream": {
+      "title": "Pripravljeni raziskati svojo psiho?",
+      "description": "Ujemite svoje sanje in odkrijte njihove skrite pomene",
+      "button": "Zapiši nove sanje"
+    },
+    "multipleAnalysis": {
+      "title": "Večkratna analiza sanj",
+      "description": "Odkrijte globlje vpoglede z analizo vzorcev v vaših sanjah",
+      "button": "Analiziraj več sanj"
+    }
+  },
+  "creditBalance": {
+    "title": "Stanje kreditov",
+    "subtitle": "Krediti za AI analizo",
+    "buyMore": "Kupi več"
+  },
   "myDreams": "Moje sanje",
   "noDreams": "Še nimate shranjenih sanj",
   "noDreamsDescription": "Začnite z zapisovanjem svojih sanj in odkrijte skrite pomene.",

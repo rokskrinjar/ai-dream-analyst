@@ -1,5 +1,26 @@
 {
   "title": "Dashboard",
+  "welcome": {
+    "title": "Welcome back, {name}!",
+    "subtitle": "Your dream journey continues. Explore your recent entries or start a new one."
+  },
+  "quickActions": {
+    "recordDream": {
+      "title": "Ready to explore your mind?",
+      "description": "Capture your dreams and unlock their hidden meanings",
+      "button": "Record New Dream"
+    },
+    "multipleAnalysis": {
+      "title": "Multiple Dream Analysis",
+      "description": "Unlock deeper insights by analyzing patterns across your dreams",
+      "button": "Analyze Multiple Dreams"
+    }
+  },
+  "creditBalance": {
+    "title": "Credit Balance",
+    "subtitle": "Credits for AI analysis",
+    "buyMore": "Buy more"
+  },
   "myDreams": "My Dreams",
   "noDreams": "No dreams saved yet",
   "noDreamsDescription": "Start recording your dreams and discover hidden meanings.",

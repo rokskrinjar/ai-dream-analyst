@@ -45,11 +45,11 @@ const DreamActivityCalendar = () => {
   };
 
   const getActivityLevel = (count: number): string => {
-    if (count === 0) return 'bg-slate-100 dark:bg-slate-800/30';
-    if (count === 1) return 'bg-green-200 dark:bg-green-800/80';
-    if (count === 2) return 'bg-green-400 dark:bg-green-700';
-    if (count >= 3) return 'bg-green-600 dark:bg-green-500';
-    return 'bg-slate-100 dark:bg-slate-800/30';
+    if (count === 0) return 'bg-muted';
+    if (count === 1) return 'bg-primary/20';
+    if (count === 2) return 'bg-primary/50';
+    if (count >= 3) return 'bg-primary';
+    return 'bg-muted';
   };
 
   // Generate calendar data for the past year (desktop/tablet)
@@ -291,10 +291,10 @@ const DreamActivityCalendar = () => {
         <div className="flex items-center justify-between text-xs text-muted-foreground ml-8">
           <span className="font-medium">Manj</span>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-sm bg-slate-100 dark:bg-slate-800/30"></div>
-            <div className="w-3 h-3 rounded-sm bg-green-200 dark:bg-green-800/80"></div>
-            <div className="w-3 h-3 rounded-sm bg-green-400 dark:bg-green-700"></div>
-            <div className="w-3 h-3 rounded-sm bg-green-600 dark:bg-green-500"></div>
+            <div className="w-3 h-3 rounded-sm bg-muted"></div>
+            <div className="w-3 h-3 rounded-sm bg-primary/20"></div>
+            <div className="w-3 h-3 rounded-sm bg-primary/50"></div>
+            <div className="w-3 h-3 rounded-sm bg-primary"></div>
           </div>
           <span className="font-medium">Več</span>
         </div>
