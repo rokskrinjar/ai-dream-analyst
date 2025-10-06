@@ -44,5 +44,13 @@
   "success": {
     "deleted": "Sanje uspešno izbrisane",
     "analyzed": "Sanje uspešno analizirane"
+  },
+  "analysisSection": {
+    "viewAnalysis": "Poglej AI analizo",
+    "hideAnalysis": "Skrij analizo",
+    "themes": "Teme",
+    "symbols": "Simboli",
+    "analysis": "Analiza",
+    "recommendations": "Priporočila"
   }
 }

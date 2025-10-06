@@ -44,5 +44,13 @@
   "success": {
     "deleted": "Dream successfully deleted",
     "analyzed": "Dream successfully analyzed"
+  },
+  "analysisSection": {
+    "viewAnalysis": "View AI Analysis",
+    "hideAnalysis": "Hide Analysis",
+    "themes": "Themes",
+    "symbols": "Symbols",
+    "analysis": "Analysis",
+    "recommendations": "Recommendations"
   }
 }

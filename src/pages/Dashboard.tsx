@@ -49,6 +49,7 @@ import { CompactCreditDisplay } from '@/components/CompactCreditDisplay';
 import { CreditDisplay } from '@/components/CreditDisplay';
 import { CreditUsageModal } from '@/components/CreditUsageModal';
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from 'react-i18next';
 import dreamBg1 from '@/assets/dream-bg-1.jpg';
 import dreamBg2 from '@/assets/dream-bg-2.jpg';
 import dreamBg3 from '@/assets/dream-bg-3.jpg';
@@ -81,6 +82,7 @@ const Dashboard = () => {
   const { isAdmin } = useAdmin();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
   const [dreams, setDreams] = useState<Dream[]>([]);
   const [analyses, setAnalyses] = useState<{ [key: string]: DreamAnalysis }>({});
   const [allDreams, setAllDreams] = useState<Dream[]>([]);
@@ -90,6 +92,7 @@ const Dashboard = () => {
   const [showCreditModal, setShowCreditModal] = useState(false);
   const [pendingAnalysis, setPendingAnalysis] = useState<string | null>(null);
   const [showAllDreams, setShowAllDreams] = useState(false);
+  const [expandedDreamId, setExpandedDreamId] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Debug logging
@@ -454,81 +457,188 @@ const Dashboard = () => {
               </CardContent>
             </Card>
             ) : (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {dreams.slice(0, 4).map((dream, index) => {
-                  const analysis = analyses[dream.id];
-                  const isAnalyzing = analyzingDreams.has(dream.id);
-                  const backgroundImages = [dreamBg1, dreamBg2, dreamBg3, dreamBg4];
-                  const bgImage = backgroundImages[index % 4];
-                  
-                  return (
-                    <Card 
-                      key={dream.id} 
-                      className="border-none overflow-hidden group hover:shadow-xl transition-all cursor-pointer h-[280px]"
-                      onClick={() => !isAnalyzing && navigate(`/dream/${dream.id}`)}
-                    >
-                      {/* Background image with overlay */}
-                      <div 
-                        className="relative h-full bg-cover bg-center"
-                        style={{ backgroundImage: `url(${bgImage})` }}
-                      >
-                        {/* Dark overlay for better text readability */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
-                        
-                        {/* Content */}
-                        <div className="relative h-full flex flex-col justify-between p-5">
-                          {/* Top section with badge */}
-                          <div className="flex justify-end">
-                            {analysis && (
-                              <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30">
-                                <CheckCircle2 className="h-3 w-3 mr-1" />
-                                Analyzed
-                              </Badge>
-                            )}
-                          </div>
-                          
-                          {/* Bottom section with text and button */}
-                          <div className="space-y-3">
-                            <div>
-                              <h3 className="font-semibold text-white text-lg mb-1 line-clamp-1">
-                                {dream.title}
-                              </h3>
-                              <p className="text-white/80 text-sm line-clamp-2">
-                                {dream.content}
-                              </p>
+              <div className="space-y-6">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {dreams.slice(0, 4).map((dream, index) => {
+                    const analysis = analyses[dream.id];
+                    const isAnalyzing = analyzingDreams.has(dream.id);
+                    const backgroundImages = [dreamBg1, dreamBg2, dreamBg3, dreamBg4];
+                    const bgImage = backgroundImages[index % 4];
+                    const isExpanded = expandedDreamId === dream.id;
+                    
+                    return (
+                      <div key={dream.id} className="lg:col-span-4 space-y-4">
+                        <Card 
+                          className="border-none overflow-hidden group hover:shadow-xl transition-all cursor-pointer h-[280px] lg:w-1/4"
+                          onClick={() => {
+                            if (!isAnalyzing) {
+                              if (analysis) {
+                                setExpandedDreamId(isExpanded ? null : dream.id);
+                              } else {
+                                navigate(`/dream/${dream.id}`);
+                              }
+                            }
+                          }}
+                        >
+                          {/* Background image with overlay */}
+                          <div 
+                            className="relative h-full bg-cover bg-center"
+                            style={{ backgroundImage: `url(${bgImage})` }}
+                          >
+                            {/* Dark overlay for better text readability */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+                            
+                            {/* Content */}
+                            <div className="relative h-full flex flex-col justify-between p-5">
+                              {/* Top section with badge */}
+                              <div className="flex justify-end">
+                                {analysis && (
+                                  <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30">
+                                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                                    Analyzed
+                                  </Badge>
+                                )}
+                              </div>
+                              
+                              {/* Bottom section with text and button */}
+                              <div className="space-y-3">
+                                <div>
+                                  <h3 className="font-semibold text-white text-lg mb-1 line-clamp-1">
+                                    {dream.title}
+                                  </h3>
+                                  <p className="text-white/80 text-sm line-clamp-2">
+                                    {dream.content}
+                                  </p>
+                                </div>
+                                
+                                {!analysis && !isAnalyzing && (
+                                  <Button 
+                                    size="sm" 
+                                    variant="secondary"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      analyzeDream(dream.id);
+                                    }}
+                                    className="w-full bg-white/20 backdrop-blur-sm text-white border-white/30 hover:bg-white/30"
+                                  >
+                                    <Brain className="h-3 w-3 mr-2" />
+                                    Analyze Dream
+                                  </Button>
+                                )}
+                                
+                                {isAnalyzing && (
+                                  <Button 
+                                    size="sm" 
+                                    disabled
+                                    className="w-full bg-white/20 backdrop-blur-sm text-white"
+                                  >
+                                    <Loader2 className="h-3 w-3 mr-2 animate-spin" />
+                                    Analyzing...
+                                  </Button>
+                                )}
+                              </div>
                             </div>
-                            
-                            {!analysis && !isAnalyzing && (
-                              <Button 
-                                size="sm" 
-                                variant="secondary"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  analyzeDream(dream.id);
-                                }}
-                                className="w-full bg-white/20 backdrop-blur-sm text-white border-white/30 hover:bg-white/30"
-                              >
-                                <Brain className="h-3 w-3 mr-2" />
-                                Analyze Dream
-                              </Button>
-                            )}
-                            
-                            {isAnalyzing && (
-                              <Button 
-                                size="sm" 
-                                disabled
-                                className="w-full bg-white/20 backdrop-blur-sm text-white"
-                              >
-                                <Loader2 className="h-3 w-3 mr-2 animate-spin" />
-                                Analyzing...
-                              </Button>
-                            )}
                           </div>
-                        </div>
+                        </Card>
+
+                        {/* Collapsible Analysis Section */}
+                        {analysis && isExpanded && (
+                          <Card className="border-border/50 bg-card">
+                            <CardContent className="p-6 space-y-6">
+                              {/* Header */}
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <Sparkles className="h-5 w-5 text-primary" />
+                                  <h3 className="text-lg font-semibold">
+                                    {t('dashboard.analysisSection.viewAnalysis')}
+                                  </h3>
+                                </div>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setExpandedDreamId(null)}
+                                >
+                                  <ChevronDown className="h-4 w-4" />
+                                </Button>
+                              </div>
+
+                              <Separator />
+
+                              {/* Themes */}
+                              {analysis.themes && analysis.themes.length > 0 && (
+                                <div className="space-y-3">
+                                  <div className="flex items-center gap-2">
+                                    <Heart className="h-4 w-4 text-primary" />
+                                    <h4 className="font-semibold text-foreground">
+                                      {t('dashboard.analysisSection.themes')}
+                                    </h4>
+                                  </div>
+                                  <div className="flex flex-wrap gap-2">
+                                    {analysis.themes.map((theme, idx) => (
+                                      <Badge key={idx} variant="secondary">
+                                        {theme}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Symbols */}
+                              {analysis.symbols && analysis.symbols.length > 0 && (
+                                <div className="space-y-3">
+                                  <div className="flex items-center gap-2">
+                                    <Sparkles className="h-4 w-4 text-primary" />
+                                    <h4 className="font-semibold text-foreground">
+                                      {t('dashboard.analysisSection.symbols')}
+                                    </h4>
+                                  </div>
+                                  <ul className="space-y-2">
+                                    {analysis.symbols.map((symbol, idx) => (
+                                      <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
+                                        <span className="text-primary mt-0.5">•</span>
+                                        <span>{formatSymbol(symbol)}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+
+                              {/* Analysis Text */}
+                              {analysis.analysis_text && (
+                                <div className="space-y-3">
+                                  <div className="flex items-center gap-2">
+                                    <Brain className="h-4 w-4 text-primary" />
+                                    <h4 className="font-semibold text-foreground">
+                                      {t('dashboard.analysisSection.analysis')}
+                                    </h4>
+                                  </div>
+                                  <p className="text-sm text-muted-foreground leading-relaxed">
+                                    {analysis.analysis_text}
+                                  </p>
+                                </div>
+                              )}
+
+                              {/* Recommendations */}
+                              {analysis.recommendations && (
+                                <div className="space-y-3">
+                                  <div className="flex items-center gap-2">
+                                    <Lightbulb className="h-4 w-4 text-primary" />
+                                    <h4 className="font-semibold text-foreground">
+                                      {t('dashboard.analysisSection.recommendations')}
+                                    </h4>
+                                  </div>
+                                  <p className="text-sm text-muted-foreground leading-relaxed">
+                                    {analysis.recommendations}
+                                  </p>
+                                </div>
+                              )}
+                            </CardContent>
+                          </Card>
+                        )}
                       </div>
-                    </Card>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             )}
         </div>
