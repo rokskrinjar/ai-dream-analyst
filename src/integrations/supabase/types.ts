@@ -48,6 +48,7 @@ export type Database = {
           dream_id: string
           emotions: string[] | null
           id: string
+          image_url: string | null
           language: string
           recommendations: string | null
           reflection_questions: string[] | null
@@ -60,6 +61,7 @@ export type Database = {
           dream_id: string
           emotions?: string[] | null
           id?: string
+          image_url?: string | null
           language?: string
           recommendations?: string | null
           reflection_questions?: string[] | null
@@ -72,6 +74,7 @@ export type Database = {
           dream_id?: string
           emotions?: string[] | null
           id?: string
+          image_url?: string | null
           language?: string
           recommendations?: string | null
           reflection_questions?: string[] | null

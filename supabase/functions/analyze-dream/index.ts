@@ -361,6 +361,51 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
       }
     }
 
+    // Generate AI image for the dream
+    let imageUrl = null;
+    try {
+      const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+      if (!lovableApiKey) {
+        console.warn('LOVABLE_API_KEY not configured, skipping image generation');
+      } else {
+        // Create descriptive prompt for image generation
+        const themesText = parsedAnalysis.themes?.slice(0, 3).join(', ') || 'abstract dream';
+        const imagePrompt = `Create a surreal, dreamlike artistic visualization of: "${dream.title}". Style: ethereal, symbolic, mystical, dreamscape. Capture the essence of these themes: ${themesText}. Make it visually stunning and evocative.`;
+        
+        console.log('Generating AI image with prompt:', imagePrompt);
+        
+        const imageResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${lovableApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash-image-preview',
+            messages: [
+              {
+                role: 'user',
+                content: imagePrompt
+              }
+            ],
+            modalities: ['image', 'text']
+          }),
+        });
+
+        if (imageResponse.ok) {
+          const imageData = await imageResponse.json();
+          imageUrl = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+          console.log('AI image generated successfully');
+        } else {
+          const errorText = await imageResponse.text();
+          console.error('Image generation failed:', imageResponse.status, errorText);
+        }
+      }
+    } catch (imageError) {
+      console.error('Error generating image:', imageError);
+      // Continue without image if generation fails
+    }
+
     // Save analysis to database
     const { data: savedAnalysis, error: saveError } = await supabaseAdmin
       .from('dream_analyses')
@@ -371,7 +416,8 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
         symbols: parsedAnalysis.symbols || [],
         analysis_text: parsedAnalysis.analysis_text || 'Analiza ni na voljo.',
         recommendations: parsedAnalysis.recommendations || 'Priporočila niso na voljo.',
-        reflection_questions: parsedAnalysis.reflection_questions || []
+        reflection_questions: parsedAnalysis.reflection_questions || [],
+        image_url: imageUrl
       })
       .select()
       .single();

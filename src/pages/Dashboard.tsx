@@ -75,6 +75,7 @@ interface DreamAnalysis {
   analysis_text: string;
   recommendations: string;
   reflection_questions?: string[];
+  image_url?: string;
   created_at: string;
 }
 
@@ -465,7 +466,9 @@ const Dashboard = () => {
                     const analysis = analyses[dream.id];
                     const isAnalyzing = analyzingDreams.has(dream.id);
                     const backgroundImages = [dreamBg1, dreamBg2, dreamBg3, dreamBg4];
-                    const bgImage = backgroundImages[index % 4];
+                    const staticBgImage = backgroundImages[index % 4];
+                    // Use AI-generated image if available, otherwise use static background
+                    const bgImage = analysis?.image_url || staticBgImage;
                     const isExpanded = expandedDreamId === dream.id;
                     
                     return (
