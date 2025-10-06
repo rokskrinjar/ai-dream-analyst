@@ -370,7 +370,7 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
       } else {
         // Create descriptive prompt for image generation
         const themesText = parsedAnalysis.themes?.slice(0, 3).join(', ') || 'abstract dream';
-        const imagePrompt = `Create a surreal, dreamlike artistic visualization of: "${dream.title}". Style: ethereal, symbolic, mystical, dreamscape. Capture the essence of these themes: ${themesText}. Make it visually stunning and evocative.`;
+        const imagePrompt = `Create a cheerful, lighthearted stylized illustration of: "${dream.title}". Style: whimsical, colorful, playful, modern illustration, friendly and inviting. Capture the essence of these themes: ${themesText}. Use bright colors, simple shapes, and a warm, optimistic visual style.`;
         
         console.log('Generating AI image with prompt:', imagePrompt);
         
