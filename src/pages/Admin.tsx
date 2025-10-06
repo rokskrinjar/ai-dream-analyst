@@ -18,6 +18,7 @@ import {
   FileText,
   TrendingUp
 } from 'lucide-react';
+import { AppHeader } from '@/components/AppHeader';
 
 interface AdminStats {
   totalUsers: number;
@@ -178,21 +179,13 @@ const Admin = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto space-y-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Upravljanje sistema Lovilec Sanj</p>
-          </div>
-          <Badge variant="secondary" className="flex items-center gap-2">
-            <Shield className="h-4 w-4" />
-            Administrator
-          </Badge>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="min-h-screen bg-background">
+      <AppHeader showBackButton title="Administracija" subtitle="Upravljanje sistema Lovilec Sanj" />
+      
+      <div className="container mx-auto px-6 py-8">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Skupaj Uporabnikov</CardTitle>
@@ -369,6 +362,7 @@ const Admin = () => {
             </Card>
           </TabsContent>
         </Tabs>
+        </div>
       </div>
     </div>
   );

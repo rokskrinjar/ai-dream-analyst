@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
+import { AppHeader } from '@/components/AppHeader';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -312,91 +313,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border/30 bg-card/30">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Brain className="h-8 w-8 text-primary" />
-              <h1 className="text-2xl font-bold text-foreground">Lovilec Sanj</h1>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              {isMobile ? (
-                // Mobile navigation dropdown
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm">
-                      <Menu className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent 
-                    align="end" 
-                    className="w-56 bg-popover/95 backdrop-blur-md border border-border/50 shadow-lg"
-                  >
-                    <DropdownMenuItem onClick={() => navigate('/pricing')}>
-                      <CreditCard className="h-4 w-4 mr-2" />
-                      Cenki
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/account')}>
-                      <Settings className="h-4 w-4 mr-2" />
-                      Račun {plan ? `(${plan.name})` : ''}
-                    </DropdownMenuItem>
-                    {isAdmin && (
-                      <DropdownMenuItem onClick={() => navigate('/admin')}>
-                        <Shield className="h-4 w-4 mr-2" />
-                        Admin
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuSeparator />
-                    <div className="px-2 py-1.5">
-                      <CompactCreditDisplay />
-                    </div>
-                    <DropdownMenuSeparator />
-                    <div className="px-2 py-1.5 text-xs text-muted-foreground flex items-center">
-                      <User className="h-3 w-3 mr-2" />
-                      {user?.email}
-                    </div>
-                    <DropdownMenuItem onClick={handleSignOut}>
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Odjava
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                // Desktop navigation
-                <>
-                  <nav className="flex items-center space-x-2">
-                    <Button variant="ghost" size="sm" onClick={() => navigate('/pricing')}>
-                      <CreditCard className="h-4 w-4 mr-2" />
-                      Cenki
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => navigate('/account')}>
-                      <Settings className="h-4 w-4 mr-2" />
-                      Račun {plan ? `(${plan.name})` : ''}
-                    </Button>
-                    {isAdmin && (
-                      <Button variant="ghost" size="sm" onClick={() => navigate('/admin')}>
-                        <Shield className="h-4 w-4 mr-2" />
-                        Admin
-                      </Button>
-                    )}
-                  </nav>
-                  <CompactCreditDisplay />
-                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                    <User className="h-4 w-4" />
-                    <span>{user?.email}</span>
-                  </div>
-                  <Button variant="outline" onClick={handleSignOut}>
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Odjava
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
+      <AppHeader />
 
       <div className="container mx-auto px-4 py-8">
 

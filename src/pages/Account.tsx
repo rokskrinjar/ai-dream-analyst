@@ -7,8 +7,9 @@ import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { User, CreditCard, Calendar, Settings, LogOut } from "lucide-react";
+import { User, CreditCard, Calendar, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { AppHeader } from "@/components/AppHeader";
 
 interface UserSubscription {
   plan_id: string;
@@ -115,23 +116,7 @@ export default function Account() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" onClick={() => navigate('/dashboard')}>
-                ← Nadzorna plošča
-              </Button>
-              <h1 className="text-2xl font-bold text-foreground">Moj račun</h1>
-            </div>
-            <Button variant="outline" onClick={handleSignOut}>
-              <LogOut className="w-4 h-4 mr-2" />
-              Odjava
-            </Button>
-          </div>
-        </div>
-      </header>
+      <AppHeader showBackButton title="Moj račun" subtitle="Upravljajte svoj profil in naročnino" />
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Profile Information */}

@@ -2,15 +2,16 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Label } from "@/components/ui/label";
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, Save, Calendar, Heart, Tag } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { Save, Calendar, Heart, Tag } from 'lucide-react';
 import { EmotionWheel } from '@/components/EmotionWheel';
 import { z } from 'zod';
+import { AppHeader } from "@/components/AppHeader";
 
 const dreamSchema = z.object({
   title: z.string()
@@ -40,6 +41,7 @@ const dreamSchema = z.object({
 const DreamEntry = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -138,22 +140,7 @@ const DreamEntry = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border/30 bg-card/30">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/dashboard')}
-              className="p-2"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Nazaj na nadzorno ploščo
-            </Button>
-            <h1 className="text-2xl font-bold text-foreground">Nova sanja</h1>
-          </div>
-        </div>
-      </header>
+      <AppHeader showBackButton title="Nova sanja" subtitle="Zabeležite svojo sanjsko izkušnjo" />
 
       <div className="container mx-auto px-4 py-8 max-w-2xl">
         <Card className="border-border/50">

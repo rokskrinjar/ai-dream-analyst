@@ -6,6 +6,7 @@ import { Check, Zap, Crown, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { AppHeader } from "@/components/AppHeader";
 
 interface SubscriptionPlan {
   id: string;
@@ -264,34 +265,21 @@ export default function Pricing() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" onClick={() => navigate('/')}>
-                ← Nazaj
-              </Button>
-              <h1 className="text-2xl font-bold text-foreground">Naročnine</h1>
-            </div>
-            {user && (
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" onClick={() => navigate('/dashboard')}>
-                  Nadzorna plošča
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={toggleDebugMode}
-                  className="text-xs"
-                >
-                  {debugMode ? '🐛 ON' : '🐛 OFF'}
-                </Button>
-              </div>
-            )}
-          </div>
+      <AppHeader title="Naročnine" />
+      
+      {/* Debug Mode Toggle for logged-in users */}
+      {user && (
+        <div className="container mx-auto px-4 pt-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={toggleDebugMode}
+            className="text-xs"
+          >
+            {debugMode ? '🐛 Debug ON' : '🐛 Debug OFF'}
+          </Button>
         </div>
-      </header>
+      )}
 
       {/* Debug and Error Display */}
       {(debugMode || lastError) && (
