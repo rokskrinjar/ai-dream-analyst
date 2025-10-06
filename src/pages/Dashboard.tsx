@@ -458,7 +458,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
             ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {dreams.slice(0, 4).map((dream, index) => {
                   const analysis = analyses[dream.id];
                   const isAnalyzing = analyzingDreams.has(dream.id);
@@ -471,7 +471,7 @@ const Dashboard = () => {
                       <Card 
                         key={dream.id}
                         className={cn(
-                          "border-none overflow-hidden group hover:shadow-xl transition-all cursor-pointer",
+                          "border-none overflow-hidden group hover:shadow-xl transition-all cursor-pointer h-[320px] flex flex-col",
                           isExpanded && "ring-2 ring-primary shadow-2xl"
                         )}
                         onClick={() => {
@@ -479,66 +479,64 @@ const Dashboard = () => {
                             if (analysis) {
                               setExpandedDreamId(isExpanded ? null : dream.id);
                             } else {
-                              navigate(`/dream/${dream.id}`);
+                              analyzeDream(dream.id);
                             }
                           }
                         }}
                       >
-                        <div className="flex flex-col sm:flex-row">
-                          {/* Image Section */}
-                          <div 
-                            className="relative w-full sm:w-48 h-48 sm:h-auto bg-cover bg-center flex-shrink-0"
-                            style={{ backgroundImage: `url(${bgImage})` }}
-                          >
-                            <div className="absolute inset-0 bg-gradient-to-br from-black/60 to-black/30" />
-                            {analysis && (
-                              <Badge className="absolute top-3 right-3 bg-white/20 backdrop-blur-sm text-white border-white/30">
-                                <CheckCircle2 className="h-3 w-3 mr-1" />
-                                Analyzed
-                              </Badge>
-                            )}
+                        {/* Image Section */}
+                        <div 
+                          className="relative w-full h-48 bg-cover bg-center flex-shrink-0"
+                          style={{ backgroundImage: `url(${bgImage})` }}
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-br from-black/60 to-black/30" />
+                          {analysis && (
+                            <Badge className="absolute top-3 right-3 bg-white/20 backdrop-blur-sm text-white border-white/30">
+                              <CheckCircle2 className="h-3 w-3 mr-1" />
+                              Analyzed
+                            </Badge>
+                          )}
+                        </div>
+                        
+                        {/* Content Section */}
+                        <div className="flex-1 flex flex-col p-5 bg-card">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-foreground text-lg mb-2 line-clamp-2">
+                              {dream.title}
+                            </h3>
+                            <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                              {dream.content}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(dream.created_at).toLocaleDateString()}
+                            </p>
                           </div>
                           
-                          {/* Content Section */}
-                          <div className="flex-1 flex flex-col p-5 bg-card">
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-foreground text-lg mb-2 line-clamp-2">
-                                {dream.title}
-                              </h3>
-                              <p className="text-sm text-muted-foreground mb-3 line-clamp-3">
-                                {dream.content}
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {new Date(dream.created_at).toLocaleDateString()}
-                              </p>
-                            </div>
-                            
-                            {!analysis && !isAnalyzing && (
-                              <Button 
-                                size="sm" 
-                                variant="outline"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  analyzeDream(dream.id);
-                                }}
-                                className="mt-4 w-full"
-                              >
-                                <Brain className="h-3 w-3 mr-2" />
-                                Analyze Dream
-                              </Button>
-                            )}
-                            
-                            {isAnalyzing && (
-                              <Button 
-                                size="sm" 
-                                disabled
-                                className="mt-4 w-full"
-                              >
-                                <Loader2 className="h-3 w-3 mr-2 animate-spin" />
-                                Analyzing...
-                              </Button>
-                            )}
-                          </div>
+                          {!analysis && !isAnalyzing && (
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                analyzeDream(dream.id);
+                              }}
+                              className="mt-4 w-full"
+                            >
+                              <Brain className="h-3 w-3 mr-2" />
+                              Analyze Dream
+                            </Button>
+                          )}
+                          
+                          {isAnalyzing && (
+                            <Button 
+                              size="sm" 
+                              disabled
+                              className="mt-4 w-full"
+                            >
+                              <Loader2 className="h-3 w-3 mr-2 animate-spin" />
+                              Analyzing...
+                            </Button>
+                          )}
                         </div>
                       </Card>
 
