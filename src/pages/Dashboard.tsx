@@ -42,7 +42,8 @@ import {
   MessageCircleQuestion,
   Menu,
   Pencil,
-  CheckCircle2
+  CheckCircle2,
+  MessageCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DreamActivityCalendar } from '@/components/DreamActivityCalendar';
@@ -632,6 +633,26 @@ const Dashboard = () => {
                             <p className="text-sm text-muted-foreground leading-relaxed">
                               {analysis.recommendations}
                             </p>
+                          </div>
+                        )}
+
+                        {/* Reflection Questions */}
+                        {analysis.reflection_questions && analysis.reflection_questions.length > 0 && (
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <MessageCircle className="h-4 w-4 text-primary" />
+                              <h4 className="font-semibold text-foreground">
+                                {t('dashboard.analysisSection.reflectionQuestions')}
+                              </h4>
+                            </div>
+                            <ul className="space-y-2">
+                              {analysis.reflection_questions.map((question, idx) => (
+                                <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
+                                  <span className="text-primary mt-0.5">•</span>
+                                  <span>{question}</span>
+                                </li>
+                              ))}
+                            </ul>
                           </div>
                         )}
                       </CardContent>
