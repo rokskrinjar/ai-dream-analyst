@@ -43,7 +43,8 @@ import {
   Menu,
   Pencil,
   CheckCircle2,
-  MessageCircle
+  MessageCircle,
+  Moon
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DreamActivityCalendar } from '@/components/DreamActivityCalendar';
@@ -63,6 +64,7 @@ interface Dream {
   content: string;
   dream_date: string;
   mood?: string;
+  primary_emotion?: string;
   created_at: string;
 }
 
@@ -566,6 +568,27 @@ const Dashboard = () => {
                           >
                             <ChevronDown className="h-4 w-4" />
                           </Button>
+                        </div>
+
+                        <Separator />
+
+                        {/* Dream Description */}
+                        <div className="space-y-3 bg-background/50 rounded-lg p-4 border">
+                          <div className="flex items-center gap-2">
+                            <Moon className="h-4 w-4 text-primary" />
+                            <h4 className="font-semibold text-foreground">
+                              {t('analysisSection.dreamDescription')}
+                            </h4>
+                          </div>
+                          <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                            {dream.content}
+                          </p>
+                          {dream.primary_emotion && (
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <Heart className="h-3 w-3" />
+                              <span>{t('analysisSection.primaryEmotion')}: {dream.primary_emotion}</span>
+                            </div>
+                          )}
                         </div>
 
                         <Separator />

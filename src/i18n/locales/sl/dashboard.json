@@ -46,8 +46,10 @@
     "analyzed": "Sanje uspešno analizirane"
   },
   "analysisSection": {
-    "viewAnalysis": "Poglej AI analizo",
+    "viewAnalysis": "Prikaži AI analizo",
     "hideAnalysis": "Skrij analizo",
+    "dreamDescription": "Opis sanj",
+    "primaryEmotion": "Primarna čustva",
     "themes": "Teme",
     "symbols": "Simboli",
     "analysis": "Analiza",

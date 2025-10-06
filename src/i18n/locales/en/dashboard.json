@@ -48,6 +48,8 @@
   "analysisSection": {
     "viewAnalysis": "View AI Analysis",
     "hideAnalysis": "Hide Analysis",
+    "dreamDescription": "Dream Description",
+    "primaryEmotion": "Primary emotion",
     "themes": "Themes",
     "symbols": "Symbols",
     "analysis": "Analysis",
