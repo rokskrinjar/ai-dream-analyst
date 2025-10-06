@@ -183,10 +183,10 @@ const Analytics = () => {
       let analysesData: DreamAnalysis[] = [];
       
       if (dreamIds.length > 0) {
-        const { data, error: analysesError } = await supabase
-          .from('dream_analyses')
-          .select('*')
-          .in('dream_id', dreamIds);
+      const { data, error: analysesError } = await supabase
+        .from('dream_analyses')
+        .select('id, dream_id, themes, emotions, symbols, analysis_text, recommendations, created_at, reflection_questions, language')
+        .in('dream_id', dreamIds);
 
         if (analysesError) throw analysesError;
         analysesData = data || [];
@@ -297,10 +297,8 @@ const Analytics = () => {
       console.log('  - dreams count:', dreams.length);
       console.log('  - analyses count:', analyses.length);
       
-      // Strip out image_url to avoid sending massive base64 images
-      const analysesWithoutImages = analyses.map(({ image_url, ...rest }) => rest);
       const { data, error } = await supabase.functions.invoke('analyze-dream-patterns', {
-        body: { dreams, analyses: analysesWithoutImages, forceRefresh }
+        body: { dreams, analyses, forceRefresh }
       });
 
       console.log('📥 Edge function response:', { data, error });
