@@ -84,7 +84,7 @@ const Dashboard = () => {
   const { isAdmin } = useAdmin();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const [dreams, setDreams] = useState<Dream[]>([]);
   const [analyses, setAnalyses] = useState<{ [key: string]: DreamAnalysis }>({});
   const [allDreams, setAllDreams] = useState<Dream[]>([]);
