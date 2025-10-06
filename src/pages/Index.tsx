@@ -100,80 +100,93 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <main>
         {/* Enhanced Hero Section */}
-        <section className="relative overflow-hidden">
-          <div className="absolute inset-0 gradient-bg"></div>
-          <div className="container relative mx-auto px-4 py-16 lg:py-24">
-            <div className="flex flex-col lg:flex-row items-center gap-12">
-              <div className="flex-1 text-center lg:text-left">
-                <div className="space-y-8 animate-fade-in-up">
-                  {/* Trust indicators */}
-                  <div className="flex items-center justify-center lg:justify-start gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                      <span>{t('hero.rating')}</span>
-                    </div>
-                    <div className="w-px h-4 bg-border"></div>
-                    <div className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
-                      <span>{t('hero.users')}</span>
-                    </div>
-                    <div className="w-px h-4 bg-border"></div>
-                    <div className="flex items-center gap-1">
-                      <Shield className="h-4 w-4" />
-                      <span>{t('hero.privacy')}</span>
-                    </div>
-                  </div>
-
-                  <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-foreground animate-glow-pulse">
-                    <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                      {t('common:appName')}
-                    </span>
-                  </h1>
-                  
-                  <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                    {t('hero.subtitle')}
-                  </p>
-
-                  {/* Social proof */}
-                  <div className="glass-card p-4 max-w-md mx-auto lg:mx-0">
-                    <div className="flex items-center gap-3">
-                      <Zap className="h-5 w-5 text-primary" />
-                      <div className="text-sm">
-                        <span className="font-semibold text-foreground">{t('hero.newAiUpdate')}</span>
-                        <span className="text-muted-foreground"> • {t('hero.updatedWith')}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                    <Button 
-                      size="lg" 
-                      className="font-semibold px-8 py-4 text-lg hover:shadow-lg transition-all duration-300 animate-glow-pulse"
-                      onClick={() => navigate('/auth')}
-                    >
-                      {t('hero.ctaFree')}
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
-                    
-                    <Button 
-                      variant="outline" 
-                      size="lg"
-                      className="font-semibold px-8 py-4 text-lg glass-card hover:bg-primary/5"
-                      onClick={() => navigate('/pricing')}
-                    >
-                      <TrendingUp className="mr-2 h-5 w-5" />
-                      {t('hero.viewPricing')}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex-1 relative">
-                <InteractiveDreamJournal />
-              </div>
-            </div>
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0a0118] via-[#1a0b2e] to-[#0a0118]">
+          {/* Radial gradient spotlight */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(139,92,246,0.15),transparent_50%)]" />
+          
+          {/* Floating particles */}
+          <div className="absolute inset-0">
+            {[...Array(20)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute rounded-full bg-primary/10 blur-xl animate-float-particles"
+                style={{
+                  width: `${Math.random() * 100 + 50}px`,
+                  height: `${Math.random() * 100 + 50}px`,
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 10}s`,
+                  animationDuration: `${Math.random() * 10 + 10}s`,
+                }}
+              />
+            ))}
           </div>
-        </section>
+        </div>
+
+        {/* Content */}
+        <div className="container relative z-10 mx-auto px-4 py-32 text-center">
+          {/* Trust Badge */}
+          <div className="mb-8 animate-fade-in">
+            <p className="text-sm text-muted-foreground/80">
+              {t('index:hero.trustBadge')}
+            </p>
+          </div>
+
+          {/* Headline */}
+          <h1 className="mx-auto mb-8 max-w-4xl text-5xl font-bold leading-tight text-white md:text-6xl lg:text-7xl animate-fade-in drop-shadow-2xl" style={{ animationDelay: '0.2s' }}>
+            {t('index:hero.title')}
+          </h1>
+
+          {/* Subtext */}
+          <p className="mx-auto mb-12 max-w-2xl text-lg leading-relaxed text-muted-foreground/90 md:text-xl animate-fade-in" style={{ animationDelay: '0.4s' }}>
+            {t('index:hero.subtitle')}
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="mb-16 flex flex-col items-center justify-center gap-4 sm:flex-row animate-fade-in" style={{ animationDelay: '0.6s' }}>
+            <Button
+              size="lg"
+              className="h-14 px-8 text-lg shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 transition-all"
+              onClick={() => navigate('/auth')}
+            >
+              {t('index:hero.cta.primary')}
+            </Button>
+            <Button
+              size="lg"
+              variant="ghost"
+              className="h-14 px-8 text-lg text-white hover:bg-white/10"
+              onClick={() => document.getElementById('science-behind-dreams')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              {t('index:hero.cta.secondary')}
+            </Button>
+          </div>
+
+          {/* Floating Insight Cards */}
+          <div className="mx-auto grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-3 animate-fade-in" style={{ animationDelay: '0.8s' }}>
+            {[
+              { key: 'flying', icon: '✈️' },
+              { key: 'water', icon: '💧' },
+              { key: 'shadow', icon: '🌙' },
+            ].map((card, index) => (
+              <div
+                key={card.key}
+                className="group rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl transition-all hover:bg-white/10 hover:scale-105 hover:border-primary/30"
+                style={{
+                  animationDelay: `${1 + index * 0.2}s`,
+                }}
+              >
+                <div className="mb-2 text-3xl">{card.icon}</div>
+                <p className="text-sm text-white/80 group-hover:text-white transition-colors">
+                  {t(`index:hero.insightCards.${card.key}`)}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
 
         {/* Science Behind Dreams Section */}

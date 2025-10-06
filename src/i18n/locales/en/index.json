@@ -1,14 +1,17 @@
 {
   "hero": {
-    "rating": "4.9/5 rating",
-    "users": "10,000+ users",
-    "private": "100% private",
-    "title": "Dream Catcher",
-    "subtitle": "Discover hidden messages in your dreams with the power of artificial intelligence. Analyze patterns, understand symbolism, and gain personal insights into your inner world.",
-    "newFeature": "New AI Analysis",
-    "newFeatureDesc": "Updated with GPT-4o",
-    "startFree": "Start Free",
-    "viewPricing": "View Pricing"
+    "title": "Your Dreams Aren't Random. They're Messages from Your Mind.",
+    "subtitle": "Backed by neuroscience and psychology, dreams reveal your emotional patterns, creativity, and inner growth. Recording and analyzing them helps you understand yourself — one night at a time.",
+    "trustBadge": "Trusted by 10,000+ dreamers  •  Based on neuroscience  •  100% private",
+    "cta": {
+      "primary": "Start Your Dream Journal →",
+      "secondary": "Watch how it works"
+    },
+    "insightCards": {
+      "flying": "Flying: Freedom & escape",
+      "water": "Water: Emotional state",
+      "shadow": "Jungian archetype: The Shadow"
+    }
   },
   "scienceBehindDreams": {
     "title": "🧠 The Science Behind Dreams",

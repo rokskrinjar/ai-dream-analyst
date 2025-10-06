@@ -1,14 +1,17 @@
 {
   "hero": {
-    "rating": "4.9/5 ocena",
-    "users": "10,000+ uporabnikov",
-    "private": "100% zasebno",
-    "title": "Lovilec Sanj",
-    "subtitle": "Odkrijte skrita sporočila svojih sanj z močjo umetne inteligence. Analizirajte vzorce, razumejte simboliko in pridobite osebne vpoglede v svoj notranji svet.",
-    "newFeature": "Nova AI analiza",
-    "newFeatureDesc": "Posodobljena z GPT-4o",
-    "startFree": "Začni brezplačno",
-    "viewPricing": "Poglej cene"
+    "title": "Vaše sanje niso naključne. So sporočila vašega uma.",
+    "subtitle": "Podprte z nevroznanostjo in psihologijo, sanje razkrivajo vaše čustvene vzorce, ustvarjalnost in notranjo rast. Njihovo beleženje in analiza vam pomaga razumeti sebe — noč za nočjo.",
+    "trustBadge": "Zaupajo nam 10.000+ sanjačev  •  Temelji na nevroznanosti  •  100% zasebno",
+    "cta": {
+      "primary": "Začni dnevnik sanj →",
+      "secondary": "Poglej, kako deluje"
+    },
+    "insightCards": {
+      "flying": "Letenje: Svoboda in beg",
+      "water": "Voda: Čustveno stanje",
+      "shadow": "Jungovski arhetip: Senca"
+    }
   },
   "scienceBehindDreams": {
     "title": "🧠 Znanost o Sanjah",
