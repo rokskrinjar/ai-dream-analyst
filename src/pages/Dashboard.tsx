@@ -121,7 +121,7 @@ const Dashboard = () => {
         .order('created_at', { ascending: false });
       
       if (!showAllDreams) {
-        query.limit(5);
+        query.limit(4);
       }
       
       const { data, error } = await query;
@@ -213,7 +213,7 @@ const Dashboard = () => {
           
           const queryPromise = supabase
             .from('dream_analyses')
-            .select('*')
+            .select('id, dream_id, themes, emotions, symbols, recommendations, created_at, reflection_questions, language')
             .in('dream_id', batch);
           
           try {
@@ -374,7 +374,7 @@ const Dashboard = () => {
       <div className="container mx-auto px-4 py-8 space-y-8">
 
         {/* Dream Activity Calendar */}
-        <DreamActivityCalendar />
+        <DreamActivityCalendar dreams={allDreams} />
 
         {/* Welcome Header */}
         <div className="text-center space-y-2">

@@ -1,6 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { supabase } from '@/integrations/supabase/client';
 import { Calendar } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -8,41 +7,27 @@ interface DreamActivityData {
   [date: string]: number;
 }
 
-const DreamActivityCalendar = () => {
-  const [activityData, setActivityData] = useState<DreamActivityData>({});
-  const [loading, setLoading] = useState(true);
+interface Dream {
+  id: string;
+  dream_date: string;
+}
+
+interface DreamActivityCalendarProps {
+  dreams: Dream[];
+}
+
+const DreamActivityCalendar = ({ dreams }: DreamActivityCalendarProps) => {
   const isMobile = useIsMobile();
 
-  useEffect(() => {
-    fetchDreamActivity();
-  }, []);
-
-  const fetchDreamActivity = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('dreams')
-        .select('dream_date')
-        .order('dream_date', { ascending: true });
-
-      if (error) throw error;
-
-      // Process data into activity counts
-      const activity: DreamActivityData = {};
-      (data || []).forEach(dream => {
-        const date = dream.dream_date;
-        activity[date] = (activity[date] || 0) + 1;
-      });
-
-      console.log('Dream activity data:', activity);
-      console.log('Total dreams found:', data?.length);
-      console.log('Individual dream dates:', data?.map(d => d.dream_date));
-      setActivityData(activity);
-    } catch (error) {
-      console.error('Error fetching dream activity:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Process dreams into activity data
+  const activityData = useMemo(() => {
+    const activity: DreamActivityData = {};
+    dreams.forEach(dream => {
+      const date = dream.dream_date;
+      activity[date] = (activity[date] || 0) + 1;
+    });
+    return activity;
+  }, [dreams]);
 
   const getActivityLevel = (count: number): string => {
     if (count === 0) return 'bg-muted';
@@ -186,38 +171,18 @@ const DreamActivityCalendar = () => {
     return labels;
   };
 
-  // Memoized calendar generation - only runs when activityData changes and has data
+  // Memoized calendar generation
   const weeksData = useMemo(() => {
-    // Don't generate calendar if we're loading or have no data
-    if (loading || Object.keys(activityData).length === 0) {
-      console.log('Calendar generation skipped - loading:', loading, 'data keys:', Object.keys(activityData).length);
+    if (Object.keys(activityData).length === 0) {
       return [];
     }
-    
-    // Validate we have the expected data for Sep 17th
-    const hasSep17 = activityData['2025-09-17'];
-    console.log('Calendar generation with data:', activityData, 'Sep 17 count:', hasSep17);
-    
     return isMobile ? generateMobileCalendarData() : generateCalendarData();
-  }, [activityData, loading, isMobile]);
+  }, [activityData, isMobile]);
 
   const monthLabels = useMemo(() => {
     if (weeksData.length === 0) return {};
     return getMonthLabels(weeksData);
   }, [weeksData]);
-
-  // Show loading state - only check loading, not weeksData.length to avoid initialization issues
-  if (loading) {
-    return (
-      <div className="bg-card border border-border/50 rounded-lg p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <Calendar className="h-5 w-5 text-muted-foreground" />
-          <h2 className="text-lg font-semibold">Aktivnost sanj</h2>
-        </div>
-        <div className="h-32 bg-muted/20 rounded animate-pulse"></div>
-      </div>
-    );
-  }
 
   // If no data loaded, show empty state
   if (weeksData.length === 0) {
