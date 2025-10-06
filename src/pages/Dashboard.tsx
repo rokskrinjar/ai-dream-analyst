@@ -553,7 +553,7 @@ const Dashboard = () => {
                           <div className="flex items-center gap-2">
                             <Sparkles className="h-5 w-5 text-primary" />
                             <h3 className="text-lg font-semibold">
-                              {t('dashboard.analysisSection.viewAnalysis')} - {dream.title}
+                              {t('analysisSection.viewAnalysis')} - {dream.title}
                             </h3>
                           </div>
                           <Button
@@ -573,7 +573,7 @@ const Dashboard = () => {
                             <div className="flex items-center gap-2">
                               <Heart className="h-4 w-4 text-primary" />
                               <h4 className="font-semibold text-foreground">
-                                {t('dashboard.analysisSection.themes')}
+                                {t('analysisSection.themes')}
                               </h4>
                             </div>
                             <div className="flex flex-wrap gap-2">
@@ -592,7 +592,7 @@ const Dashboard = () => {
                             <div className="flex items-center gap-2">
                               <Sparkles className="h-4 w-4 text-primary" />
                               <h4 className="font-semibold text-foreground">
-                                {t('dashboard.analysisSection.symbols')}
+                                {t('analysisSection.symbols')}
                               </h4>
                             </div>
                             <ul className="space-y-2">
@@ -612,7 +612,7 @@ const Dashboard = () => {
                             <div className="flex items-center gap-2">
                               <Brain className="h-4 w-4 text-primary" />
                               <h4 className="font-semibold text-foreground">
-                                {t('dashboard.analysisSection.analysis')}
+                                {t('analysisSection.analysis')}
                               </h4>
                             </div>
                             <p className="text-sm text-muted-foreground leading-relaxed">
@@ -627,7 +627,7 @@ const Dashboard = () => {
                             <div className="flex items-center gap-2">
                               <Lightbulb className="h-4 w-4 text-primary" />
                               <h4 className="font-semibold text-foreground">
-                                {t('dashboard.analysisSection.recommendations')}
+                                {t('analysisSection.recommendations')}
                               </h4>
                             </div>
                             <p className="text-sm text-muted-foreground leading-relaxed">
@@ -642,7 +642,7 @@ const Dashboard = () => {
                             <div className="flex items-center gap-2">
                               <MessageCircle className="h-4 w-4 text-primary" />
                               <h4 className="font-semibold text-foreground">
-                                {t('dashboard.analysisSection.reflectionQuestions')}
+                                {t('analysisSection.reflectionQuestions')}
                               </h4>
                             </div>
                             <ul className="space-y-2">
