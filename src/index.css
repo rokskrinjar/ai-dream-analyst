@@ -8,27 +8,27 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 220 17% 22%;
-    --foreground: 210 40% 98%;
-    --card: 217 19% 27%;
-    --card-foreground: 210 40% 98%;
-    --popover: 217 19% 27%;
-    --popover-foreground: 210 40% 98%;
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 98%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
     --primary: 330 81% 60%;
     --primary-foreground: 0 0% 100%;
     --primary-light: 330 81% 70%;
     --primary-dark: 330 81% 50%;
-    --secondary: 215 16% 47%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217 19% 35%;
-    --muted-foreground: 215 20% 70%;
+    --secondary: 220 13% 91%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 220 13% 95%;
+    --muted-foreground: 215 16% 47%;
     --accent: 330 81% 60%;
     --accent-foreground: 0 0% 100%;
     --accent-light: 330 81% 70%;
-    --destructive: 0 62.8% 50%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 215 16% 35%;
-    --input: 215 16% 35%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
     --ring: 330 81% 60%;
     --chart-1: 330 81% 60%;
     --chart-2: 160 60% 45%;
@@ -39,8 +39,8 @@ All colors MUST be HSL.
     
     /* Gradient variables */
     --gradient-primary: linear-gradient(135deg, hsl(330, 81%, 60%), hsl(340, 75%, 55%));
-    --gradient-secondary: linear-gradient(180deg, hsl(220, 17%, 22%), hsl(217, 19%, 27%));
-    --gradient-accent: linear-gradient(90deg, hsl(330, 81%, 60%), hsl(215, 16%, 47%));
+    --gradient-secondary: linear-gradient(180deg, hsl(0, 0%, 100%), hsl(220, 13%, 95%));
+    --gradient-accent: linear-gradient(90deg, hsl(330, 81%, 60%), hsl(220, 13%, 91%));
     
     /* Shadow variables */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -130,10 +130,10 @@ All colors MUST be HSL.
 
   /* Glassmorphism utilities */
   .glass-card {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
   }
 
   .gradient-bg {
