@@ -148,17 +148,37 @@ const Dashboard = () => {
     
     try {
       const dreamIds = dreamsList.map(dream => dream.id);
-      const { data, error } = await supabase
-        .from('dream_analyses')
-        .select('*')
-        .in('dream_id', dreamIds);
-
-      if (error) throw error;
-      
       const analysesMap: { [key: string]: DreamAnalysis } = {};
-      (data || []).forEach(analysis => {
-        analysesMap[analysis.dream_id] = analysis;
-      });
+      
+      // Batch queries to prevent timeout (5 IDs at a time)
+      const batchSize = 5;
+      for (let i = 0; i < dreamIds.length; i += batchSize) {
+        const batch = dreamIds.slice(i, i + batchSize);
+        
+        // Add timeout to each batch query
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Query timeout')), 10000)
+        );
+        
+        const queryPromise = supabase
+          .from('dream_analyses')
+          .select('*')
+          .in('dream_id', batch);
+        
+        try {
+          const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any;
+          
+          if (error) throw error;
+          
+          (data || []).forEach((analysis: DreamAnalysis) => {
+            analysesMap[analysis.dream_id] = analysis;
+          });
+        } catch (batchError) {
+          console.error('Error fetching batch:', batchError);
+          // Continue with next batch even if this one fails
+        }
+      }
+      
       setAnalyses(analysesMap);
     } catch (error) {
       console.error('Error fetching analyses:', error);
@@ -176,20 +196,40 @@ const Dashboard = () => {
       if (dreamsError) throw dreamsError;
       setAllDreams(allDreamsData || []);
       
-      // Fetch all analyses for complete statistics
+      // Fetch all analyses for complete statistics with batching
       if (allDreamsData && allDreamsData.length > 0) {
         const allDreamIds = allDreamsData.map(dream => dream.id);
-        const { data: allAnalysesData, error: analysesError } = await supabase
-          .from('dream_analyses')
-          .select('*')
-          .in('dream_id', allDreamIds);
-
-        if (analysesError) throw analysesError;
-        
         const allAnalysesMap: { [key: string]: DreamAnalysis } = {};
-        (allAnalysesData || []).forEach(analysis => {
-          allAnalysesMap[analysis.dream_id] = analysis;
-        });
+        
+        // Batch queries to prevent timeout (5 IDs at a time)
+        const batchSize = 5;
+        for (let i = 0; i < allDreamIds.length; i += batchSize) {
+          const batch = allDreamIds.slice(i, i + batchSize);
+          
+          // Add timeout to each batch query
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Query timeout')), 10000)
+          );
+          
+          const queryPromise = supabase
+            .from('dream_analyses')
+            .select('*')
+            .in('dream_id', batch);
+          
+          try {
+            const { data: allAnalysesData, error: analysesError } = await Promise.race([queryPromise, timeoutPromise]) as any;
+            
+            if (analysesError) throw analysesError;
+            
+            (allAnalysesData || []).forEach((analysis: DreamAnalysis) => {
+              allAnalysesMap[analysis.dream_id] = analysis;
+            });
+          } catch (batchError) {
+            console.error('Error fetching batch for stats:', batchError);
+            // Continue with next batch even if this one fails
+          }
+        }
+        
         setAllAnalyses(allAnalysesMap);
       }
     } catch (error) {
@@ -229,24 +269,6 @@ const Dashboard = () => {
     });
 
     try {
-      // Validate session before calling edge function
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !session) {
-        console.log('Session invalid, attempting refresh...');
-        // Try to refresh the session
-        const { data: { session: newSession }, error: refreshError } = await supabase.auth.refreshSession();
-        if (refreshError || !newSession) {
-          toast({
-            title: "Session expired",
-            description: "Please log in again.",
-            variant: "destructive",
-          });
-          navigate('/auth');
-          return;
-        }
-        console.log('Session refreshed successfully');
-      }
-
       // Deduct credits first (optimistic update)
       const success = await deductCredits(1);
       if (!success && !isUnlimited) {
@@ -263,16 +285,6 @@ const Dashboard = () => {
       });
 
       if (error) {
-        // Handle session expiry specifically
-        if (error.message?.includes('SESSION_EXPIRED') || error.message?.includes('Auth session missing')) {
-          toast({
-            title: "Session expired",
-            description: "Please log in again.",
-            variant: "destructive",
-          });
-          navigate('/auth');
-          return;
-        }
         if (error.message?.includes('402')) {
           toast({
             title: "Ni dovolj kreditov",

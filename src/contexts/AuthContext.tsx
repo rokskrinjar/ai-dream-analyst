@@ -50,25 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(false);
     });
 
-    // Set up automatic token refresh (check every minute)
-    const refreshInterval = setInterval(async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const expiresAt = session.expires_at ? session.expires_at * 1000 : 0;
-        const timeUntilExpiry = expiresAt - Date.now();
-        
-        // Refresh if expiring in less than 5 minutes
-        if (timeUntilExpiry < 5 * 60 * 1000 && timeUntilExpiry > 0) {
-          console.log('Auto-refreshing session...');
-          await supabase.auth.refreshSession();
-        }
-      }
-    }, 60000); // Check every minute
-
-    return () => {
-      subscription.unsubscribe();
-      clearInterval(refreshInterval);
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   const signUp = async (email: string, password: string, language: string = 'sl') => {
