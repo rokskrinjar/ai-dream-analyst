@@ -143,36 +143,69 @@ serve(async (req) => {
 
     // Check for cached analysis unless force refresh is requested
     if (!forceRefresh) {
-      const latestDreamDate = Math.max(...dreams.map((d: any) => new Date(d.dream_date).getTime()));
-      const { data: cachedAnalysis } = await supabase
+      console.log('Checking for cached pattern analysis...');
+      
+      // Get the most recent analysis for this user (no strict dreams_count match)
+      const { data: cachedAnalysis, error: cacheError } = await supabase
         .from('pattern_analyses')
         .select('*')
         .eq('user_id', user.id)
-        .eq('dreams_count', dreams.length)
-        .gte('last_dream_date', new Date(latestDreamDate).toISOString().split('T')[0])
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
+
+      if (cacheError) {
+        console.error('Error fetching cached analysis:', cacheError);
+      }
 
       if (cachedAnalysis) {
-        // Check if it's an old version analysis
-        const analysisVersion = cachedAnalysis.analysis_version || 1;
+        console.log(`Found cached analysis: ${cachedAnalysis.dreams_count} dreams, created ${cachedAnalysis.created_at}`);
         
-        if (analysisVersion < CURRENT_ANALYSIS_VERSION) {
-          // Calculate estimated cost for upgrade
-          const finalInputText = JSON.stringify(dreamData);
-          const finalEstimatedTokens = Math.ceil(finalInputText.length / 4);
-          const finalEstimatedCost = Math.max(2, Math.ceil(finalEstimatedTokens / 1000));
+        // Check if the cached analysis is recent enough (within 30 days)
+        const cacheAge = Date.now() - new Date(cachedAnalysis.created_at).getTime();
+        const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+        const isRecent = cacheAge < thirtyDaysInMs;
+        
+        // Check if it covers at least 80% of current dreams
+        const coveragePercentage = (cachedAnalysis.dreams_count / dreams.length) * 100;
+        const hasGoodCoverage = coveragePercentage >= 80;
+        
+        console.log(`Cache age: ${Math.floor(cacheAge / (24 * 60 * 60 * 1000))} days, Coverage: ${coveragePercentage.toFixed(1)}%`);
+        
+        // If cache is valid (recent and good coverage), return it
+        if (isRecent && hasGoodCoverage) {
+          // Check if it's an old version analysis
+          const analysisVersion = cachedAnalysis.analysis_version || 1;
           
-          console.log('Found older version analysis, offering upgrade');
+          if (analysisVersion < CURRENT_ANALYSIS_VERSION) {
+            // Calculate estimated cost for upgrade
+            const finalInputText = JSON.stringify(dreamData);
+            const finalEstimatedTokens = Math.ceil(finalInputText.length / 4);
+            const finalEstimatedCost = Math.max(2, Math.ceil(finalEstimatedTokens / 1000));
+            
+            console.log('Found older version analysis, offering upgrade');
+            return new Response(
+              JSON.stringify({ 
+                analysis: cachedAnalysis.analysis_data, 
+                cached: true,
+                upgradeAvailable: true,
+                currentVersion: analysisVersion,
+                availableVersion: CURRENT_ANALYSIS_VERSION,
+                estimatedUpgradeCost: finalEstimatedCost,
+                creditsUsed: 0,
+                dreamsAnalyzed: cachedAnalysis.dreams_count 
+              }),
+              {
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+              }
+            );
+          }
+          
+          console.log('Returning cached pattern analysis (current version, recent, good coverage)');
           return new Response(
             JSON.stringify({ 
               analysis: cachedAnalysis.analysis_data, 
               cached: true,
-              upgradeAvailable: true,
-              currentVersion: analysisVersion,
-              availableVersion: CURRENT_ANALYSIS_VERSION,
-              estimatedUpgradeCost: finalEstimatedCost,
               creditsUsed: 0,
               dreamsAnalyzed: cachedAnalysis.dreams_count 
             }),
@@ -180,20 +213,11 @@ serve(async (req) => {
               headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             }
           );
+        } else {
+          console.log(`Cache invalid - Recent: ${isRecent}, Coverage: ${hasGoodCoverage}. Generating new analysis.`);
         }
-        
-        console.log('Returning cached pattern analysis (current version)');
-        return new Response(
-          JSON.stringify({ 
-            analysis: cachedAnalysis.analysis_data, 
-            cached: true,
-            creditsUsed: 0,
-            dreamsAnalyzed: cachedAnalysis.dreams_count 
-          }),
-          {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        );
+      } else {
+        console.log('No cached analysis found. Generating new analysis.');
       }
     }
 
