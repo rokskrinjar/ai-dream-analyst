@@ -104,8 +104,25 @@ const renderTextContent = (content: any): React.ReactNode => {
     });
   }
   
-  // If it's an object, try to extract text
+  // If it's an object, check for paragraph_N keys
   if (typeof content === 'object') {
+    // Extract numbered paragraph keys (paragraph_1, paragraph_2, etc.)
+    const paragraphKeys = Object.keys(content).filter(key => key.startsWith('paragraph_'));
+    
+    if (paragraphKeys.length > 0) {
+      // Sort by number to maintain order
+      const sortedKeys = paragraphKeys.sort((a, b) => {
+        const numA = parseInt(a.replace('paragraph_', ''));
+        const numB = parseInt(b.replace('paragraph_', ''));
+        return numA - numB;
+      });
+      
+      return sortedKeys.map((key, idx) => (
+        <p key={idx} className="mb-4">{content[key]}</p>
+      ));
+    }
+    
+    // Fallback to other object properties
     const text = content.paragraph || content.text || content.content || JSON.stringify(content);
     return <p>{text}</p>;
   }

@@ -114,7 +114,7 @@ serve(async (req) => {
     const recentDreams = dreams.slice(0, 30);
     const inputText = JSON.stringify(recentDreams) + JSON.stringify(analyses);
     const estimatedTokens = Math.ceil(inputText.length / 4);
-    const estimatedCost = Math.max(2, Math.ceil(estimatedTokens / 2000)); // More conservative estimation
+    const estimatedCost = Math.max(2, Math.ceil(estimatedTokens / 15000)); // Realistic cost: ~5-10 credits for pattern analysis
 
     // Check if user has sufficient credits for estimated cost
     const { data: canUseCredits, error: creditError } = await supabase
@@ -181,7 +181,7 @@ serve(async (req) => {
             // Calculate estimated cost for upgrade
             const finalInputText = JSON.stringify(dreamData);
             const finalEstimatedTokens = Math.ceil(finalInputText.length / 4);
-            const finalEstimatedCost = Math.max(2, Math.ceil(finalEstimatedTokens / 1000));
+            const finalEstimatedCost = Math.max(2, Math.ceil(finalEstimatedTokens / 15000));
             
             console.log('Found older version analysis, offering upgrade');
             return new Response(
@@ -238,8 +238,8 @@ serve(async (req) => {
     // Calculate estimated cost based on input size
     const finalInputText = JSON.stringify(dreamData);
     const finalEstimatedTokens = Math.ceil(finalInputText.length / 4); // Rough estimation: 4 chars per token
-    const finalEstimatedCost = Math.max(2, Math.ceil(finalEstimatedTokens / 1000)); // Minimum 2 credits, +1 per 1000 tokens
-
+    const finalEstimatedCost = Math.max(2, Math.ceil(finalEstimatedTokens / 15000)); // Realistic cost: ~5-10 credits for pattern analysis
+    
     console.log(`Estimated tokens: ${finalEstimatedTokens}, Estimated cost: ${finalEstimatedCost} credits`);
 
     const prompt = `Kot strokovnjak za analizo sanj analizirajte naslednje podatke ${dreamData.length} sanj uporabnika in ustvarite celovito, poglobljeno analizo vzorcev. KRITIČNO: VEDNO se obračajte na uporabnika v DRUGI OSEBI (vi, vam, vaš, vaše, vaših). Odzovite se v JSON formatu s slovenskimi besedami.
