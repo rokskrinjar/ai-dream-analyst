@@ -141,16 +141,17 @@ const Dashboard = () => {
     const state = location.state as { analyzeId?: string } | null;
     console.log('Auto-analyze effect fired, state:', state);
     if (state?.analyzeId) {
-      // Clear the state to prevent re-triggering
+      const dreamIdToAnalyze = state.analyzeId; // Store in local variable
+      // Clear the state IMMEDIATELY to prevent re-triggering
       window.history.replaceState({}, document.title);
-      console.log('Will analyze dream:', state.analyzeId);
+      console.log('Will analyze dream:', dreamIdToAnalyze);
       // Add small delay to ensure component is fully mounted
       setTimeout(() => {
-        console.log('Calling analyzeDream for:', state.analyzeId);
-        analyzeDream(state.analyzeId);
+        console.log('Calling analyzeDream for:', dreamIdToAnalyze);
+        analyzeDream(dreamIdToAnalyze);
       }, 100);
     }
-  }, [location.state, analyzeDream]);
+  }, [location.state]); // Remove analyzeDream from dependencies!
 
   const fetchDreams = async () => {
     try {
