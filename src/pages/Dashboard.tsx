@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useCreditContext } from '@/contexts/CreditContext';
 import { useAdmin } from '@/hooks/useAdmin';
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -44,7 +44,8 @@ import {
   Pencil,
   CheckCircle2,
   MessageCircle,
-  Moon
+  Moon,
+  Trash2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DreamActivityCalendar } from '@/components/DreamActivityCalendar';
@@ -86,6 +87,7 @@ const Dashboard = () => {
   const { credits, plan, refreshCredits, deductCredits, isUnlimited } = useCreditContext();
   const { isAdmin } = useAdmin();
   const navigate = useNavigate();
+  const location = useLocation();
   const isMobile = useIsMobile();
   const { t } = useTranslation('dashboard');
   const [dreams, setDreams] = useState<Dream[]>([]);
@@ -112,6 +114,17 @@ const Dashboard = () => {
     fetchDreams();
     fetchAllDreamsForStats();
   }, [user, navigate, showAllDreams]);
+
+  // Auto-analyze dream after editing (from EditDream page)
+  useEffect(() => {
+    const state = location.state as { analyzeId?: string } | null;
+    if (state?.analyzeId) {
+      // Clear the state to prevent re-triggering
+      window.history.replaceState({}, document.title);
+      // Trigger analysis
+      analyzeDream(state.analyzeId);
+    }
+  }, [location.state]);
 
   const fetchDreams = async () => {
     try {
@@ -326,6 +339,34 @@ const Dashboard = () => {
     }
   };
 
+  const handleDeleteDream = async (dreamId: string) => {
+    try {
+      const { error } = await supabase
+        .from('dreams')
+        .delete()
+        .eq('id', dreamId)
+        .eq('user_id', user?.id);
+
+      if (error) throw error;
+
+      // Remove from local state
+      setDreams(prev => prev.filter(d => d.id !== dreamId));
+      setAllDreams(prev => prev.filter(d => d.id !== dreamId));
+      
+      toast({
+        title: "Uspešno izbrisano",
+        description: "Sanja je bila izbrisana.",
+      });
+    } catch (error) {
+      console.error('Error deleting dream:', error);
+      toast({
+        title: "Napaka",
+        description: "Napaka pri brisanju sanje.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleSignOut = async () => {
     const { error } = await signOut();
     if (error) {
@@ -537,6 +578,43 @@ const Dashboard = () => {
                         >
                           {/* Dark gradient overlay */}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+                          
+                          {/* Dropdown Menu - top left */}
+                          <div className="absolute top-3 left-3 z-10">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon"
+                                  className="h-8 w-8 bg-black/50 hover:bg-black/70 text-white"
+                                >
+                                  <Menu className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="start" className="bg-background" onClick={(e) => e.stopPropagation()}>
+                                <DropdownMenuItem
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    navigate(`/edit-dream/${dream.id}`);
+                                  }}
+                                >
+                                  <Pencil className="h-4 w-4 mr-2" />
+                                  Edit Dream
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteDream(dream.id);
+                                  }}
+                                  className="text-destructive"
+                                >
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Delete Dream
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
                           
                           {/* Analyzed badge - top right */}
                           {analysis && (

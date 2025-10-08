@@ -13,6 +13,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Analytics from "./pages/Analytics";
 import DreamEntry from "./pages/DreamEntry";
+import EditDream from "./pages/EditDream";
 import Pricing from "./pages/Pricing";
 import Account from "./pages/Account";
 import Admin from "./pages/Admin";
@@ -35,6 +36,7 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/dream/new" element={<DreamEntry />} />
+              <Route path="/edit-dream/:id" element={<EditDream />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/account" element={<Account />} />
               <Route path="/admin" element={<Admin />} />
