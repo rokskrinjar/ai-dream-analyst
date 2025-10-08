@@ -434,8 +434,18 @@ Important: Focus on accurately depicting the specific scenes, actions, and setti
 
         if (imageResponse.ok) {
           const imageData = await imageResponse.json();
+          
+          // Log the full response to debug the structure
+          console.log('Image API response structure:', JSON.stringify(imageData, null, 2));
+          
+          // Try to extract the image URL
           imageUrl = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-          console.log('AI image generated successfully');
+          
+          if (imageUrl) {
+            console.log('AI image generated successfully, URL length:', imageUrl.length);
+          } else {
+            console.error('Image URL not found in response. Response:', imageData);
+          }
         } else {
           const errorText = await imageResponse.text();
           console.error('Image generation failed:', imageResponse.status, errorText);
