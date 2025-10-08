@@ -116,7 +116,13 @@ const Dashboard = () => {
   }, [user, navigate, showAllDreams]);
 
   const analyzeDream = useCallback(async (dreamId: string) => {
-    if (analyzingDreams.has(dreamId)) return;
+    console.log('🔍 analyzeDream called for:', dreamId);
+    console.log('🔍 Already analyzing?', analyzingDreams.has(dreamId));
+    
+    if (analyzingDreams.has(dreamId)) {
+      console.log('⏭️ Skipping - already analyzing this dream');
+      return;
+    }
 
     console.log('analyzeDream called - credits:', credits, 'isUnlimited:', isUnlimited);
 
@@ -297,6 +303,18 @@ const Dashboard = () => {
           variant: "destructive",
         });
         return;
+      }
+
+      // Delete existing analysis before re-analyzing
+      console.log('Deleting old analysis for dream:', pendingAnalysis);
+      const { error: deleteError } = await supabase
+        .from('dream_analyses')
+        .delete()
+        .eq('dream_id', pendingAnalysis);
+      
+      if (deleteError) {
+        console.warn('Failed to delete old analysis:', deleteError);
+        // Continue anyway - maybe there was no analysis to delete
       }
 
       const { data, error } = await supabase.functions.invoke('analyze-dream', {
