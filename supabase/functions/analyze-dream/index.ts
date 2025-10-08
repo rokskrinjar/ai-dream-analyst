@@ -397,9 +397,20 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
       if (!lovableApiKey) {
         console.warn('LOVABLE_API_KEY not configured, skipping image generation');
       } else {
-        // Create descriptive prompt for image generation
-        const themesText = parsedAnalysis.themes?.slice(0, 3).join(', ') || 'abstract dream';
-        const imagePrompt = `Create a cheerful, lighthearted stylized illustration of: "${dream.title}". Style: whimsical, colorful, playful, modern illustration, friendly and inviting. Capture the essence of these themes: ${themesText}. Use bright colors, simple shapes, and a warm, optimistic visual style.`;
+        // Create descriptive prompt from actual dream content
+        const dreamSummary = dream.content.substring(0, 500); // First 500 chars of actual content
+        const emotionsText = parsedAnalysis.emotions?.slice(0, 3).join(', ') || '';
+        const symbolsText = parsedAnalysis.symbols?.slice(0, 3).map((s: any) => s.symbol).join(', ') || '';
+        const themesText = parsedAnalysis.themes?.slice(0, 3).join(', ') || '';
+        
+        const imagePrompt = `Create a vivid, artistic illustration that captures this dream scene: "${dreamSummary}". 
+
+Key elements to include: ${symbolsText}
+Themes: ${themesText}
+Emotional tone: ${emotionsText}
+Art style: Surreal dreamscape, artistic, cinematic, atmospheric. Use visual metaphors and symbolic imagery. The mood should reflect the dream's emotional content - not artificially cheerful.
+
+Important: Focus on accurately depicting the specific scenes, actions, and settings from the dream content, not generic dream symbols.`;
         
         console.log('Generating AI image with prompt:', imagePrompt);
         
