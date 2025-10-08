@@ -162,6 +162,17 @@ const EditDream = () => {
 
       if (error) throw error;
 
+      // Delete the old analysis so it can be re-analyzed with updated content
+      const { error: deleteAnalysisError } = await supabase
+        .from('dream_analyses')
+        .delete()
+        .eq('dream_id', id);
+
+      if (deleteAnalysisError) {
+        console.warn('Failed to delete old analysis:', deleteAnalysisError);
+        // Don't throw - continue anyway
+      }
+
       toast({
         title: "Uspešno posodobljeno!",
         description: "Vaša sanja je bila posodobljena.",
