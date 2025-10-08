@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCreditContext } from '@/contexts/CreditContext';
 import { useAdmin } from '@/hooks/useAdmin';
@@ -115,16 +115,42 @@ const Dashboard = () => {
     fetchAllDreamsForStats();
   }, [user, navigate, showAllDreams]);
 
+  const analyzeDream = useCallback(async (dreamId: string) => {
+    if (analyzingDreams.has(dreamId)) return;
+
+    console.log('analyzeDream called - credits:', credits, 'isUnlimited:', isUnlimited);
+
+    // Check credits first (unless unlimited)
+    if (!isUnlimited && (!credits || credits.credits_remaining < 1)) {
+      toast({
+        title: "Ni dovolj kreditov",
+        description: "Za analizo sanj potrebujete vsaj 1 kredit. Nadgradite svoj načrt.",
+        variant: "destructive",
+      });
+      navigate('/pricing');
+      return;
+    }
+
+    // Show credit confirmation modal
+    setPendingAnalysis(dreamId);
+    setShowCreditModal(true);
+  }, [analyzingDreams, credits, isUnlimited, toast, navigate]);
+
   // Auto-analyze dream after editing (from EditDream page)
   useEffect(() => {
     const state = location.state as { analyzeId?: string } | null;
+    console.log('Auto-analyze effect fired, state:', state);
     if (state?.analyzeId) {
       // Clear the state to prevent re-triggering
       window.history.replaceState({}, document.title);
-      // Trigger analysis
-      analyzeDream(state.analyzeId);
+      console.log('Will analyze dream:', state.analyzeId);
+      // Add small delay to ensure component is fully mounted
+      setTimeout(() => {
+        console.log('Calling analyzeDream for:', state.analyzeId);
+        analyzeDream(state.analyzeId);
+      }, 100);
     }
-  }, [location.state]);
+  }, [location.state, analyzeDream]);
 
   const fetchDreams = async () => {
     try {
@@ -248,27 +274,6 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Error fetching all dreams for stats:', error);
     }
-  };
-
-  const analyzeDream = async (dreamId: string) => {
-    if (analyzingDreams.has(dreamId)) return;
-
-    console.log('analyzeDream called - credits:', credits, 'isUnlimited:', isUnlimited);
-
-    // Check credits first (unless unlimited)
-    if (!isUnlimited && (!credits || credits.credits_remaining < 1)) {
-      toast({
-        title: "Ni dovolj kreditov",
-        description: "Za analizo sanj potrebujete vsaj 1 kredit. Nadgradite svoj načrt.",
-        variant: "destructive",
-      });
-      navigate('/pricing');
-      return;
-    }
-
-    // Show credit confirmation modal
-    setPendingAnalysis(dreamId);
-    setShowCreditModal(true);
   };
 
   const confirmAnalysis = async () => {
