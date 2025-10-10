@@ -404,6 +404,7 @@ const Analytics = () => {
 
   const handleAnalysisConfirmation = (confirmed: boolean) => {
     if (confirmed) {
+      setShowChoiceScreen(false);
       generatePatternAnalysis(dreams, analyses, true);
     }
     setShowCostConfirmation(false);
