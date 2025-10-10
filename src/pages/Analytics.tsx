@@ -146,6 +146,7 @@ const Analytics = () => {
   const [showCostConfirmation, setShowCostConfirmation] = useState(false);
   const [showUpgradeOption, setShowUpgradeOption] = useState(false);
   const [showChoiceScreen, setShowChoiceScreen] = useState(false);
+  const [showResults, setShowResults] = useState(false);
   const [hasExistingAnalysis, setHasExistingAnalysis] = useState(false);
   const [lastAnalysisDate, setLastAnalysisDate] = useState<string | null>(null);
   const [analysisRequirements, setAnalysisRequirements] = useState({
@@ -379,8 +380,10 @@ const Analytics = () => {
           });
         }
         
-        // CRITICAL: Set loading to false AFTER analysis is set
+        // CRITICAL: Set loading to false AND show results
         setIsAnalyzing(false);
+        setShowResults(true);
+        setShowChoiceScreen(false);
       } else {
         console.error('⚠️ No analysis data in response!');
         setIsAnalyzing(false);
@@ -405,6 +408,7 @@ const Analytics = () => {
   const handleAnalysisConfirmation = (confirmed: boolean) => {
     if (confirmed) {
       setShowChoiceScreen(false);
+      setShowResults(false);
       generatePatternAnalysis(dreams, analyses, true);
     }
     setShowCostConfirmation(false);
@@ -447,6 +451,7 @@ const Analytics = () => {
 
   const handleBackToChoices = () => {
     setPatternAnalysis(null);
+    setShowResults(false);
     setShowChoiceScreen(true);
   };
 
@@ -577,7 +582,7 @@ const Analytics = () => {
         />
 
         {/* AI Pattern Analysis - Show choice screen or progress */}
-        {analysisRequirements.canAnalyze && (showChoiceScreen || isAnalyzing) && (
+        {analysisRequirements.canAnalyze && !showResults && (showChoiceScreen || isAnalyzing) && (
           <Card className="mb-8">
             <CardHeader className="text-center">
               <CardTitle className="flex items-center justify-center space-x-2 text-2xl">
@@ -693,7 +698,7 @@ const Analytics = () => {
         )}
 
         {/* AI Pattern Analysis Results */}
-        {patternAnalysis && !showChoiceScreen && !isAnalyzing ? (
+        {showResults && patternAnalysis && !isAnalyzing ? (
           <ErrorBoundary
             fallback={
               <Card className="mb-8 border-destructive">
