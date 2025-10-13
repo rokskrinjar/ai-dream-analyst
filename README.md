@@ -4,6 +4,27 @@
 
 **URL**: https://lovable.dev/projects/c755e01b-0d77-44f7-9097-b21c6fe63609
 
+# AI Dream Analyst (Lovilnec Sanj)
+
+A full-stack app for recording and analyzing dreams with AI insights. Track emotions, get multi-language support, and unlock patterns across entries. Built for beginners scaling to complex apps!
+
+## Features
+- Record dreams with titles, descriptions, dates, and emotion tags (Joy, Fear, etc.).
+- Dashboard with activity calendar and credit-based analysis.
+- Multi-language: English & Slovenian (expandable).
+- Tech: React + TypeScript + shadcn-ui + Tailwind + Vite.
+
+## Quick Start
+- Live Demo: [View on Lovable](https://lovable.dev/projects/c755e01b-0d77-44f7-9097-b21c6fe63609)
+- Local Dev: `git clone https://github.com/rokskrinjar/ai-dream-analyst.git`, then `npm i` & `npm run dev`.
+- Backend: Integrated via Lovable (add Supabase next for DB/auth).
+
+## Next Steps
+- Add AI analysis via OpenAI API.
+- Deploy to Vercel for scalability.
+
+Built with ❤️ by rok.skrinjar. Let's dream big!
+
 ## How can I edit this code?
 
 There are several ways of editing your application.
