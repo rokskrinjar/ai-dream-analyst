@@ -10,6 +10,7 @@ import dreamEntrySl from './locales/sl/dreamEntry.json';
 import pricingSl from './locales/sl/pricing.json';
 import accountSl from './locales/sl/account.json';
 import indexSl from './locales/sl/index.json';
+import dreamsSl from './locales/sl/dreams.json';
 
 import commonEn from './locales/en/common.json';
 import authEn from './locales/en/auth.json';
@@ -19,6 +20,7 @@ import dreamEntryEn from './locales/en/dreamEntry.json';
 import pricingEn from './locales/en/pricing.json';
 import accountEn from './locales/en/account.json';
 import indexEn from './locales/en/index.json';
+import dreamsEn from './locales/en/dreams.json';
 
 const resources = {
   sl: {
@@ -30,6 +32,7 @@ const resources = {
     pricing: pricingSl,
     account: accountSl,
     index: indexSl,
+    dreams: dreamsSl,
   },
   en: {
     common: commonEn,
@@ -40,6 +43,7 @@ const resources = {
     pricing: pricingEn,
     account: accountEn,
     index: indexEn,
+    dreams: dreamsEn,
   },
 };
 

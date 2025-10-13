@@ -1,0 +1,55 @@
+{
+  "title": "Moje Sanje",
+  "totalDreams": "Skupaj sanj: {{count}}",
+  "viewMode": {
+    "grid": "Pogled mrežice",
+    "table": "Pogled tabele"
+  },
+  "search": {
+    "placeholder": "Išči sanje po naslovu ali vsebini..."
+  },
+  "filters": {
+    "all": "Vse sanje",
+    "analyzed": "Analizirane",
+    "notAnalyzed": "Neanalizirane",
+    "dateRange": {
+      "7d": "Zadnjih 7 dni",
+      "30d": "Zadnjih 30 dni",
+      "90d": "Zadnji 3 mesece",
+      "all": "Vse obdobje"
+    },
+    "emotion": "Filtriraj po čustvih"
+  },
+  "sort": {
+    "label": "Razvrsti po",
+    "dateDesc": "Najnovejše najprej",
+    "dateAsc": "Najstarejše najprej",
+    "titleAsc": "Naslov A-Ž",
+    "titleDesc": "Naslov Ž-A"
+  },
+  "bulkActions": {
+    "selected": "{{count}} izbranih",
+    "analyzeSelected": "Analiziraj izbrane",
+    "deleteSelected": "Izbriši izbrane",
+    "confirmDelete": "Izbriši {{count}} sanj?",
+    "confirmDeleteDesc": "S tem boste trajno izbrisali izbrane sanje in njihove analize."
+  },
+  "empty": {
+    "noResults": "Ni najdenih sanj",
+    "noResultsDesc": "Poskusite prilagoditi filtre ali iskalni niz",
+    "noDreams": "Še ni sanj",
+    "noDreamsDesc": "Začnite zapisovati svoje sanje za odklepanje AI vpogledov"
+  },
+  "table": {
+    "date": "Datum",
+    "title": "Naslov",
+    "preview": "Predogled",
+    "emotion": "Čustvo",
+    "status": "Status",
+    "actions": "Dejanja"
+  },
+  "status": {
+    "analyzed": "Analizirano",
+    "notAnalyzed": "Neanalizirano"
+  }
+}

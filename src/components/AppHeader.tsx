@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { CompactCreditDisplay } from "@/components/CompactCreditDisplay";
-import { Menu, X, ChevronLeft, User, CreditCard, BarChart3, Settings, LogOut } from "lucide-react";
+import { Menu, X, ChevronLeft, User, CreditCard, BarChart3, Settings, LogOut, BookOpen } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import {
   DropdownMenu,
@@ -35,6 +35,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ showBackButton, title, sub
 
   const navigationItems = [
     { path: '/dashboard', label: t('dashboard:title'), icon: BarChart3 },
+    { path: '/dreams', label: t('dreams:title'), icon: BookOpen },
     { path: '/pricing', label: t('pricing:title'), icon: CreditCard },
     { path: '/account', label: t('account:title'), icon: User },
   ];

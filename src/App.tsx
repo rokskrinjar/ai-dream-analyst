@@ -17,6 +17,7 @@ import EditDream from "./pages/EditDream";
 import Pricing from "./pages/Pricing";
 import Account from "./pages/Account";
 import Admin from "./pages/Admin";
+import Dreams from "./pages/Dreams";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/analytics" element={<Analytics />} />
+              <Route path="/dreams" element={<Dreams />} />
               <Route path="/dream/new" element={<DreamEntry />} />
               <Route path="/edit-dream/:id" element={<EditDream />} />
               <Route path="/pricing" element={<Pricing />} />

@@ -544,7 +544,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-semibold text-foreground">Recent Dreams</h2>
             {dreams.length > 0 && (
-              <Button variant="link" onClick={() => navigate('/analytics')}>
+              <Button variant="link" onClick={() => navigate('/dreams')}>
                 View all →
               </Button>
             )}

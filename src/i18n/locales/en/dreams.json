@@ -1,0 +1,55 @@
+{
+  "title": "My Dreams",
+  "totalDreams": "Total Dreams: {{count}}",
+  "viewMode": {
+    "grid": "Grid View",
+    "table": "Table View"
+  },
+  "search": {
+    "placeholder": "Search dreams by title or content..."
+  },
+  "filters": {
+    "all": "All Dreams",
+    "analyzed": "Analyzed",
+    "notAnalyzed": "Not Analyzed",
+    "dateRange": {
+      "7d": "Last 7 days",
+      "30d": "Last 30 days",
+      "90d": "Last 3 months",
+      "all": "All time"
+    },
+    "emotion": "Filter by emotion"
+  },
+  "sort": {
+    "label": "Sort by",
+    "dateDesc": "Newest first",
+    "dateAsc": "Oldest first",
+    "titleAsc": "Title A-Z",
+    "titleDesc": "Title Z-A"
+  },
+  "bulkActions": {
+    "selected": "{{count}} selected",
+    "analyzeSelected": "Analyze Selected",
+    "deleteSelected": "Delete Selected",
+    "confirmDelete": "Delete {{count}} dreams?",
+    "confirmDeleteDesc": "This will permanently delete the selected dreams and their analyses."
+  },
+  "empty": {
+    "noResults": "No dreams found",
+    "noResultsDesc": "Try adjusting your filters or search query",
+    "noDreams": "No dreams yet",
+    "noDreamsDesc": "Start recording your dreams to unlock AI insights"
+  },
+  "table": {
+    "date": "Date",
+    "title": "Title",
+    "preview": "Preview",
+    "emotion": "Emotion",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "status": {
+    "analyzed": "Analyzed",
+    "notAnalyzed": "Not analyzed"
+  }
+}
