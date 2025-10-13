@@ -54,10 +54,7 @@ import { CreditDisplay } from '@/components/CreditDisplay';
 import { CreditUsageModal } from '@/components/CreditUsageModal';
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from 'react-i18next';
-import dreamBg1 from '@/assets/dream-bg-1.jpg';
-import dreamBg2 from '@/assets/dream-bg-2.jpg';
-import dreamBg3 from '@/assets/dream-bg-3.jpg';
-import dreamBg4 from '@/assets/dream-bg-4.jpg';
+import analyzeNowPlaceholder from '@/assets/analyze-now.png';
 
 interface Dream {
   id: string;
@@ -572,10 +569,8 @@ const Dashboard = () => {
                   {dreams.slice(0, 4).map((dream, index) => {
                     const analysis = analyses[dream.id];
                     const isAnalyzing = analyzingDreams.has(dream.id);
-                    const backgroundImages = [dreamBg1, dreamBg2, dreamBg3, dreamBg4];
-                    const staticBgImage = backgroundImages[index % 4];
-                    // Use AI-generated image if available, otherwise use static background
-                    const bgImage = analysis?.image_url || staticBgImage;
+                    // Use AI-generated image if analyzed, otherwise use the "Analyze Now" placeholder
+                    const bgImage = analysis?.image_url || analyzeNowPlaceholder;
                     const isExpanded = expandedDreamId === dream.id;
                     
                     return (
