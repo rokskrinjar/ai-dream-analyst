@@ -74,7 +74,13 @@ interface PatternAnalysis {
   integration_suggestions?: string;
 }
 
-const COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', 'hsl(var(--secondary))', 'hsl(var(--muted))'];
+const EMOTION_COLORS = [
+  '#ec4899', // Pink/Hot Pink - Primary emotion
+  '#8b5cf6', // Purple - Secondary emotion
+  '#3b82f6', // Blue - Third emotion  
+  '#10b981', // Green - Fourth emotion
+  '#e5e7eb'  // Light Gray - "Other" category
+];
 
 // Helper function to safely render text content from various formats
 const renderTextContent = (content: any): React.ReactNode => {
@@ -461,10 +467,30 @@ const Analytics = () => {
     value: tp.frequency
   })) || [];
 
-  const emotionData = patternAnalysis?.emotional_journey?.map(ej => ({
-    name: ej.emotion,
-    value: ej.frequency
-  })) || [];
+  const emotionData = (() => {
+    const emotions = patternAnalysis?.emotional_journey?.map(ej => ({
+      name: ej.emotion,
+      value: ej.frequency
+    })) || [];
+    
+    // Sort by frequency (highest first)
+    const sorted = [...emotions].sort((a, b) => b.value - a.value);
+    
+    if (sorted.length <= 4) {
+      return sorted;
+    }
+    
+    // Take top 4, aggregate the rest into "Other"
+    const top4 = sorted.slice(0, 4);
+    const remaining = sorted.slice(4);
+    const otherValue = remaining.reduce((sum, item) => sum + item.value, 0);
+    
+    if (otherValue > 0) {
+      return [...top4, { name: 'Drugo', value: otherValue }];
+    }
+    
+    return top4;
+  })();
 
 
   const milestones = [
@@ -824,7 +850,7 @@ const Analytics = () => {
                       <ResponsiveContainer width="100%" height={300}>
                         <PieChart>
                           <Pie
-                            data={emotionData.slice(0, 6)}
+                            data={emotionData}
                             cx="50%"
                             cy="50%"
                             outerRadius={100}
@@ -832,8 +858,8 @@ const Analytics = () => {
                             dataKey="value"
                             label={({ name, value }) => `${name}: ${value}`}
                           >
-                            {emotionData.slice(0, 6).map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            {emotionData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={EMOTION_COLORS[index]} />
                             ))}
                           </Pie>
                           <Tooltip />
