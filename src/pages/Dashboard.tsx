@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCreditContext } from '@/contexts/CreditContext';
 import { useAdmin } from '@/hooks/useAdmin';
@@ -98,6 +98,7 @@ const Dashboard = () => {
   const [showAllDreams, setShowAllDreams] = useState(false);
   const [expandedDreamId, setExpandedDreamId] = useState<string | null>(null);
   const { toast } = useToast();
+  const analysisRef = useRef<HTMLDivElement>(null);
 
   // Debug logging
   console.log('Dashboard render - credits:', credits, 'plan:', plan);
@@ -581,11 +582,19 @@ const Dashboard = () => {
                           isExpanded && "ring-2 ring-primary shadow-2xl"
                         )}
                         onClick={() => {
-                          if (!isAnalyzing) {
-                            if (analysis) {
-                              setExpandedDreamId(isExpanded ? null : dream.id);
-                            } else {
-                              analyzeDream(dream.id);
+                          if (!isAnalyzing && analysis) {
+                            const isCurrentlyExpanded = expandedDreamId === dream.id;
+                            setExpandedDreamId(isCurrentlyExpanded ? null : dream.id);
+                            
+                            // Scroll to analysis after expansion
+                            if (!isCurrentlyExpanded) {
+                              setTimeout(() => {
+                                analysisRef.current?.scrollIntoView({ 
+                                  behavior: 'smooth', 
+                                  block: 'start',
+                                  inline: 'nearest'
+                                });
+                              }, 150);
                             }
                           }
                         }}
@@ -654,14 +663,14 @@ const Dashboard = () => {
                               {!analysis && !isAnalyzing && (
                                 <Button
                                   size="sm"
-                                  variant="secondary"
+                                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold animate-pulse shadow-lg"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     analyzeDream(dream.id);
                                   }}
                                 >
-                                  <Brain className="w-3 h-3 mr-1" />
-                                  Analyze
+                                  <Brain className="w-4 h-4 mr-1.5" />
+                                  Analyze Now
                                 </Button>
                               )}
                               {isAnalyzing && (
@@ -688,7 +697,10 @@ const Dashboard = () => {
                   if (!dream) return null;
 
                   return (
-                    <Card className="mt-6 border-l-4 border-l-primary bg-muted/30 animate-in slide-in-from-top-4 duration-300">
+                    <Card 
+                      ref={analysisRef}
+                      className="mt-6 border-l-4 border-l-primary bg-muted/30 animate-in slide-in-from-top-4 duration-300"
+                    >
                       <CardContent className="p-6 space-y-6">
                         {/* Header */}
                         <div className="flex items-center justify-between">
