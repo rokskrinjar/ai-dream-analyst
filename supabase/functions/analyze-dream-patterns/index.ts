@@ -221,13 +221,37 @@ serve(async (req) => {
       }
     }
 
-    console.log(`Analyzing ${dreams.length} dreams with ${analyses.length} analyses`);
+    // Language detection function
+    const detectLanguage = (dreams: any[]): string => {
+      const combinedText = dreams.map(d => d.content).join(' ').toLowerCase();
+      
+      const croatianPatterns = /\b(je|sam|bio|bila|mogu|trebam|imam|htio|htjela)\b/g;
+      const croatianCount = (combinedText.match(croatianPatterns) || []).length;
+      
+      const slovenianPatterns = /\b(je|sem|bil|bila|lahko|moram|imam|hotel|hotela)\b/g;
+      const slovenianCount = (combinedText.match(slovenianPatterns) || []).length;
+      
+      const englishPatterns = /\b(the|is|was|were|have|had|can|will|would)\b/g;
+      const englishCount = (combinedText.match(englishPatterns) || []).length;
+      
+      const germanPatterns = /\b(der|die|das|ich|bin|war|habe|kann|wird)\b/g;
+      const germanCount = (combinedText.match(germanPatterns) || []).length;
+      
+      const scores = { hr: croatianCount, sl: slovenianCount, en: englishCount, de: germanCount };
+      const detected = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+      
+      return croatianCount + slovenianCount + englishCount + germanCount < 10 ? 'en' : detected;
+    };
 
-    const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
-    if (!openAIApiKey) {
-      console.error('OpenAI API key not found');
+    // Detect language from dream content
+    const detectedLanguage = detectLanguage(dreams);
+    console.log('Detected language for pattern analysis:', detectedLanguage);
+
+    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+    if (!lovableApiKey) {
+      console.error('Lovable API key not found');
       return new Response(
-        JSON.stringify({ error: 'OpenAI API key not configured' }),
+        JSON.stringify({ error: 'Lovable API key not configured' }),
         {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -235,123 +259,161 @@ serve(async (req) => {
       );
     }
 
-    // Calculate estimated cost based on input size
-    const finalInputText = JSON.stringify(dreamData);
-    const finalEstimatedTokens = Math.ceil(finalInputText.length / 4); // Rough estimation: 4 chars per token
-    const finalEstimatedCost = Math.max(2, Math.ceil(finalEstimatedTokens / 15000)); // Realistic cost: ~5-10 credits for pattern analysis
-    
-    console.log(`Estimated tokens: ${finalEstimatedTokens}, Estimated cost: ${finalEstimatedCost} credits`);
+    // Language-specific prompts
+    const promptTemplates: any = {
+      en: {
+        system: 'You are a top expert in dream analysis with over 20 years of experience in psychology, neuroscience, and dream research. You specialize in pattern recognition, symbolic interpretation, and psychological analysis. CRITICAL: Always respond with a VALID JSON object without additional text. Your analyses are in-depth, professionally grounded, and psychologically accurate. Use English text for all values.',
+        prompt: `As a dream analysis expert, analyze the following data from ${dreamData.length} user dreams and create a comprehensive, in-depth pattern analysis. CRITICAL: ALWAYS address the user in SECOND PERSON (you, your, yours). Respond in JSON format with English words.
 
-    const prompt = `Kot strokovnjak za analizo sanj analizirajte naslednje podatke ${dreamData.length} sanj uporabnika in ustvarite celovito, poglobljeno analizo vzorcev. KRITIČNO: VEDNO se obračajte na uporabnika v DRUGI OSEBI (vi, vam, vaš, vaše, vaših). Odzovite se v JSON formatu s slovenskimi besedami.
+DREAM DATA AND AI ANALYSES:
+${JSON.stringify(dreamData, null, 2)}
+
+Create an extensive, multi-page analysis that ALWAYS addresses the user directly with "you", "your", "yours". Include:
+
+1. executive_summary: Summary of key findings (4-5 paragraphs, each 3-4 sentences). Address the user directly: "Your dreams show...", "In your dreams...", "You have tendencies..."
+
+2. theme_patterns: List of most frequent themes (at least 8-12 themes) with:
+   - theme: theme name
+   - frequency: number of occurrences
+   - significance: description of meaning for YOU in second person (3-4 sentences): "This theme reveals to you...", "In your dreams..."
+   - evolution: how the theme develops in YOUR dreams over time
+
+3. emotional_journey: In-depth emotional analysis with:
+   - emotion: emotion name
+   - frequency: number of occurrences
+   - trend: trend description for YOU: "Your emotions show..."
+   - psychological_significance: what the emotion reveals about YOUR mental state
+   - triggers: possible triggers in YOUR dreams
+
+4. symbol_meanings: Detailed symbolic interpretation (at least 10-15 symbols) with:
+   - symbol: symbol name
+   - frequency: occurrences in YOUR dreams
+   - interpretation: interpretation for YOU (4-5 sentences): "This symbol in your dreams represents..."
+   - personal_context: how it connects with YOUR life
+   - archetypal_meaning: universal meaning for YOU
+
+5. temporal_patterns: Extensive time pattern analysis (4-5 paragraphs) directly addressing you:
+   - "Your seasonal patterns show..."
+   - "In your weekly cycle..."
+   - "Evolution of your dreams over time..."
+   - "Connections with your life events..."
+
+6. psychological_insights: In-depth psychological analysis (4-5 paragraphs) with direct addressing:
+   - "Your unconscious fears and desires..."
+   - "Your personality traits..."
+   - "Your conflicts and internal struggles..."
+   - "Your potential for growth..."
+
+7. life_stage_analysis: Life stage analysis (3-4 paragraphs) with direct addressing:
+   - "Your current life challenges..."
+   - "Your developmental tasks..."
+   - "Your transitions and changes..."
+
+8. recommendations: Extensive list of 12-15 specific recommendations with direct addressing:
+   - action: concrete action FOR YOU: "Try...", "Reflect on...", "Include in your..."
+   - rationale: why IT'S RECOMMENDED FOR YOU: "This will help you...", "For you it will be beneficial..."
+   - implementation: how YOU execute it: "You can do this by..."
+   - expected_outcome: expected result FOR YOU: "With this you will achieve..."
+
+9. personal_growth: Comprehensive personal growth analysis (5-6 paragraphs) with direct addressing:
+   - "Your achieved development..."
+   - "Your areas for improvement..."
+   - "Your potential for the future..."
+   - "Connections between your dreams and reality..."
+
+10. integration_suggestions: Suggestions for integrating insights (3-4 paragraphs) directly for you:
+     - "In your daily practices..."
+     - "Your reflection techniques..."
+     - "Ways YOU can use insights..."
+
+CRITICAL: Every sentence must be written in SECOND PERSON. Use "you", "your", "yours" instead of third person. Example: "Your dreams show..." instead of "Dreams show...". Analysis should be worth 2+ credits with at least 3-4 pages of content.`
+      },
+      hr: {
+        system: 'Vi ste vrhunski stručnjak za analizu snova s preko 20 godina iskustva u psihologiji, neuroznanosti i istraživanju snova. Specijalizirani ste za prepoznavanje obrazaca, simboličku interpretaciju i psihološku analizu. KRITIČNO: Uvijek odgovorite s VAŽEĆIM JSON objektom bez dodatnog teksta. Vaše analize su dubinske, stručno utemeljene i psihološki točne. Koristite hrvatski tekst za sve vrijednosti.',
+        prompt: `Kao stručnjak za analizu snova analizirajte sljedeće podatke iz ${dreamData.length} korisničkih snova i stvorite sveobuhvatnu, dubinsku analizu obrazaca. KRITIČNO: UVIJEK se obraćajte korisniku u DRUGOM LICU (vi, vaš, vaše). Odgovorite u JSON formatu s hrvatskim riječima.
+
+PODACI O SNOVIMA I AI ANALIZAMA:
+${JSON.stringify(dreamData, null, 2)}
+
+Stvorite opsežnu, višestručnu analizu koja se UVIJEK obraća izravno korisniku s "vi", "vaš", "vaše". Uključite slične kategorije kao gore sa 8-12 tema, 10-15 simbola, 12-15 preporuka itd.`
+      },
+      sl: {
+        system: 'Si vrhunski strokovnjak za analizo sanj s preko 20 let izkušenj na področju psihologije, nevrologije in dream raziskav. Specializiran si za prepoznavanje vzorcev, simbolne interpretacije in psihološko analizo. KRITIČNO: Vedno odgovoriš z VELJAVNIM JSON objektom brez dodatnega besedila. Tvoje analize so poglobljene, strokovno utemeljene in psihološko natančne. Uporabi slovensko besedila za vse vrednosti.',
+        prompt: `Kot strokovnjak za analizo sanj analizirajte naslednje podatke ${dreamData.length} sanj uporabnika in ustvarite celovito, poglobljeno analizo vzorcev. KRITIČNO: VEDNO se obračajte na uporabnika v DRUGI OSEBI (vi, vam, vaš, vaše, vaših). Odzovite se v JSON formatu s slovenskimi besedami.
 
 PODATKI O SANJAH IN AI ANALIZAH:
 ${JSON.stringify(dreamData, null, 2)}
 
-Ustvarite obsežno, večstransko analizo, ki se VEDNO obrača direktno na uporabnika z "vi", "vam", "vaš", "vaše", "vaših". Vključuje:
+Ustvarite obsežno, večstransko analizo, ki se VEDNO obrača direktno na uporabnika z "vi", "vam", "vaš", "vaše", "vaših". Vključuje slične kategorije kot zgoraj z 8-12 temami, 10-15 simboli, 12-15 priporočili itd.`
+      },
+      de: {
+        system: 'Sie sind ein Spitzenexperte für Traumanalyse mit über 20 Jahren Erfahrung in Psychologie, Neurowissenschaften und Traumforschung. Sie sind auf Mustererkennung, symbolische Interpretation und psychologische Analyse spezialisiert. KRITISCH: Antworten Sie immer mit einem GÜLTIGEN JSON-Objekt ohne zusätzlichen Text. Ihre Analysen sind tiefgründig, fachlich fundiert und psychologisch präzise. Verwenden Sie deutschen Text für alle Werte.',
+        prompt: `Als Traumanalyse-Experte analysieren Sie die folgenden Daten aus ${dreamData.length} Benutzerträumen und erstellen Sie eine umfassende, tiefgehende Musteranalyse. KRITISCH: Sprechen Sie den Benutzer IMMER in der ZWEITEN PERSON an (Sie, Ihr, Ihre). Antworten Sie im JSON-Format mit deutschen Wörtern.
 
-1. executive_summary: Povzetek ključnih odkritij (4-5 odstavkov, vsak 3-4 stavki). Nagovarjajte uporabnika direktno: "Vaše sanje kažejo...", "V vaših sanjah se pojavlja...", "Vi imate tendence..."
+TRAUMDATEN UND KI-ANALYSEN:
+${JSON.stringify(dreamData, null, 2)}
 
-2. theme_patterns: Seznam najpogostejših tem (vsaj 8-12 tem) z:
-   - theme: ime teme
-   - frequency: število pojavitev
-   - significance: opis pomena za UPORABNIKA v drugi osebi (3-4 stavki): "Ta tema vam razkriva...", "V vaših sanjah..."
-   - evolution: kako se tema razvija v VAŠIH sanjah skozi čas
+Erstellen Sie eine umfangreiche, mehrseitige Analyse, die sich IMMER direkt an den Benutzer mit "Sie", "Ihr", "Ihre" wendet. Schließen Sie ähnliche Kategorien wie oben mit 8-12 Themen, 10-15 Symbolen, 12-15 Empfehlungen usw. ein.`
+      }
+    };
 
-3. emotional_journey: Poglobljena čustvena analiza z:
-   - emotion: ime čustva
-   - frequency: število pojavitev
-   - trend: opis trenda za UPORABNIKA: "Vaša čustva kažejo..."
-   - psychological_significance: kaj čustvo razkriva o VAŠEM psihičnem stanju
-   - triggers: možni sprožilci v VAŠIH sanjah
+    const languagePrompt = promptTemplates[detectedLanguage] || promptTemplates['en'];
 
-4. symbol_meanings: Podrobna simbolna interpretacija (vsaj 10-15 simbolov) z:
-   - symbol: ime simbola
-   - frequency: število pojavitev v VAŠIH sanjah
-   - interpretation: interpretacija za UPORABNIKA (4-5 stavkov): "Ta simbol v vaših sanjah predstavlja..."
-   - personal_context: kako se povezuje z VAŠIM življenjem
-   - archetypal_meaning: univerzalni pomen za VAS
+    console.log('Sending request to Lovable AI for pattern analysis...');
 
-5. temporal_patterns: Obsežna analiza časovnih vzorcev (4-5 odstavkov) direktno nagovarjajoč uporabnika:
-   - "Vaši sezonski vzorci kažejo..."
-   - "V vašem tedenskem ciklu..."
-   - "Evolucija vaših sanj skozi čas..."
-   - "Povezave z vašimi življenjskimi dogodki..."
-
-6. psychological_insights: Poglobljena psihološka analiza (4-5 odstavkov) z direktnim nagovarjanjem:
-   - "Vaše nezavedne strahove in želje..."
-   - "Vaše osebnostne značilnosti..."
-   - "Vaši konflikti in notranji boji..."
-   - "Vaš potencial za rast..."
-
-7. life_stage_analysis: Analiza življenjske faze (3-4 odstavki) z direktnim nagovarjanjem:
-   - "Vaši trenutni življenjski izzivi..."
-   - "Vaše razvojne naloge..."
-   - "Vaši prehodi in spremembe..."
-
-8. recommendations: Obsežen seznam 12-15 specifičnih priporočil z direktnim nagovarjanjem:
-   - action: konkretno dejanje ZA VAS: "Poskusite...", "Razmislite o...", "Vključite v svoj..."
-   - rationale: zakaj JE PRIPOROČENO ZA VAS: "To vam bo pomagalo...", "Za vas bo koristno..."
-   - implementation: kako VI izveste: "Lahko to storite tako..."
-   - expected_outcome: pričakovani rezultat ZA VAS: "S tem boste dosegli..."
-
-9. personal_growth: Celovita analiza osebne rasti (5-6 odstavkov) z direktnim nagovarjanjem:
-   - "Vaš doseženi razvoj..."
-   - "Vaša področja za izboljšave..."
-   - "Vaš potencial za prihodnost..."
-   - "Povezave med vašimi sanjami in resničnostjo..."
-
-10. integration_suggestions: Predlogi za integracijo spoznanj (3-4 odstavki) direktno za uporabnika:
-    - "V vaših dnevnih praksah..."
-    - "Vaše refleksijske tehnike..."
-    - "Načini, kako VI lahko uporabite spoznanja..."
-
-KRITIČNO: Vsak stavek mora biti napisan v DRUGI OSEBI. Uporabite "vi", "vam", "vaš", "vaše", "vaših" namesto tretje osebe. Primer: "Vaše sanje kažejo..." namesto "Sanje kažejo...". Analiza naj bo vredna 2+ kreditov z vsaj 3-4 strani vsebine.`;
-
-    console.log('Sending request to OpenAI for pattern analysis...');
-
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
+        'Authorization': `Bearer ${lovableApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'google/gemini-2.5-pro',
         messages: [
-          {
-            role: 'system',
-            content: 'Si vrhunski strokovnjak za analizo sanj s preko 20 let izkušenj na področju psihologije, nevrologije in dream raziskav. Specializiran si za prepoznavanje vzorcev, simbolne interpretacije in psihološko analizo. KRITIČNO: Vedno odgovoriš z VELJAVNIM JSON objektom brez dodatnega besedila. Tvoje analize so poglobljene, strokovno utemeljene in psihološko natančne. Uporabi slovensko besedila za vse vrednosti.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
+          { role: 'system', content: languagePrompt.system },
+          { role: 'user', content: languagePrompt.prompt }
         ],
-        temperature: 0.2,
         max_tokens: 8000,
-        response_format: { type: "json_object" }
       }),
     });
 
     if (!response.ok) {
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ 
+          error: 'Rate limits exceeded. Please try again in a moment.',
+          errorCode: 'RATE_LIMIT_EXCEEDED'
+        }), {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ 
+          error: 'AI usage limit reached. Please contact support or try again later.',
+          errorCode: 'PAYMENT_REQUIRED'
+        }), {
+          status: 402,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
       const error = await response.text();
-      console.error('OpenAI API error:', error);
-      throw new Error(`OpenAI API error: ${response.status}`);
+      console.error('Lovable AI API error:', error);
+      throw new Error(`Lovable AI API error: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('OpenAI response received for pattern analysis');
+    console.log('Lovable AI response received for pattern analysis');
 
     let analysisContent = data.choices[0].message.content.trim();
 
-    // Clean up the response to extract JSON
+    // Clean up the response to extract JSON (Gemini sometimes adds markdown)
     if (analysisContent.startsWith('```json')) {
       analysisContent = analysisContent.replace(/```json\s*/, '').replace(/```\s*$/, '');
     } else if (analysisContent.startsWith('```')) {
       analysisContent = analysisContent.replace(/```\s*/, '').replace(/```\s*$/, '');
     }
 
-    console.log('Raw OpenAI response length:', analysisContent.length);
+    console.log('Raw AI response length:', analysisContent.length);
 
     let parsedAnalysis;
     try {
@@ -382,9 +444,9 @@ KRITIČNO: Vsak stavek mora biti napisan v DRUGI OSEBI. Uporabite "vi", "vam", "
         throw new Error('Insufficient symbol meanings (minimum 8 required)');
       }
       
-      console.log('OpenAI analysis validated successfully');
+      console.log('AI analysis validated successfully');
     } catch (parseError) {
-      console.error('Failed to parse or validate OpenAI response:', parseError);
+      console.error('Failed to parse or validate AI response:', parseError);
       console.error('Response content:', analysisContent.substring(0, 500) + '...');
       
       // Return error instead of fallback - force user to try again
@@ -409,7 +471,8 @@ KRITIČNO: Vsak stavek mora biti napisan v DRUGI OSEBI. Uporabite "vi", "vam", "
         analysis_data: parsedAnalysis,
         dreams_count: dreams.length,
         last_dream_date: new Date(latestDreamDate).toISOString().split('T')[0],
-        analysis_version: CURRENT_ANALYSIS_VERSION
+        analysis_version: CURRENT_ANALYSIS_VERSION,
+        language: detectedLanguage
       })
       .select()
       .single();

@@ -182,7 +182,6 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
-          preferred_language: string
           updated_at: string
           user_id: string
         }
@@ -190,7 +189,6 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
-          preferred_language?: string
           updated_at?: string
           user_id: string
         }
@@ -198,7 +196,6 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
-          preferred_language?: string
           updated_at?: string
           user_id?: string
         }
@@ -428,18 +425,9 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      reset_credits_if_needed: {
-        Args: { user_id: string }
-        Returns: undefined
-      }
-      reset_monthly_credits: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      is_admin: { Args: never; Returns: boolean }
+      reset_credits_if_needed: { Args: { user_id: string }; Returns: undefined }
+      reset_monthly_credits: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

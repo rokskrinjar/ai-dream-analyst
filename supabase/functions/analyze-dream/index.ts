@@ -210,14 +210,129 @@ serve(async (req) => {
       );
     }
 
-    // Get OpenAI API key
-    const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
-    if (!openAIApiKey) {
-      throw new Error('OpenAI API key not configured');
-    }
+    // Language detection function
+    const detectLanguage = (text: string): string => {
+      const lowerText = text.toLowerCase();
+      
+      const croatianPatterns = /\b(je|sam|bio|bila|mogu|trebam|imam|htio|htjela|bio|bio sam|imao|nisam|trebao)\b/g;
+      const croatianCount = (lowerText.match(croatianPatterns) || []).length;
+      
+      const slovenianPatterns = /\b(je|sem|bil|bila|lahko|moram|imam|hotel|hotela|nisem|moral|lahko)\b/g;
+      const slovenianCount = (lowerText.match(slovenianPatterns) || []).length;
+      
+      const englishPatterns = /\b(the|is|was|were|have|had|can|will|would|been|has|are)\b/g;
+      const englishCount = (lowerText.match(englishPatterns) || []).length;
+      
+      const germanPatterns = /\b(der|die|das|ich|bin|war|habe|hatte|kann|wird|würde)\b/g;
+      const germanCount = (lowerText.match(germanPatterns) || []).length;
+      
+      const scores = { hr: croatianCount, sl: slovenianCount, en: englishCount, de: germanCount };
+      const detected = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+      
+      return croatianCount + slovenianCount + englishCount + germanCount < 3 ? 'en' : detected;
+    };
 
-    // Prepare the prompt for dream analysis
-    const analysisPrompt = `Analiziraj moje sanje na osnovi naslednjih podatkov:
+    // Detect language from dream content
+    const detectedLanguage = detectLanguage(dream.content);
+    console.log('Detected language:', detectedLanguage);
+
+    // Language-specific prompts
+    const prompts: any = {
+      en: {
+        system: 'You are an experienced dream analysis expert with deep understanding of symbolism and psychology. Always respond in English and return only a JSON object. Your task is to provide thorough, detailed analysis with comprehensive, practical recommendations that help the person understand and use insights from dreams in daily life. Recommendations should be long, detailed, and useful - not short or generic.',
+        instruction: `Analyze my dream based on the following data:
+        
+        Dream Title: ${dream.title}
+        Dream Content: ${dream.content}
+        Mood: ${dream.mood || 'Not specified'}
+        Tags: ${dream.tags ? dream.tags.join(', ') : 'None specified'}
+        
+        Return the analysis in the following JSON format in English:
+        {
+          "themes": [list of main themes from the dream],
+          "emotions": [list of emotions appearing in the dream],
+          "symbols": [
+            {
+              "symbol": "symbol name",
+              "meaning": "symbol meaning"
+            }
+          ],
+          "analysis_text": "detailed dream analysis in English",
+          "recommendations": "comprehensive and detailed recommendations for further reflection and action (3-5 concrete recommendations, each in its own paragraph with explanation and practical advice)",
+          "reflection_questions": [
+            "Specific question 1 related to this dream",
+            "Specific question 2 related to this dream",
+            "Specific question 3 related to this dream"
+          ]
+        }
+
+SPECIAL INSTRUCTIONS FOR RECOMMENDATIONS:
+- Write 3-5 concrete, detailed recommendations
+- Each recommendation should be a long paragraph (3-5 sentences) with explanation of WHY it's important
+- Include practical steps the person can take
+- Connect recommendations with elements from the dream and their symbolic meaning
+- Write recommendations as connected text with paragraphs, not as a numbered list
+- Each paragraph should start with a new line for better readability
+- Example structure: "First recommendation with explanation...\\n\\nSecond recommendation with explanation...\\n\\nThird recommendation..."
+
+IMPORTANT for reflection_questions:
+- Questions MUST be specific to these exact dreams: "${dream.title}" - "${dream.content.substring(0, 100)}..."
+- Questions should start with "Reflect on..."
+- Questions should directly mention elements from the dream (people, places, objects, situations)
+- Examples of good questions:
+  * "Reflect on how [specific person/situation from dream] reflects your current relationships..."
+  * "Reflect on the connection between [concrete element from dream] and your recent concerns..."
+  * "Reflect on what [specific situation from dream content] is telling you about your fears/desires..."
+- DO NOT use generic questions like "how do emotions connect with life"
+
+IMPORTANT: Return ONLY clean JSON object without markdown code blocks, without \`\`\`json and without \`\`\`, without additional text.`
+      },
+      hr: {
+        system: 'Vi ste iskusni stručnjak za analizu snova sa dubokim razumijevanjem simbolike i psihologije. Uvijek odgovarajte na hrvatskom i vratite samo JSON objekt. Vaš zadatak je pružiti temeljitu, detaljnu analizu s opsežnim, praktičnim preporukama koje pomažu osobi razumjeti i koristiti uvide iz snova u svakodnevnom životu. Preporuke trebaju biti dugačke, detaljne i korisne - ne kratke ili generičke.',
+        instruction: `Analizirajte moj san na temelju sljedećih podataka:
+        
+        Naslov sna: ${dream.title}
+        Sadržaj sna: ${dream.content}
+        Raspoloženje: ${dream.mood || 'Nije navedeno'}
+        Oznake: ${dream.tags ? dream.tags.join(', ') : 'Nisu navedene'}
+        
+        Vratite analizu u sljedećem JSON formatu na hrvatskom:
+        {
+          "themes": [popis glavnih tema iz sna],
+          "emotions": [popis emocija koje se pojavljuju u snu],
+          "symbols": [
+            {
+              "symbol": "ime simbola",
+              "meaning": "značenje simbola"
+            }
+          ],
+          "analysis_text": "detaljna analiza sna na hrvatskom",
+          "recommendations": "opsežne i detaljne preporuke za daljnje razmišljanje i djelovanje (3-5 konkretnih preporuka, svaka u svom odlomku s obrazloženjem i praktičnim savjetima)",
+          "reflection_questions": [
+            "Specifično pitanje 1 povezano s ovim snom",
+            "Specifično pitanje 2 povezano s ovim snom",
+            "Specifično pitanje 3 povezano s ovim snom"
+          ]
+        }
+
+POSEBNE UPUTE ZA PREPORUKE:
+- Napišite 3-5 konkretnih, detaljnih preporuka
+- Svaka preporuka neka bude dugačak odlomak (3-5 rečenica) s obrazloženjem ZAŠTO je važna
+- Uključite praktične korake koje osoba može napraviti
+- Povežite preporuke s elementima iz sna i njihovim simboličkim značenjem
+- Napišite preporuke kao povezan tekst s odlomcima, ne kao numerirani popis
+- Svaki odlomak neka počinje novim retkom za bolju čitljivost
+
+VAŽNO za reflection_questions:
+- Pitanja MORAJU biti specifična za ove točne snove: "${dream.title}" - "${dream.content.substring(0, 100)}..."
+- Pitanja neka počinju s "Razmislite o..."
+- Pitanja neka izravno spominju elemente iz sna (osobe, mjesta, predmete, situacije)
+
+VAŽNO: Vratite SAMO čisti JSON objekt bez markdown kod blokova, bez \`\`\`json i bez \`\`\`, bez dodatnog teksta.`
+      },
+      sl: {
+        system: 'Si izkušen strokovnjak za analizo sanj z globokim razumevanjem simbolike in psihologije. Odgovarjaj vedno v slovenščini in vrni samo JSON objekt. Tvoja naloga je zagotoviti temeljito, podrobno analizo z obsežnimi, praktičnimi priporočili, ki pomagajo osebi razumeti in uporabiti uvide iz sanj v vsakdanjem življenju. Priporočila naj bodo dolga, podrobna in koristna - ne kratka ali splošna.',
+        instruction: `Analiziraj moje sanje na osnovi naslednjih podatkov:
         
         Naslov sanj: ${dream.title}
         Vsebina sanj: ${dream.content}
@@ -238,7 +353,7 @@ serve(async (req) => {
           "recommendations": "obsežna in podrobna priporočila za nadaljnje razmišljanje in ukrepanje (3-5 konkretnih priporočil, vsako v svojem odstavku z razlago in praktičnimi nasveti)",
           "reflection_questions": [
             "Specifično vprašanje 1 povezano s to sanjijo",
-            "Specifično vprašanje 2 povezano s to sanjijo", 
+            "Specifično vprašanje 2 povezano s to sanjijo",
             "Specifično vprašanje 3 povezano s to sanjijo"
           ]
         }
@@ -249,64 +364,119 @@ POSEBNE NAVODILA ZA PRIPOROČILA:
 - Vključi praktične korake, ki jih lahko oseba naredi
 - Poveži priporočila z elementi iz sanj in njihovim simbolnim pomenom
 - Napiši priporočila kot povezan tekst z odstavki, ne kot oštevilčen seznam
-- Vsak odstavek naj se začne z novo vrstico za boljšo berljivost
-- Primer strukture: "Prvo priporočilo z razlago...\n\nDrugo priporočilo z razlago...\n\nTretje priporočilo..."
 
 POMEMBNO za reflection_questions:
 - Vprašanja MORAJO biti specifična za te natančne sanje: "${dream.title}" - "${dream.content.substring(0, 100)}..."
-- Vprašanja naj se začnejo z "Razmislite o..." 
+- Vprašanja naj se začnejo z "Razmislite o..."
 - Vprašanja naj neposredno omenjajo elemente iz sanj (osebe, kraje, predmete, situacije)
-- Primeri dobrih vprašanj: 
-  * "Razmislite o tem, kako [konkretna oseba/situacija iz sanj] odraža vaše trenutne odnose..."
-  * "Razmislite o povezavi med [konkreten element iz sanj] in vašimi nedavnimi skrbmi..."
-  * "Razmislite o tem, kaj vam [specifična situacija iz vsebine sanj] sporoča o vaših strahovih/željah..."
-- NE uporabljaj splošnih vprašanj kot so "kako se čustva povezujejo z življenjem"
 
-POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json in brez \`\`\`, brez dodatnega besedila.`;
+POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json in brez \`\`\`, brez dodatnega besedila.`
+      },
+      de: {
+        system: 'Sie sind ein erfahrener Traumanalyse-Experte mit tiefem Verständnis für Symbolik und Psychologie. Antworten Sie immer auf Deutsch und geben Sie nur ein JSON-Objekt zurück. Ihre Aufgabe ist es, eine gründliche, detaillierte Analyse mit umfassenden, praktischen Empfehlungen zu liefern, die der Person helfen, Einsichten aus Träumen zu verstehen und im täglichen Leben zu nutzen. Empfehlungen sollten lang, detailliert und nützlich sein - nicht kurz oder allgemein.',
+        instruction: `Analysieren Sie meinen Traum anhand der folgenden Daten:
+        
+        Traumtitel: ${dream.title}
+        Trauminhalt: ${dream.content}
+        Stimmung: ${dream.mood || 'Nicht angegeben'}
+        Tags: ${dream.tags ? dream.tags.join(', ') : 'Keine angegeben'}
+        
+        Geben Sie die Analyse im folgenden JSON-Format auf Deutsch zurück:
+        {
+          "themes": [Liste der Hauptthemen aus dem Traum],
+          "emotions": [Liste der im Traum auftretenden Emotionen],
+          "symbols": [
+            {
+              "symbol": "Symbolname",
+              "meaning": "Symbolbedeutung"
+            }
+          ],
+          "analysis_text": "detaillierte Traumanalyse auf Deutsch",
+          "recommendations": "umfassende und detaillierte Empfehlungen für weitere Reflexion und Handlung (3-5 konkrete Empfehlungen, jede in ihrem eigenen Absatz mit Erklärung und praktischen Ratschlägen)",
+          "reflection_questions": [
+            "Spezifische Frage 1 im Zusammenhang mit diesem Traum",
+            "Spezifische Frage 2 im Zusammenhang mit diesem Traum",
+            "Spezifische Frage 3 im Zusammenhang mit diesem Traum"
+          ]
+        }
 
-    console.log('Sending request to OpenAI...');
+BESONDERE ANWEISUNGEN FÜR EMPFEHLUNGEN:
+- Schreiben Sie 3-5 konkrete, detaillierte Empfehlungen
+- Jede Empfehlung sollte ein langer Absatz (3-5 Sätze) mit Erklärung sein, WARUM sie wichtig ist
+- Fügen Sie praktische Schritte hinzu, die die Person unternehmen kann
+- Verbinden Sie Empfehlungen mit Elementen aus dem Traum und ihrer symbolischen Bedeutung
 
-    // Call OpenAI API
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+WICHTIG für reflection_questions:
+- Fragen MÜSSEN spezifisch für diese genauen Träume sein: "${dream.title}" - "${dream.content.substring(0, 100)}..."
+- Fragen sollten mit "Denken Sie über..." beginnen
+- Fragen sollten direkt Elemente aus dem Traum erwähnen (Personen, Orte, Objekte, Situationen)
+
+WICHTIG: Geben Sie NUR ein sauberes JSON-Objekt ohne Markdown-Codeblöcke, ohne \`\`\`json und ohne \`\`\`, ohne zusätzlichen Text zurück.`
+      }
+    };
+
+    const languagePrompts = prompts[detectedLanguage] || prompts['en'];
+
+    // Get Lovable API key
+    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+    if (!lovableApiKey) {
+      throw new Error('Lovable API key not configured');
+    }
+
+    console.log('Sending request to Lovable AI...');
+
+    // Call Lovable AI API
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
+        'Authorization': `Bearer ${lovableApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'google/gemini-2.5-flash',
         messages: [
-          { 
-            role: 'system', 
-            content: 'Si izkušen strokovnjak za analizo sanj z globokim razumevanjem simbolike in psihologije. Odgovarjaj vedno v slovenščini in vrni samo JSON objekt. Tvoja naloga je zagotoviti temeljito, podrobno analizo z obsežnimi, praktičnimi priporočili, ki pomagajo osebi razumeti in uporabiti uvide iz sanj v vsakdanjem življenju. Priporočila naj bodo dolga, podrobna in koristna - ne kratka ali splošna.' 
-          },
-          { 
-            role: 'user', 
-            content: analysisPrompt 
-          }
+          { role: 'system', content: languagePrompts.system },
+          { role: 'user', content: languagePrompts.instruction }
         ],
-        temperature: 0.7,
         max_tokens: 2800,
       }),
     });
 
     if (!response.ok) {
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ 
+          error: 'Rate limits exceeded. Please try again in a moment.',
+          errorCode: 'RATE_LIMIT_EXCEEDED'
+        }), {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ 
+          error: 'AI usage limit reached. Please contact support or try again later.',
+          errorCode: 'PAYMENT_REQUIRED'
+        }), {
+          status: 402,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
       const errorText = await response.text();
-      console.error('OpenAI API error:', errorText);
-      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
+      console.error('Lovable AI API error:', errorText);
+      throw new Error(`Lovable AI API error: ${response.status} - ${errorText}`);
     }
 
-    const openAIData = await response.json();
-    console.log('OpenAI response received');
+    const aiData = await response.json();
+    console.log('Lovable AI response received');
 
-    if (!openAIData.choices || !openAIData.choices[0]) {
-      throw new Error('Invalid OpenAI response format');
+    if (!aiData.choices || !aiData.choices[0]) {
+      throw new Error('Invalid AI response format');
     }
 
-    const analysisContent = openAIData.choices[0].message.content;
+    const analysisContent = aiData.choices[0].message.content;
     console.log('Analysis content:', analysisContent);
 
-    // Parse the JSON response from OpenAI with enhanced cleaning
+    // Parse the JSON response from AI with enhanced cleaning
     let parsedAnalysis;
     try {
       // Enhanced JSON cleaning to handle control characters and newlines
@@ -332,7 +502,7 @@ POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json
       }
       
     } catch (parseError) {
-      console.error('Error parsing OpenAI JSON response:', parseError);
+      console.error('Error parsing AI JSON response:', parseError);
       const errorMessage = parseError instanceof Error ? parseError.message : String(parseError);
       const positionMatch = errorMessage.match(/position (\d+)/);
       console.error('Parse error details:', {
