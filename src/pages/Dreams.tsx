@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -36,7 +35,6 @@ type DateRangeFilter = '7d' | '30d' | '90d' | 'all';
 type SortBy = 'date-desc' | 'date-asc' | 'title-asc' | 'title-desc';
 
 export default function Dreams() {
-  const { t } = useTranslation(['dreams', 'common']);
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -73,7 +71,7 @@ export default function Dreams() {
       setDreams(data || []);
     } catch (error) {
       console.error('Error fetching dreams:', error);
-      toast.error(t('common:errors.loadFailed'));
+      toast.error('Failed to load dreams');
     } finally {
       setLoading(false);
     }
@@ -141,7 +139,7 @@ export default function Dreams() {
 
       if (error) throw error;
       
-      toast.success(t('common:success.deleted'));
+      toast.success('Dream deleted successfully');
       fetchDreams();
       setSelectedDreams(prev => {
         const newSet = new Set(prev);
@@ -150,7 +148,7 @@ export default function Dreams() {
       });
     } catch (error) {
       console.error('Error deleting dream:', error);
-      toast.error(t('common:errors.deleteFailed'));
+      toast.error('Failed to delete dream');
     }
   };
 
@@ -163,13 +161,13 @@ export default function Dreams() {
 
       if (error) throw error;
       
-      toast.success(t('common:success.deleted'));
+      toast.success('Dreams deleted successfully');
       fetchDreams();
       setSelectedDreams(new Set());
       setDeleteDialogOpen(false);
     } catch (error) {
       console.error('Error deleting dreams:', error);
-      toast.error(t('common:errors.deleteFailed'));
+      toast.error('Failed to delete dreams');
     }
   };
 
@@ -208,7 +206,7 @@ export default function Dreams() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <AppHeader title={t('dreams:title')} />
+        <AppHeader title="My Dreams" />
         <main className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[...Array(8)].map((_, i) => (
@@ -228,15 +226,15 @@ export default function Dreams() {
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader title={t('dreams:title')} />
+      <AppHeader title="My Dreams" />
       
       <main className="container mx-auto px-4 py-8">
         {/* Header with filters */}
         <div className="mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-3xl font-bold">{t('dreams:title')}</h1>
-              <p className="text-muted-foreground">{t('dreams:totalDreams', { count: filteredAndSortedDreams.length })}</p>
+              <h1 className="text-3xl font-bold">My Dreams</h1>
+              <p className="text-muted-foreground">{filteredAndSortedDreams.length} dreams total</p>
             </div>
             
             <div className="flex gap-2">
@@ -262,7 +260,7 @@ export default function Dreams() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder={t('dreams:search.placeholder')}
+                placeholder="Search dreams..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -274,9 +272,9 @@ export default function Dreams() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t('dreams:filters.all')}</SelectItem>
-                <SelectItem value="analyzed">{t('dreams:filters.analyzed')}</SelectItem>
-                <SelectItem value="not-analyzed">{t('dreams:filters.notAnalyzed')}</SelectItem>
+                <SelectItem value="all">All dreams</SelectItem>
+                <SelectItem value="analyzed">Analyzed</SelectItem>
+                <SelectItem value="not-analyzed">Not analyzed</SelectItem>
               </SelectContent>
             </Select>
 
@@ -285,10 +283,10 @@ export default function Dreams() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t('dreams:filters.dateRange.all')}</SelectItem>
-                <SelectItem value="7d">{t('dreams:filters.dateRange.7d')}</SelectItem>
-                <SelectItem value="30d">{t('dreams:filters.dateRange.30d')}</SelectItem>
-                <SelectItem value="90d">{t('dreams:filters.dateRange.90d')}</SelectItem>
+                <SelectItem value="all">All time</SelectItem>
+                <SelectItem value="7d">Last 7 days</SelectItem>
+                <SelectItem value="30d">Last 30 days</SelectItem>
+                <SelectItem value="90d">Last 90 days</SelectItem>
               </SelectContent>
             </Select>
 
@@ -297,10 +295,10 @@ export default function Dreams() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="date-desc">{t('dreams:sort.dateDesc')}</SelectItem>
-                <SelectItem value="date-asc">{t('dreams:sort.dateAsc')}</SelectItem>
-                <SelectItem value="title-asc">{t('dreams:sort.titleAsc')}</SelectItem>
-                <SelectItem value="title-desc">{t('dreams:sort.titleDesc')}</SelectItem>
+                <SelectItem value="date-desc">Newest first</SelectItem>
+                <SelectItem value="date-asc">Oldest first</SelectItem>
+                <SelectItem value="title-asc">Title A-Z</SelectItem>
+                <SelectItem value="title-desc">Title Z-A</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -309,7 +307,7 @@ export default function Dreams() {
         {/* Bulk actions bar */}
         {viewMode === 'table' && selectedDreams.size > 0 && (
           <div className="mb-4 p-4 bg-muted rounded-lg flex items-center justify-between">
-            <span className="font-medium">{t('dreams:bulkActions.selected', { count: selectedDreams.size })}</span>
+            <span className="font-medium">{selectedDreams.size} selected</span>
             <div className="flex gap-2">
               <Button
                 variant="destructive"
@@ -317,7 +315,7 @@ export default function Dreams() {
                 onClick={() => setDeleteDialogOpen(true)}
               >
                 <Trash2 className="w-4 h-4 mr-2" />
-                {t('dreams:bulkActions.deleteSelected')}
+                Delete selected
               </Button>
             </div>
           </div>
@@ -328,14 +326,14 @@ export default function Dreams() {
           <Card>
             <CardContent className="py-16 text-center">
               <h3 className="text-xl font-semibold mb-2">
-                {dreams.length === 0 ? t('dreams:empty.noDreams') : t('dreams:empty.noResults')}
+                {dreams.length === 0 ? 'No dreams yet' : 'No results found'}
               </h3>
               <p className="text-muted-foreground mb-6">
-                {dreams.length === 0 ? t('dreams:empty.noDreamsDesc') : t('dreams:empty.noResultsDesc')}
+                {dreams.length === 0 ? 'Start recording your dreams to begin your journey' : 'Try adjusting your filters'}
               </p>
               {dreams.length === 0 && (
                 <Button onClick={() => navigate('/dream-entry')}>
-                  {t('common:actions.addDream')}
+                  Add Dream
                 </Button>
               )}
             </CardContent>
@@ -372,7 +370,7 @@ export default function Dreams() {
                             navigate(`/edit-dream/${dream.id}`);
                           }}>
                             <Edit className="w-4 h-4 mr-2" />
-                            {t('common:actions.edit')}
+                            Edit
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={(e) => {
@@ -383,7 +381,7 @@ export default function Dreams() {
                             className="text-destructive"
                           >
                             <Trash2 className="w-4 h-4 mr-2" />
-                            {t('common:actions.delete')}
+                            Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -401,11 +399,11 @@ export default function Dreams() {
                       {dream.analysis && dream.analysis.length > 0 ? (
                         <Badge variant="default" className="ml-auto">
                           <Brain className="w-3 h-3 mr-1" />
-                          {t('dreams:status.analyzed')}
+                          Analyzed
                         </Badge>
                       ) : (
                         <Badge variant="outline" className="ml-auto">
-                          {t('dreams:status.notAnalyzed')}
+                          Not analyzed
                         </Badge>
                       )}
                     </div>
@@ -428,12 +426,12 @@ export default function Dreams() {
                       onCheckedChange={toggleSelectAll}
                     />
                   </TableHead>
-                  <TableHead>{t('dreams:table.date')}</TableHead>
-                  <TableHead>{t('dreams:table.title')}</TableHead>
-                  <TableHead className="hidden md:table-cell">{t('dreams:table.preview')}</TableHead>
-                  <TableHead className="hidden lg:table-cell">{t('dreams:table.emotion')}</TableHead>
-                  <TableHead>{t('dreams:table.status')}</TableHead>
-                  <TableHead className="w-12">{t('dreams:table.actions')}</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Title</TableHead>
+                  <TableHead className="hidden md:table-cell">Preview</TableHead>
+                  <TableHead className="hidden lg:table-cell">Emotion</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="w-12">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -459,10 +457,10 @@ export default function Dreams() {
                       {dream.analysis && dream.analysis.length > 0 ? (
                         <Badge variant="default">
                           <Brain className="w-3 h-3 mr-1" />
-                          {t('dreams:status.analyzed')}
+                          Analyzed
                         </Badge>
                       ) : (
-                        <Badge variant="outline">{t('dreams:status.notAnalyzed')}</Badge>
+                        <Badge variant="outline">Not analyzed</Badge>
                       )}
                     </TableCell>
                     <TableCell onClick={(e) => e.stopPropagation()}>
@@ -475,7 +473,7 @@ export default function Dreams() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => navigate(`/edit-dream/${dream.id}`)}>
                             <Edit className="w-4 h-4 mr-2" />
-                            {t('common:actions.edit')}
+                            Edit
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => {
@@ -485,7 +483,7 @@ export default function Dreams() {
                             className="text-destructive"
                           >
                             <Trash2 className="w-4 h-4 mr-2" />
-                            {t('common:actions.delete')}
+                            Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -550,18 +548,18 @@ export default function Dreams() {
           <AlertDialogHeader>
             <AlertDialogTitle>
               {selectedDreams.size > 0
-                ? t('dreams:bulkActions.confirmDelete', { count: selectedDreams.size })
-                : t('common:confirmDelete')}
+                ? `Delete ${selectedDreams.size} dreams?`
+                : 'Delete dream?'}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {selectedDreams.size > 0
-                ? t('dreams:bulkActions.confirmDeleteDesc')
-                : t('common:confirmDeleteDesc')}
+                ? 'This action cannot be undone. The selected dreams will be permanently deleted.'
+                : 'This action cannot be undone. This dream will be permanently deleted.'}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setDreamToDelete(null)}>
-              {t('common:actions.cancel')}
+              Cancel
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
@@ -575,7 +573,7 @@ export default function Dreams() {
               }}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {t('common:actions.delete')}
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

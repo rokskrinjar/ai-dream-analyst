@@ -2,10 +2,8 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Brain } from "lucide-react";
 import { Button } from "./ui/button";
-import { useTranslation } from "react-i18next";
 
 export const LandingHeader = () => {
-  const { t } = useTranslation("index");
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -40,7 +38,7 @@ export const LandingHeader = () => {
             className="flex items-center gap-2 text-xl font-bold text-foreground hover:opacity-80 transition-opacity"
           >
             <Brain className="w-8 h-8 text-primary" />
-            <span>{t("header.appName")}</span>
+            <span>Dream Analyzer</span>
           </button>
 
           {/* Navigation */}
@@ -49,25 +47,25 @@ export const LandingHeader = () => {
               onClick={() => scrollToSection("hero")}
               className="text-foreground/80 hover:text-foreground transition-colors"
             >
-              {t("header.nav.home")}
+              Home
             </button>
             <button
               onClick={() => scrollToSection("how-it-works")}
               className="text-foreground/80 hover:text-foreground transition-colors"
             >
-              {t("header.nav.howItWorks")}
+              How it works
             </button>
             <button
               onClick={() => scrollToSection("pricing-preview")}
               className="text-foreground/80 hover:text-foreground transition-colors"
             >
-              {t("header.nav.pricing")}
+              Pricing
             </button>
             <button
               onClick={() => scrollToSection("faq")}
               className="text-foreground/80 hover:text-foreground transition-colors"
             >
-              {t("header.nav.contact")}
+              FAQ
             </button>
           </nav>
 
@@ -77,11 +75,11 @@ export const LandingHeader = () => {
               to="/auth"
               className="text-foreground/80 hover:text-foreground transition-colors hidden sm:block"
             >
-              {t("header.auth.login")}
+              Login
             </Link>
             <Link to="/auth">
               <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                {t("header.auth.signup")}
+                Sign up
               </Button>
             </Link>
           </div>
