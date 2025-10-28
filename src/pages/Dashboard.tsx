@@ -53,7 +53,6 @@ import { CompactCreditDisplay } from '@/components/CompactCreditDisplay';
 import { CreditDisplay } from '@/components/CreditDisplay';
 import { CreditUsageModal } from '@/components/CreditUsageModal';
 import { useToast } from "@/hooks/use-toast";
-import { useTranslation } from 'react-i18next';
 import analyzeNowPlaceholder from '@/assets/analyze-now.png';
 
 interface Dream {
@@ -86,7 +85,6 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
-  const { t } = useTranslation('dashboard');
   const [dreams, setDreams] = useState<Dream[]>([]);
   const [analyses, setAnalyses] = useState<{ [key: string]: DreamAnalysis }>({});
   const [allDreams, setAllDreams] = useState<Dream[]>([]);
@@ -707,7 +705,7 @@ const Dashboard = () => {
                           <div className="flex items-center gap-2">
                             <Sparkles className="h-5 w-5 text-primary" />
                             <h3 className="text-lg font-semibold">
-                              {t('analysisSection.viewAnalysis')} - {dream.title}
+                              View Analysis - {dream.title}
                             </h3>
                           </div>
                           <Button
@@ -726,7 +724,7 @@ const Dashboard = () => {
                           <div className="flex items-center gap-2">
                             <Moon className="h-4 w-4 text-primary" />
                             <h4 className="font-semibold text-foreground">
-                              {t('analysisSection.dreamDescription')}
+                              Dream Description
                             </h4>
                           </div>
                           <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
@@ -735,7 +733,7 @@ const Dashboard = () => {
                           {dream.primary_emotion && (
                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
                               <Heart className="h-3 w-3" />
-                              <span>{t('analysisSection.primaryEmotion')}: {dream.primary_emotion}</span>
+                              <span>Primary Emotion: {dream.primary_emotion}</span>
                             </div>
                           )}
                         </div>
@@ -748,7 +746,7 @@ const Dashboard = () => {
                             <div className="flex items-center gap-2">
                               <Heart className="h-4 w-4 text-primary" />
                               <h4 className="font-semibold text-foreground">
-                                {t('analysisSection.themes')}
+                                Themes
                               </h4>
                             </div>
                             <div className="flex flex-wrap gap-2">
@@ -767,7 +765,7 @@ const Dashboard = () => {
                             <div className="flex items-center gap-2">
                               <Sparkles className="h-4 w-4 text-primary" />
                               <h4 className="font-semibold text-foreground">
-                                {t('analysisSection.symbols')}
+                                Symbols
                               </h4>
                             </div>
                             <ul className="space-y-2">
@@ -787,7 +785,7 @@ const Dashboard = () => {
                             <div className="flex items-center gap-2">
                               <Brain className="h-4 w-4 text-primary" />
                               <h4 className="font-semibold text-foreground">
-                                {t('analysisSection.analysis')}
+                                Analysis
                               </h4>
                             </div>
                             <p className="text-sm text-muted-foreground leading-relaxed">
@@ -802,7 +800,7 @@ const Dashboard = () => {
                             <div className="flex items-center gap-2">
                               <Lightbulb className="h-4 w-4 text-primary" />
                               <h4 className="font-semibold text-foreground">
-                                {t('analysisSection.recommendations')}
+                                Recommendations
                               </h4>
                             </div>
                             <p className="text-sm text-muted-foreground leading-relaxed">
@@ -817,7 +815,7 @@ const Dashboard = () => {
                             <div className="flex items-center gap-2">
                               <MessageCircle className="h-4 w-4 text-primary" />
                               <h4 className="font-semibold text-foreground">
-                                {t('analysisSection.reflectionQuestions')}
+                                Reflection Questions
                               </h4>
                             </div>
                             <ul className="space-y-2">

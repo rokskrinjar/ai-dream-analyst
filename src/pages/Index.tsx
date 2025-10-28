@@ -9,13 +9,11 @@ import { Brain, Sparkles, TrendingUp, Moon, Activity, Eye, BookOpen, Heart, Ligh
 import { TestimonialSection } from "@/components/TestimonialSection";
 import { FAQSection } from "@/components/FAQSection";
 import { LandingHeader } from "@/components/LandingHeader";
-import { useTranslation } from "react-i18next";
 import heroImage from "@/assets/modern-dream-hero.jpg";
 
 const Index = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { t } = useTranslation(['index', 'common']);
 
   useEffect(() => {
     if (user) {
@@ -26,76 +24,92 @@ const Index = () => {
   const features = [
     {
       icon: <BookOpen className="h-6 w-6" />,
-      title: t('features.dreamJournal.title'),
-      description: t('features.dreamJournal.description')
+      title: "Dream Journal",
+      description: "Keep a secure digital journal of your dreams with rich details and emotions"
     },
     {
       icon: <Brain className="h-6 w-6" />,
-      title: t('features.aiAnalysis.title'),
-      description: t('features.aiAnalysis.description')
+      title: "AI Analysis",
+      description: "Get deep insights powered by advanced AI based on psychological theories"
     },
     {
       icon: <TrendingUp className="h-6 w-6" />,
-      title: t('features.personalInsights.title'),
-      description: t('features.personalInsights.description')
+      title: "Personal Insights",
+      description: "Track patterns and discover meanings in your subconscious"
     },
     {
       icon: <Moon className="h-6 w-6" />,
-      title: t('features.remAnalysis.title'),
-      description: t('features.remAnalysis.description')
+      title: "REM Analysis",
+      description: "Understand your sleep cycles and dream phases"
     },
     {
       icon: <Eye className="h-6 w-6" />,
-      title: t('features.symbolism.title'),
-      description: t('features.symbolism.description')
+      title: "Symbolism",
+      description: "Decode symbols and their personal significance"
     },
     {
       icon: <Heart className="h-6 w-6" />,
-      title: t('features.emotionalAnalysis.title'),
-      description: t('features.emotionalAnalysis.description')
-    }
-  ];
-
-  const dreamFacts = [
-    {
-      title: t('aboutDreams.facts.everyoneDreams.title'),
-      description: t('aboutDreams.facts.everyoneDreams.description')
-    },
-    {
-      title: t('aboutDreams.facts.freud.title'),
-      description: t('aboutDreams.facts.freud.description')
-    },
-    {
-      title: t('aboutDreams.facts.jung.title'), 
-      description: t('aboutDreams.facts.jung.description')
-    },
-    {
-      title: t('aboutDreams.facts.emotionalProcessing.title'),
-      description: t('aboutDreams.facts.emotionalProcessing.description')
+      title: "Emotional Analysis",
+      description: "Track emotional patterns across your dreams"
     }
   ];
 
   const steps = [
     {
       icon: <Lightbulb className="h-8 w-8" />,
-      title: t('howItWorks.steps.record.title'),
-      description: t('howItWorks.steps.record.description')
+      title: "Record Your Dreams",
+      description: "Write down your dreams immediately after waking for best recall"
     },
     {
       icon: <Brain className="h-8 w-8" />,
-      title: t('howItWorks.steps.analyze.title'),
-      description: t('howItWorks.steps.analyze.description')
+      title: "AI Analysis",
+      description: "Get instant AI-powered analysis based on psychology"
     },
     {
       icon: <Users className="h-8 w-8" />,
-      title: t('howItWorks.steps.insights.title'),
-      description: t('howItWorks.steps.insights.description')
+      title: "Discover Insights",
+      description: "Understand themes, emotions, and patterns in your dreams"
     },
     {
       icon: <Shield className="h-8 w-8" />,
-      title: t('howItWorks.steps.track.title'),
-      description: t('howItWorks.steps.track.description')
+      title: "Track Progress",
+      description: "Monitor your dream journey and personal growth"
     }
+  ];
+
+  const emotionalPoints = [
+    "Dreams help process daily emotions and experiences",
+    "REM sleep is crucial for emotional regulation",
+    "Recurring dreams often reflect unresolved emotional issues",
+    "Dreams can reveal suppressed feelings and thoughts"
+  ];
+
+  const creativityPoints = [
+    "Dreams enhance problem-solving abilities",
+    "Many innovations came from dreams (e.g., periodic table, sewing machine)",
+    "Dreams connect seemingly unrelated concepts",
+    "Artists and musicians often find inspiration in dreams"
+  ];
+
+  const mentalHealthPoints = [
+    "Dreams reflect mental and emotional well-being",
+    "Analyzing dreams can reveal stress and anxiety patterns",
+    "Dream journaling is therapeutic and promotes self-awareness",
+    "Understanding dreams can improve overall mental health"
+  ];
+
+  const recallPoints = [
+    "Keeping a dream journal significantly improves recall",
+    "Writing dreams immediately after waking preserves details",
+    "Regular practice strengthens dream memory",
+    "Better recall leads to deeper self-understanding"
+  ];
+
+  const selfAwarenessPoints = [
+    "Dreams reveal subconscious thoughts and desires",
+    "Patterns in dreams reflect life patterns",
+    "Understanding symbols leads to personal growth",
+    "Dreams are a window to your inner self"
   ];
 
   return (
@@ -118,12 +132,12 @@ const Index = () => {
         <div className="relative z-20 container mx-auto px-6 py-32 text-center">
           {/* Headline */}
           <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 max-w-5xl mx-auto leading-tight animate-fade-in">
-            {t("hero.title")}
+            Unlock the Secrets of Your Dreams
           </h1>
 
           {/* Subtext */}
           <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed animate-fade-in">
-            {t("hero.subtitle")}
+            Transform your dreams into insights with AI-powered analysis. Discover hidden meanings, track patterns, and embark on a journey of self-discovery.
           </p>
 
           {/* CTA Button */}
@@ -133,7 +147,7 @@ const Index = () => {
               className="text-lg px-10 py-7 bg-primary hover:bg-primary/90 text-primary-foreground"
               onClick={() => navigate("/auth")}
             >
-              {t("hero.cta")}
+              Start Your Dream Journal
             </Button>
           </div>
         </div>
@@ -143,48 +157,48 @@ const Index = () => {
       {/* Science Behind Dreams Section */}
       <section id="science-behind-dreams" className="container mx-auto px-4 py-16 bg-muted/30">
           <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t("index:scienceBehindDreams.title")}</h2>
-            <p className="text-lg text-muted-foreground">{t("index:scienceBehindDreams.subtitle")}</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">The Science Behind Dreams</h2>
+            <p className="text-lg text-muted-foreground">Evidence-based insights into why dreams matter for your wellbeing</p>
           </div>
           
           <Tabs defaultValue="emotional" className="max-w-6xl mx-auto">
             <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-2 h-auto bg-background/60 backdrop-blur-sm p-2">
               <TabsTrigger value="emotional" className="flex flex-col items-center gap-2 py-3 data-[state=active]:bg-primary/10">
                 <Brain className="h-5 w-5" />
-                <span className="text-xs md:text-sm">{t("index:scienceBehindDreams.tabs.emotional.title")}</span>
+                <span className="text-xs md:text-sm">Emotional Health</span>
               </TabsTrigger>
               <TabsTrigger value="creativity" className="flex flex-col items-center gap-2 py-3 data-[state=active]:bg-primary/10">
                 <Sparkles className="h-5 w-5" />
-                <span className="text-xs md:text-sm">{t("index:scienceBehindDreams.tabs.creativity.title")}</span>
+                <span className="text-xs md:text-sm">Creativity</span>
               </TabsTrigger>
               <TabsTrigger value="mentalHealth" className="flex flex-col items-center gap-2 py-3 data-[state=active]:bg-primary/10">
                 <TrendingUp className="h-5 w-5" />
-                <span className="text-xs md:text-sm">{t("index:scienceBehindDreams.tabs.mentalHealth.title")}</span>
+                <span className="text-xs md:text-sm">Mental Health</span>
               </TabsTrigger>
               <TabsTrigger value="recall" className="flex flex-col items-center gap-2 py-3 data-[state=active]:bg-primary/10">
                 <BookOpen className="h-5 w-5" />
-                <span className="text-xs md:text-sm">{t("index:scienceBehindDreams.tabs.recall.title")}</span>
+                <span className="text-xs md:text-sm">Dream Recall</span>
               </TabsTrigger>
               <TabsTrigger value="selfAwareness" className="flex flex-col items-center gap-2 py-3 data-[state=active]:bg-primary/10">
                 <Eye className="h-5 w-5" />
-                <span className="text-xs md:text-sm">{t("index:scienceBehindDreams.tabs.selfAwareness.title")}</span>
+                <span className="text-xs md:text-sm">Self-Awareness</span>
               </TabsTrigger>
             </TabsList>
 
             {/* Emotional Tab */}
             <TabsContent value="emotional" className="mt-8 space-y-6">
               <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold mb-4">{t("index:scienceBehindDreams.tabs.emotional.heading")}</h3>
-                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">{t("index:scienceBehindDreams.tabs.emotional.description")}</p>
+                <h3 className="text-2xl font-bold mb-4">Dreams and Emotional Processing</h3>
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">Dreams are your brain's way of processing emotions and experiences from daily life.</p>
               </div>
 
               <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-l-4 border-primary p-6 max-w-3xl mx-auto">
-                <p className="text-lg italic mb-2">"{t("index:scienceBehindDreams.tabs.emotional.quote")}"</p>
-                <p className="text-sm text-muted-foreground">— {t("index:scienceBehindDreams.tabs.emotional.quoteAuthor")}</p>
+                <p className="text-lg italic mb-2">"Dreams are the royal road to the unconscious."</p>
+                <p className="text-sm text-muted-foreground">— Sigmund Freud</p>
               </Card>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-                {(t("index:scienceBehindDreams.tabs.emotional.points", { returnObjects: true }) as string[]).map((point, idx) => (
+                {emotionalPoints.map((point, idx) => (
                   <Card key={idx} className="p-4 hover-scale">
                     <div className="flex items-start gap-3">
                       <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
@@ -194,18 +208,18 @@ const Index = () => {
                 ))}
               </div>
 
-              <p className="text-sm text-center text-muted-foreground italic">{t("index:scienceBehindDreams.tabs.emotional.research")}</p>
+              <p className="text-sm text-center text-muted-foreground italic">Research from Harvard Medical School, 2020</p>
             </TabsContent>
 
             {/* Creativity Tab */}
             <TabsContent value="creativity" className="mt-8 space-y-6">
               <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold mb-4">{t("index:scienceBehindDreams.tabs.creativity.heading")}</h3>
-                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">{t("index:scienceBehindDreams.tabs.creativity.description")}</p>
+                <h3 className="text-2xl font-bold mb-4">Dreams Boost Creativity</h3>
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">REM sleep and dreams enhance creative problem-solving and innovation.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-                {(t("index:scienceBehindDreams.tabs.creativity.points", { returnObjects: true }) as string[]).map((point, idx) => (
+                {creativityPoints.map((point, idx) => (
                   <Card key={idx} className="p-4 hover-scale">
                     <div className="flex items-start gap-3">
                       <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
@@ -216,21 +230,21 @@ const Index = () => {
               </div>
 
               <Card className="bg-accent/50 p-6 max-w-3xl mx-auto">
-                <p className="text-center"><span className="font-semibold">Famous breakthroughs: </span>{t("index:scienceBehindDreams.tabs.creativity.examples")}</p>
+                <p className="text-center"><span className="font-semibold">Famous breakthroughs: </span>Periodic table (Mendeleev), DNA structure (James Watson), Google (Larry Page)</p>
               </Card>
 
-              <p className="text-sm text-center text-muted-foreground italic">{t("index:scienceBehindDreams.tabs.creativity.research")}</p>
+              <p className="text-sm text-center text-muted-foreground italic">UC Berkeley Sleep and Neuroimaging Lab</p>
             </TabsContent>
 
             {/* Mental Health Tab */}
             <TabsContent value="mentalHealth" className="mt-8 space-y-6">
               <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold mb-4">{t("index:scienceBehindDreams.tabs.mentalHealth.heading")}</h3>
-                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">{t("index:scienceBehindDreams.tabs.mentalHealth.description")}</p>
+                <h3 className="text-2xl font-bold mb-4">Dreams and Mental Wellbeing</h3>
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">Understanding your dreams can improve mental health and emotional balance.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-                {(t("index:scienceBehindDreams.tabs.mentalHealth.points", { returnObjects: true }) as string[]).map((point, idx) => (
+                {mentalHealthPoints.map((point, idx) => (
                   <Card key={idx} className="p-4 hover-scale">
                     <div className="flex items-start gap-3">
                       <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
@@ -240,18 +254,18 @@ const Index = () => {
                 ))}
               </div>
 
-              <p className="text-sm text-center text-muted-foreground italic">{t("index:scienceBehindDreams.tabs.mentalHealth.research")}</p>
+              <p className="text-sm text-center text-muted-foreground italic">American Psychological Association</p>
             </TabsContent>
 
             {/* Recall Tab */}
             <TabsContent value="recall" className="mt-8 space-y-6">
               <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold mb-4">{t("index:scienceBehindDreams.tabs.recall.heading")}</h3>
-                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">{t("index:scienceBehindDreams.tabs.recall.description")}</p>
+                <h3 className="text-2xl font-bold mb-4">Improving Dream Recall</h3>
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">Learn techniques to remember and analyze your dreams effectively.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-                {(t("index:scienceBehindDreams.tabs.recall.points", { returnObjects: true }) as string[]).map((point, idx) => (
+                {recallPoints.map((point, idx) => (
                   <Card key={idx} className="p-4 hover-scale">
                     <div className="flex items-start gap-3">
                       <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
@@ -261,18 +275,18 @@ const Index = () => {
                 ))}
               </div>
 
-              <p className="text-sm text-center text-muted-foreground italic">{t("index:scienceBehindDreams.tabs.recall.research")}</p>
+              <p className="text-sm text-center text-muted-foreground italic">Journal of Sleep Research</p>
             </TabsContent>
 
             {/* Self-Awareness Tab */}
             <TabsContent value="selfAwareness" className="mt-8 space-y-6">
               <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold mb-4">{t("index:scienceBehindDreams.tabs.selfAwareness.heading")}</h3>
-                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">{t("index:scienceBehindDreams.tabs.selfAwareness.description")}</p>
+                <h3 className="text-2xl font-bold mb-4">Dreams and Self-Discovery</h3>
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">Dreams provide unique insights into your subconscious mind and personal growth.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-                {(t("index:scienceBehindDreams.tabs.selfAwareness.points", { returnObjects: true }) as string[]).map((point, idx) => (
+                {selfAwarenessPoints.map((point, idx) => (
                   <Card key={idx} className="p-4 hover-scale">
                     <div className="flex items-start gap-3">
                       <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
@@ -283,17 +297,17 @@ const Index = () => {
               </div>
 
               <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-l-4 border-primary p-6 max-w-3xl mx-auto">
-                <p className="text-lg font-semibold text-center">{t("index:scienceBehindDreams.tabs.selfAwareness.summary")}</p>
+                <p className="text-lg font-semibold text-center">Understanding your dreams is a journey of self-discovery and personal transformation.</p>
               </Card>
 
-              <p className="text-sm text-center text-muted-foreground italic">{t("index:scienceBehindDreams.tabs.selfAwareness.research")}</p>
+              <p className="text-sm text-center text-muted-foreground italic">Carl Jung Institute</p>
             </TabsContent>
           </Tabs>
 
           <div className="text-center mt-12">
             <Button size="lg" onClick={() => navigate('/auth')} className="gap-2">
               <Sparkles className="h-5 w-5" />
-              {t("index:scienceBehindDreams.cta")}
+              Start Analyzing Your Dreams
             </Button>
           </div>
         </section>
@@ -302,10 +316,10 @@ const Index = () => {
       <section className="container mx-auto px-4 py-16">
           <div className="text-center mb-12 animate-fade-in-up">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              {t('features.title')}
+              Powerful Features for Dream Analysis
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              {t('features.subtitle')}
+              Everything you need to understand and track your dreams
             </p>
           </div>
 
@@ -343,7 +357,7 @@ const Index = () => {
       <section id="how-it-works" className="py-20 px-4 bg-card">
         <div className="container mx-auto max-w-6xl">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-foreground">
-            {t("howItWorks.title")}
+            How It Works
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             {steps.map((step, index) => (
@@ -371,268 +385,148 @@ const Index = () => {
       <section id="pricing-preview" className="py-20 px-4 bg-background">
         <div className="container mx-auto max-w-6xl">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-foreground">
-            {t("pricingPreview.title")}
+            Choose Your Plan
           </h2>
           <p className="text-muted-foreground text-center mb-12 text-lg">
-            {t("pricingPreview.subtitle")}
+            Start with our free plan or upgrade for unlimited AI-powered analysis
           </p>
 
           <div className="grid md:grid-cols-3 gap-8 mb-12">
             {/* Free Plan */}
-            <Card className="bg-card border-border">
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold mb-2">{t("pricingPreview.free.name")}</h3>
-                <p className="text-muted-foreground mb-4">{t("pricingPreview.free.description")}</p>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold">{t("pricingPreview.free.price")}</span>
-                  <span className="text-muted-foreground">{t("pricingPreview.free.period")}</span>
+            <Card className="border-border hover:shadow-lg transition-shadow">
+              <CardHeader className="text-center pb-8">
+                <div className="mx-auto mb-4 p-3 bg-primary/10 rounded-full w-fit">
+                  <Heart className="h-6 w-6 text-primary" />
                 </div>
-                <ul className="space-y-3 mb-6">
-                  {(t("pricingPreview.free.features", { returnObjects: true }) as string[]).map((feature, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
+                <CardTitle className="text-2xl font-bold">Free</CardTitle>
+                <CardDescription>Perfect for getting started</CardDescription>
+                <div className="mt-4">
+                  <span className="text-4xl font-bold">€0</span>
+                  <span className="text-muted-foreground">/month</span>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="text-center p-4 bg-muted rounded-lg">
+                  <p className="text-lg font-semibold">5 credits/month</p>
+                  <p className="text-sm text-muted-foreground">for AI dream analysis</p>
+                </div>
+                <ul className="space-y-3">
+                  <li className="flex items-center space-x-3">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
+                    <span>Unlimited dream journaling</span>
+                  </li>
+                  <li className="flex items-center space-x-3">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
+                    <span>5 AI analyses per month</span>
+                  </li>
+                  <li className="flex items-center space-x-3">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
+                    <span>Basic dream tracking</span>
+                  </li>
                 </ul>
-                <Link to="/auth">
-                  <Button variant="outline" className="w-full">Get Started</Button>
-                </Link>
               </CardContent>
             </Card>
 
             {/* Basic Plan */}
-            <Card className="bg-card border-border">
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold mb-2">{t("pricingPreview.basic.name")}</h3>
-                <p className="text-muted-foreground mb-4">{t("pricingPreview.basic.description")}</p>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold">{t("pricingPreview.basic.price")}</span>
-                  <span className="text-muted-foreground">{t("pricingPreview.basic.period")}</span>
+            <Card className="border-primary relative">
+              <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                Most Popular
+              </Badge>
+              <CardHeader className="text-center pb-8">
+                <div className="mx-auto mb-4 p-3 bg-primary/10 rounded-full w-fit">
+                  <Zap className="h-6 w-6 text-primary" />
                 </div>
-                <ul className="space-y-3 mb-6">
-                  {(t("pricingPreview.basic.features", { returnObjects: true }) as string[]).map((feature, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
+                <CardTitle className="text-2xl font-bold">Basic</CardTitle>
+                <CardDescription>For regular dreamers</CardDescription>
+                <div className="mt-4">
+                  <span className="text-4xl font-bold">€4.99</span>
+                  <span className="text-muted-foreground">/month</span>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="text-center p-4 bg-muted rounded-lg">
+                  <p className="text-lg font-semibold">50 credits/month</p>
+                  <p className="text-sm text-muted-foreground">for AI dream analysis</p>
+                </div>
+                <ul className="space-y-3">
+                  <li className="flex items-center space-x-3">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
+                    <span>Everything in Free</span>
+                  </li>
+                  <li className="flex items-center space-x-3">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
+                    <span>50 AI analyses per month</span>
+                  </li>
+                  <li className="flex items-center space-x-3">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
+                    <span>Advanced pattern analysis</span>
+                  </li>
                 </ul>
-                <Link to="/pricing">
-                  <Button variant="outline" className="w-full">Select Plan</Button>
-                </Link>
               </CardContent>
             </Card>
 
             {/* Premium Plan */}
-            <Card className="bg-card border-primary relative">
-              <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
-                {t("pricingPreview.premium.popular")}
-              </Badge>
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold mb-2">{t("pricingPreview.premium.name")}</h3>
-                <p className="text-muted-foreground mb-4">{t("pricingPreview.premium.description")}</p>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold">{t("pricingPreview.premium.price")}</span>
-                  <span className="text-muted-foreground">{t("pricingPreview.premium.period")}</span>
+            <Card className="border-border hover:shadow-lg transition-shadow">
+              <CardHeader className="text-center pb-8">
+                <div className="mx-auto mb-4 p-3 bg-primary/10 rounded-full w-fit">
+                  <Star className="h-6 w-6 text-primary" />
                 </div>
-                <ul className="space-y-3 mb-6">
-                  {(t("pricingPreview.premium.features", { returnObjects: true }) as string[]).map((feature, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
+                <CardTitle className="text-2xl font-bold">Premium</CardTitle>
+                <CardDescription>For dream enthusiasts</CardDescription>
+                <div className="mt-4">
+                  <span className="text-4xl font-bold">€9.99</span>
+                  <span className="text-muted-foreground">/month</span>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="text-center p-4 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg">
+                  <p className="text-lg font-semibold">Unlimited</p>
+                  <p className="text-sm text-muted-foreground">dream analyses</p>
+                </div>
+                <ul className="space-y-3">
+                  <li className="flex items-center space-x-3">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
+                    <span>Everything in Basic</span>
+                  </li>
+                  <li className="flex items-center space-x-3">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
+                    <span>Unlimited AI analyses</span>
+                  </li>
+                  <li className="flex items-center space-x-3">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
+                    <span>Priority support</span>
+                  </li>
                 </ul>
-                <Link to="/pricing">
-                  <Button className="w-full bg-primary hover:bg-primary/90">Select Plan</Button>
-                </Link>
               </CardContent>
             </Card>
           </div>
 
           <div className="text-center">
-            <Link to="/pricing" className="text-primary hover:underline text-lg">
-              {t("pricingPreview.viewFullPricing")}
-            </Link>
+            <Button size="lg" onClick={() => navigate('/pricing')}>
+              View All Plans
+            </Button>
           </div>
         </div>
       </section>
 
-        {/* Enhanced Scientific Background Section */}
-        <section className="container mx-auto px-4 py-16">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-12 animate-fade-in-up">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                {t('science.title')}
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                {t('science.subtitle')}
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-12 mb-12">
-              <Card className="glass-card p-8 animate-fade-in-up">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Brain className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="text-2xl font-semibold text-foreground">{t('science.freud.title')}</h3>
-                </div>
-                <p className="text-muted-foreground mb-6 leading-relaxed">
-                  {t('science.freud.description')}
-                </p>
-                <div className="glass-card p-3 flex items-center gap-2">
-                  <Brain className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-medium text-foreground">{t('science.freud.tag')}</span>
-                </div>
-              </Card>
-
-              <Card className="glass-card p-8 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
-                    <Eye className="h-6 w-6 text-accent" />
-                  </div>
-                  <h3 className="text-2xl font-semibold text-foreground">{t('science.jung.title')}</h3>
-                </div>
-                <p className="text-muted-foreground mb-6 leading-relaxed">
-                  {t('science.jung.description')}
-                </p>
-                <div className="glass-card p-3 flex items-center gap-2">
-                  <Eye className="h-4 w-4 text-accent" />
-                  <span className="text-sm font-medium text-foreground">{t('science.jung.tag')}</span>
-                </div>
-              </Card>
-            </div>
-
-            <div className="text-center">
-              <Button 
-                variant="outline"
-                size="lg"
-                className="font-semibold px-8 py-4 text-lg glass-card hover:bg-primary/5 animate-glow-pulse"
-                onClick={() => navigate('/auth')}
-              >
-                {t('science.cta')}
-                <Sparkles className="ml-2 h-5 w-5" />
-              </Button>
-            </div>
-          </div>
-        </section>
-
       {/* FAQ Section */}
-      <div id="faq">
-        <FAQSection />
-      </div>
+      <FAQSection />
 
-        {/* Enhanced CTA Section */}
-        <section className="relative py-24 overflow-hidden">
-          <div className="absolute inset-0 gradient-bg"></div>
-          <div className="container relative mx-auto px-4">
-            <Card className="glass-card max-w-5xl mx-auto border-border/20 animate-fade-in-up">
-              <CardContent className="p-12 md:p-16 text-center">
-                <div className="mb-8">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-6">
-                    <Sparkles className="h-4 w-4 text-primary" />
-                    <span className="text-sm font-medium text-foreground">{t('cta.badge')}</span>
-                  </div>
-                  
-                  <h3 className="text-3xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-                    {t('cta.title')}
-                    <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"> 
-                      {t('cta.titleHighlight')}
-                    </span>
-                  </h3>
-                  
-                  <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-                    {t('cta.description')}
-                  </p>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-6 justify-center mb-8">
-                  <Button 
-                    size="lg"
-                    className="font-semibold px-12 py-4 text-xl hover:shadow-lg transition-all duration-300 animate-glow-pulse"
-                    onClick={() => navigate('/auth')}
-                  >
-                    <Brain className="mr-3 h-6 w-6" />
-                    {t('cta.ctaButton')}
-                  </Button>
-                  <Button 
-                    variant="outline"
-                    size="lg"
-                    className="font-semibold px-8 py-4 text-xl glass-card hover:bg-primary/5"
-                    onClick={() => {
-                      document.getElementById('science-behind-dreams')?.scrollIntoView({ 
-                        behavior: 'smooth' 
-                      });
-                    }}
-                  >
-                    {t('cta.learnMore')}
-                  </Button>
-                </div>
-
-                {/* Trust indicators */}
-                <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <Shield className="h-4 w-4" />
-                    <span>{t('cta.trustPrivate')}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span>{t('cta.trustRating')}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Zap className="h-4 w-4 text-primary" />
-                    <span>{t('cta.trustInstant')}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-      </main>
-
-      {/* Enhanced Footer */}
-      <footer className="border-t border-border/30 mt-16 bg-muted/20">
-        <div className="container mx-auto px-4 py-12">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <h4 className="text-lg font-semibold text-foreground mb-4">{t('common:appName')}</h4>
-              <p className="text-muted-foreground text-sm">
-                {t('footer.tagline')}
-              </p>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold text-foreground mb-4">{t('footer.aboutDreamsTitle')}</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• {t('footer.dreamItem1')}</li>
-                <li>• {t('footer.dreamItem2')}</li>
-                <li>• {t('footer.dreamItem3')}</li>
-                <li>• {t('footer.dreamItem4')}</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold text-foreground mb-4">{t('footer.getStartedTitle')}</h4>
-              <Button 
-                className="w-full mb-4"
-                onClick={() => navigate('/auth')}
-              >
-                {t('footer.exploreButton')}
-              </Button>
-              <p className="text-xs text-muted-foreground">
-                {t('footer.signupInfo')}
-              </p>
-            </div>
-          </div>
-          
-          <div className="border-t border-border/30 pt-8 text-center text-muted-foreground">
-            <p>{t('footer.copyright')}</p>
-            <p className="mt-2 text-sm">
-              {t('footer.foundation')}
-            </p>
-          </div>
+      {/* Final CTA */}
+      <section className="py-20 px-4 bg-gradient-to-r from-primary/10 to-accent/10">
+        <div className="container mx-auto text-center max-w-3xl">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            Ready to Understand Your Dreams?
+          </h2>
+          <p className="text-lg text-muted-foreground mb-8">
+            Join thousands of users discovering the hidden meanings in their dreams
+          </p>
+          <Button size="lg" onClick={() => navigate('/auth')} className="text-lg px-10">
+            Get Started For Free
+          </Button>
         </div>
-      </footer>
+      </section>
+      </main>
     </div>
   );
 };
