@@ -4,22 +4,22 @@ import { Star, Quote } from "lucide-react";
 const testimonials = [
   {
     name: "Marija K.",
-    role: "Psihologinja",
-    content: "Aplikacija mi je pomagala razumeti vzorce v mojih sanjah, ki sem jih prej spregledala. AI analiza je presenetljivo natančna.",
+    role: "Psychologist",
+    content: "The app helped me understand patterns in my dreams that I previously overlooked. The AI analysis is surprisingly accurate.",
     rating: 5,
     location: "Ljubljana"
   },
   {
     name: "Tomaž S.", 
-    role: "Student psihologije",
-    content: "Končno lahko sledim svojim sanjam sistematično. Vpogledi so poglobljeni in mi pomagajo pri študiju.",
+    role: "Psychology Student",
+    content: "Finally I can track my dreams systematically. The insights are deep and help me with my studies.",
     rating: 5,
     location: "Maribor"
   },
   {
     name: "Ana P.",
-    role: "Terapevtka",
-    content: "Uporabljam aplikacijo za svoje stranke. Analize so znanstveno podprte in koristne za terapevtski proces.",
+    role: "Therapist",
+    content: "I use the app for my clients. The analyses are scientifically supported and useful for the therapeutic process.",
     rating: 5,
     location: "Celje"
   }
@@ -30,10 +30,10 @@ export const TestimonialSection = () => {
     <section className="container mx-auto px-4 py-16">
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-          Kaj pravijo naši uporabniki
+          What Our Users Say
         </h2>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Pridruži se več kot 10.000 uporabnikom, ki že odkrivajo skrivnosti svojih sanj
+          Join over 10,000 users discovering the secrets of their dreams
         </p>
       </div>
 

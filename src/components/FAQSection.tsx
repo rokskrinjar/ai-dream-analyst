@@ -7,28 +7,28 @@ import {
 
 const faqs = [
   {
-    question: "Kako AI analizira moje sanje?",
-    answer: "Naš AI sistem uporablja napredne algoritme strojnega učenja in se opira na znanstvene teorije Freuda in Junga. Analizira simboliko, vzorce in čustva v vaših sanjah ter vam ponudi personalizirane vpoglede."
+    question: "How does AI analyze my dreams?",
+    answer: "Our AI system uses advanced machine learning algorithms and relies on scientific theories of Freud and Jung. It analyzes symbolism, patterns, and emotions in your dreams and provides personalized insights."
   },
   {
-    question: "So moje sanje v varnosti?",
-    answer: "Absolutno. Vsi podatki so šifrirani in shranjeni varno. Vaše sanje so vidne samo vam in jih nikoli ne delimo s tretjimi osebami. Uporabljamo najnovejše varnostne protokole za zaščito vaše zasebnosti."
+    question: "Are my dreams safe?",
+    answer: "Absolutely. All data is encrypted and stored securely. Your dreams are visible only to you and we never share them with third parties. We use the latest security protocols to protect your privacy."
   },
   {
-    question: "Koliko sanj lahko analiziram brezplačno?",
-    answer: "Z brezplačnim računom lahko mesečno analizirate do 5 sanj. Za neomejene analize in dodatne funkcije lahko nadgradite na premium paket."
+    question: "How many dreams can I analyze for free?",
+    answer: "With a free account, you can analyze up to 5 dreams per month. For unlimited analyses and additional features, you can upgrade to a premium package."
   },
   {
-    question: "Ali lahko analize pomagajo pri terapiji?",
-    answer: "Naše analize so znanstveno podprte in lahko služijo kot koristno dopolnilo k terapevtskemu procesu, vendar ne nadomešajo strokovne psihološke pomoči. Vedno se posvetujte s strokovnjakom za osebne težave."
+    question: "Can the analyses help with therapy?",
+    answer: "Our analyses are scientifically supported and can serve as a useful complement to the therapeutic process, but they do not replace professional psychological help. Always consult a professional for personal issues."
   },
   {
-    question: "Kako natančne so AI analize?",
-    answer: "Naš AI sistem je treniran na obsežni bazi psiholoških raziskav in ima visoko stopnjo natančnosti pri prepoznavanju vzorcev. Vendar pa je vsaka interpretacija subjektivna in vam svetujemo, da rezultate jemljete kot vodilo za samorazmislek."
+    question: "How accurate are AI analyses?",
+    answer: "Our AI system is trained on an extensive database of psychological research and has a high degree of accuracy in recognizing patterns. However, every interpretation is subjective and we advise you to take the results as a guide for self-reflection."
   },
   {
-    question: "Lahko izvozim svoje analize?",
-    answer: "Da, premium uporabniki lahko izvozijo vse svoje analize in podatke v različnih formatih (PDF, CSV). To vam omogoča dolgotrajno sledenje vzorcev in deljenje z strokovnjaki."
+    question: "Can I export my analyses?",
+    answer: "Yes, premium users can export all their analyses and data in various formats (PDF, CSV). This allows you to track patterns long-term and share with professionals."
   }
 ];
 
@@ -38,10 +38,10 @@ export const FAQSection = () => {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Pogosta vprašanja
+            Frequently Asked Questions
           </h2>
           <p className="text-lg text-muted-foreground">
-            Odgovori na najpogostejša vprašanja o analizi sanj z AI
+            Answers to the most common questions about AI dream analysis
           </p>
         </div>
 
