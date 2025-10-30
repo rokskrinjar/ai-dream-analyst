@@ -396,16 +396,19 @@ const Dashboard = () => {
         throw error;
       }
 
-      if (data.analysis) {
-        setAnalyses(prev => ({
-          ...prev,
-          [pendingAnalysis]: data.analysis
-        }));
-        toast({
-          title: "Analiza končana",
-          description: `AI analiza je pripravljena! Porabili ste 1 kredit.`,
-        });
-      }
+        if (data.analysis) {
+          setAnalyses(prev => ({
+            ...prev,
+            [pendingAnalysis]: data.analysis
+          }));
+          toast({
+            title: "Analiza končana",
+            description: `AI analiza je pripravljena! Porabili ste 1 kredit.`,
+          });
+          
+          // Refetch dreams to ensure UI is in sync with database
+          await fetchDreams();
+        }
     } catch (error: any) {
       console.error('Error analyzing dream:', error);
       toast({
