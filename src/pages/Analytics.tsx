@@ -463,16 +463,30 @@ const Analytics = () => {
   };
 
   // Prepare chart data
-  const themeData = patternAnalysis?.theme_patterns?.map(tp => ({
-    name: tp.theme,
-    value: tp.frequency
-  })) || [];
+  const themeData = (() => {
+    const themePatterns = patternAnalysis?.theme_patterns;
+    if (!themePatterns || !Array.isArray(themePatterns)) {
+      console.warn('theme_patterns is not an array:', themePatterns);
+      return [];
+    }
+    return themePatterns.map(tp => ({
+      name: tp.theme,
+      value: tp.frequency
+    }));
+  })();
 
   const emotionData = (() => {
-    const emotions = patternAnalysis?.emotional_journey?.map(ej => ({
+    // Safely handle emotional_journey that might not be an array (e.g., from old cached data)
+    const emotionalJourney = patternAnalysis?.emotional_journey;
+    if (!emotionalJourney || !Array.isArray(emotionalJourney)) {
+      console.warn('emotional_journey is not an array:', emotionalJourney);
+      return [];
+    }
+    
+    const emotions = emotionalJourney.map(ej => ({
       name: ej.emotion,
       value: ej.frequency
-    })) || [];
+    }));
     
     // Sort by frequency (highest first)
     const sorted = [...emotions].sort((a, b) => b.value - a.value);

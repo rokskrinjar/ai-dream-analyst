@@ -143,7 +143,7 @@ serve(async (req) => {
     }
 
 
-    const CURRENT_ANALYSIS_VERSION = 3; // Version 3 = comprehensive analysis with better validation
+    const CURRENT_ANALYSIS_VERSION = 4; // Version 4 = fixed JSON key structure (English keys, localized values)
 
     // Check for cached analysis unless force refresh is requested
     if (!forceRefresh) {
