@@ -239,179 +239,268 @@ serve(async (req) => {
     // Language-specific prompts
     const prompts: any = {
       en: {
-        system: 'You are an experienced dream analysis expert with deep understanding of symbolism and psychology. Always respond in English and return only a JSON object. Your task is to provide thorough, detailed analysis with comprehensive, practical recommendations that help the person understand and use insights from dreams in daily life. Recommendations should be long, detailed, and useful - not short or generic.',
-        instruction: `Analyze my dream based on the following data:
-        
-        Dream Title: ${dream.title}
-        Dream Content: ${dream.content}
-        Mood: ${dream.mood || 'Not specified'}
-        Tags: ${dream.tags ? dream.tags.join(', ') : 'None specified'}
-        
-        Return the analysis in the following JSON format in English:
-        {
-          "themes": [list of main themes from the dream],
-          "emotions": [list of emotions appearing in the dream],
-          "symbols": [
-            {
-              "symbol": "symbol name",
-              "meaning": "symbol meaning"
-            }
-          ],
-          "analysis_text": "detailed dream analysis in English",
-          "recommendations": "comprehensive and detailed recommendations for further reflection and action (3-5 concrete recommendations, each in its own paragraph with explanation and practical advice)",
-          "reflection_questions": [
-            "Specific question 1 related to this dream",
-            "Specific question 2 related to this dream",
-            "Specific question 3 related to this dream"
-          ]
-        }
+        system: 'You are an expert dream analyst combining psychological frameworks from Freud, Jung, Gestalt therapy, and cognitive neuroscience. Always respond in English and return only a JSON object.',
+        instruction: `Analyze this dream with deep psychological insight:
 
-SPECIAL INSTRUCTIONS FOR RECOMMENDATIONS:
-- Write 3-5 concrete, detailed recommendations
-- Each recommendation should be a long paragraph (3-5 sentences) with explanation of WHY it's important
-- Include practical steps the person can take
-- Connect recommendations with elements from the dream and their symbolic meaning
-- Write recommendations as connected text with paragraphs, not as a numbered list
-- Each paragraph should start with a new line for better readability
-- Example structure: "First recommendation with explanation...\\n\\nSecond recommendation with explanation...\\n\\nThird recommendation..."
+Title: ${dream.title}
+Content: ${dream.content}
+Date: ${dream.dream_date}
+Mood: ${dream.mood || 'Not specified'}
+Primary Emotion: ${dream.primary_emotion || 'Not specified'}
 
-IMPORTANT for reflection_questions:
-- Questions MUST be specific to these exact dreams: "${dream.title}" - "${dream.content.substring(0, 100)}..."
-- Questions should start with "Reflect on..."
-- Questions should directly mention elements from the dream (people, places, objects, situations)
-- Examples of good questions:
-  * "Reflect on how [specific person/situation from dream] reflects your current relationships..."
-  * "Reflect on the connection between [concrete element from dream] and your recent concerns..."
-  * "Reflect on what [specific situation from dream content] is telling you about your fears/desires..."
-- DO NOT use generic questions like "how do emotions connect with life"
+REQUIRED JSON OUTPUT:
+{
+  "summary": "4-6 sentence analytical summary including key events, main themes/symbols, emotional tone, and central psychological insight",
+  "initial_exploration": {
+    "core_narrative": "2-3 sentences describing the basic story, setting, and plot",
+    "key_imagery": ["striking object/person 1", "striking action 1", "striking object 2", ...],
+    "emotional_tone": "Primary feeling with nuance (e.g., 'anxious determination', 'joyful nostalgia')",
+    "characters": ["character 1: role and interaction", "character 2: role and interaction", ...]
+  },
+  "psychological_perspectives": {
+    "freudian": {
+      "manifest_content": "What literally happened (2-3 sentences)",
+      "latent_content": "Hidden wish or repressed thought (2-3 sentences)",
+      "interpretation": "Psychodynamic meaning in terms of unconscious desires, conflicts, or defenses (3-4 sentences)"
+    },
+    "jungian": {
+      "archetypes_identified": ["The Shadow: description", "The Anima/Animus: description", ...],
+      "individuation_stage": "Where the dreamer is in the journey toward wholeness (2-3 sentences)",
+      "collective_unconscious": "Universal symbols and their significance (2-3 sentences)"
+    },
+    "gestalt": {
+      "fragmented_parts": ["part 1 of dreamer's psyche", "part 2...", ...],
+      "integration_message": "How the dream shows split-off aspects seeking integration (3-4 sentences)",
+      "dreamwork_exercise": "Suggested Gestalt technique to integrate these parts (2-3 sentences)"
+    },
+    "cognitive": {
+      "problem_being_processed": "Real-life concern or memory being worked through (2-3 sentences)",
+      "threat_simulation": "Potential threats or challenges being rehearsed (2-3 sentences)",
+      "memory_consolidation": "Recent experiences or learning being integrated (2-3 sentences)"
+    }
+  },
+  "structured_analysis": {
+    "dominant_theme": "Primary theme based on emotional intensity and symbolism (1-2 sentences)",
+    "symbolic_breakdown": [
+      {"symbol": "name", "interpretation": "personal meaning", "archetypal_meaning": "universal significance"},
+      {"symbol": "name2", "interpretation": "personal meaning", "archetypal_meaning": "universal significance"},
+      ...
+    ],
+    "waking_life_connections": "Key questions linking dream to current life (3-4 questions in paragraph form)",
+    "emotional_message": "The most certain psychological message from the dream's emotions (2-3 sentences)"
+  },
+  "themes": ["theme1", "theme2", "theme3", ...],
+  "emotions": ["emotion1", "emotion2", ...],
+  "recommendations": "3-5 actionable recommendations based on the analysis (each as a paragraph, separated by \\n\\n)",
+  "reflection_questions": ["Deep question 1 specific to this dream?", "Deep question 2?", "Deep question 3?"]
+}
 
-IMPORTANT: Return ONLY clean JSON object without markdown code blocks, without \`\`\`json and without \`\`\`, without additional text.`
+CRITICAL REQUIREMENTS:
+- All text fields must be thoughtful and substantive
+- Each psychological perspective must be distinct and valuable
+- Summary must capture BOTH what happened AND what it means psychologically
+- Symbolic breakdown must have at least 5-8 symbols with both personal and archetypal meanings
+- All arrays must have multiple items (min 3-4 for themes/emotions, 5-8 for symbols)
+- Maintain professional psychological depth throughout
+- Return ONLY clean JSON without markdown blocks or extra text`
       },
       hr: {
-        system: 'Vi ste iskusni stručnjak za analizu snova sa dubokim razumijevanjem simbolike i psihologije. Uvijek odgovarajte na hrvatskom i vratite samo JSON objekt. Vaš zadatak je pružiti temeljitu, detaljnu analizu s opsežnim, praktičnim preporukama koje pomažu osobi razumjeti i koristiti uvide iz snova u svakodnevnom životu. Preporuke trebaju biti dugačke, detaljne i korisne - ne kratke ili generičke.',
-        instruction: `Analizirajte moj san na temelju sljedećih podataka:
-        
-        Naslov sna: ${dream.title}
-        Sadržaj sna: ${dream.content}
-        Raspoloženje: ${dream.mood || 'Nije navedeno'}
-        Oznake: ${dream.tags ? dream.tags.join(', ') : 'Nisu navedene'}
-        
-        Vratite analizu u sljedećem JSON formatu na hrvatskom:
-        {
-          "themes": [popis glavnih tema iz sna],
-          "emotions": [popis emocija koje se pojavljuju u snu],
-          "symbols": [
-            {
-              "symbol": "ime simbola",
-              "meaning": "značenje simbola"
-            }
-          ],
-          "analysis_text": "detaljna analiza sna na hrvatskom",
-          "recommendations": "opsežne i detaljne preporuke za daljnje razmišljanje i djelovanje (3-5 konkretnih preporuka, svaka u svom odlomku s obrazloženjem i praktičnim savjetima)",
-          "reflection_questions": [
-            "Specifično pitanje 1 povezano s ovim snom",
-            "Specifično pitanje 2 povezano s ovim snom",
-            "Specifično pitanje 3 povezano s ovim snom"
-          ]
-        }
+        system: 'Vi ste stručnjak za analizu snova koji kombinira psihološke okvire Freuda, Junga, Gestalt terapije i kognitivne neuroznanosti. Uvijek odgovarajte na hrvatskom i vratite samo JSON objekt.',
+        instruction: `Analizirajte ovaj san s dubokim psihološkim uvidom:
 
-POSEBNE UPUTE ZA PREPORUKE:
-- Napišite 3-5 konkretnih, detaljnih preporuka
-- Svaka preporuka neka bude dugačak odlomak (3-5 rečenica) s obrazloženjem ZAŠTO je važna
-- Uključite praktične korake koje osoba može napraviti
-- Povežite preporuke s elementima iz sna i njihovim simboličkim značenjem
-- Napišite preporuke kao povezan tekst s odlomcima, ne kao numerirani popis
-- Svaki odlomak neka počinje novim retkom za bolju čitljivost
+Naslov: ${dream.title}
+Sadržaj: ${dream.content}
+Datum: ${dream.dream_date}
+Raspoloženje: ${dream.mood || 'Nije navedeno'}
+Primarna emocija: ${dream.primary_emotion || 'Nije navedeno'}
 
-VAŽNO za reflection_questions:
-- Pitanja MORAJU biti specifična za ove točne snove: "${dream.title}" - "${dream.content.substring(0, 100)}..."
-- Pitanja neka počinju s "Razmislite o..."
-- Pitanja neka izravno spominju elemente iz sna (osobe, mjesta, predmete, situacije)
+POTREBAN JSON OUTPUT:
+{
+  "summary": "Analitički sažetak od 4-6 rečenica uključujući ključne događaje, glavne teme/simbole, emocionalni ton i središnji psihološki uvid",
+  "initial_exploration": {
+    "core_narrative": "2-3 rečenice koje opisuju osnovnu priču, okruženje i zaplet",
+    "key_imagery": ["upečatljiv objekt/osoba 1", "upečatljiva akcija 1", "objekt 2", ...],
+    "emotional_tone": "Primarna emocija s nijansom (npr., 'tjeskobna odlučnost', 'radosna nostalgija')",
+    "characters": ["lik 1: uloga i interakcija", "lik 2: uloga i interakcija", ...]
+  },
+  "psychological_perspectives": {
+    "freudian": {
+      "manifest_content": "Što se doslovno dogodilo (2-3 rečenice)",
+      "latent_content": "Skrivena želja ili potisnuta misao (2-3 rečenice)",
+      "interpretation": "Psihodinamičko značenje u smislu nesvjesnih želja, konflikata ili obrana (3-4 rečenice)"
+    },
+    "jungian": {
+      "archetypes_identified": ["Sjena: opis", "Anima/Animus: opis", ...],
+      "individuation_stage": "Gdje se sanjar nalazi na putu prema cjelovitosti (2-3 rečenice)",
+      "collective_unconscious": "Univerzalni simboli i njihovo značenje (2-3 rečenice)"
+    },
+    "gestalt": {
+      "fragmented_parts": ["dio 1 sanjareve psihe", "dio 2...", ...],
+      "integration_message": "Kako san pokazuje razdvojene aspekte koji traže integraciju (3-4 rečenice)",
+      "dreamwork_exercise": "Predložena Gestalt tehnika za integraciju ovih dijelova (2-3 rečenice)"
+    },
+    "cognitive": {
+      "problem_being_processed": "Problem iz stvarnog života ili sjećanje koje se obrađuje (2-3 rečenice)",
+      "threat_simulation": "Potencijalne prijetnje ili izazovi koji se uvježbavaju (2-3 rečenice)",
+      "memory_consolidation": "Nedavna iskustva ili učenje koje se integrira (2-3 rečenice)"
+    }
+  },
+  "structured_analysis": {
+    "dominant_theme": "Primarna tema temeljena na emocionalnom intenzitetu i simbolici (1-2 rečenice)",
+    "symbolic_breakdown": [
+      {"symbol": "ime", "interpretation": "osobno značenje", "archetypal_meaning": "univerzalno značenje"},
+      {"symbol": "ime2", "interpretation": "osobno značenje", "archetypal_meaning": "univerzalno značenje"},
+      ...
+    ],
+    "waking_life_connections": "Ključna pitanja koja povezuju san s trenutnim životom (3-4 pitanja u obliku paragrafa)",
+    "emotional_message": "Najsigurnija psihološka poruka iz emocija sna (2-3 rečenice)"
+  },
+  "themes": ["tema1", "tema2", "tema3", ...],
+  "emotions": ["emocija1", "emocija2", ...],
+  "recommendations": "3-5 preporuka temeljenih na analizi (svaka kao paragraf, odvojeno sa \\n\\n)",
+  "reflection_questions": ["Duboko pitanje 1 specifično za ovaj san?", "Pitanje 2?", "Pitanje 3?"]
+}
 
-VAŽNO: Vratite SAMO čisti JSON objekt bez markdown kod blokova, bez \`\`\`json i bez \`\`\`, bez dodatnog teksta.`
+KRITIČNI ZAHTJEVI:
+- Sva tekstualna polja moraju biti promišljena i sadržajna
+- Svaka psihološka perspektiva mora biti različita i vrijedna
+- Sažetak mora obuhvatiti I što se dogodilo I što to psihološki znači
+- Simbolička analiza mora imati najmanje 5-8 simbola s osobnim i arhetipskim značenjima
+- Svi nizovi moraju imati više stavki (min 3-4 za teme/emocije, 5-8 za simbole)
+- Održavajte profesionalnu psihološku dubinu
+- Vratite SAMO čisti JSON bez markdown blokova ili dodatnog teksta`
       },
       sl: {
-        system: 'Si izkušen strokovnjak za analizo sanj z globokim razumevanjem simbolike in psihologije. Odgovarjaj vedno v slovenščini in vrni samo JSON objekt. Tvoja naloga je zagotoviti temeljito, podrobno analizo z obsežnimi, praktičnimi priporočili, ki pomagajo osebi razumeti in uporabiti uvide iz sanj v vsakdanjem življenju. Priporočila naj bodo dolga, podrobna in koristna - ne kratka ali splošna.',
-        instruction: `Analiziraj moje sanje na osnovi naslednjih podatkov:
-        
-        Naslov sanj: ${dream.title}
-        Vsebina sanj: ${dream.content}
-        Razpoloženje: ${dream.mood || 'Ni navedeno'}
-        Oznake: ${dream.tags ? dream.tags.join(', ') : 'Ni navedenih'}
-        
-        Vrni analizo v naslednjem JSON formatu v slovenščini:
-        {
-          "themes": [seznam glavnih tem iz sanj],
-          "emotions": [seznam čustev, ki se pojavljajo v sanjah],
-          "symbols": [
-            {
-              "symbol": "ime simbola",
-              "meaning": "pomen simbola"
-            }
-          ],
-          "analysis_text": "podrobna analiza sanj v slovenščini",
-          "recommendations": "obsežna in podrobna priporočila za nadaljnje razmišljanje in ukrepanje (3-5 konkretnih priporočil, vsako v svojem odstavku z razlago in praktičnimi nasveti)",
-          "reflection_questions": [
-            "Specifično vprašanje 1 povezano s to sanjijo",
-            "Specifično vprašanje 2 povezano s to sanjijo",
-            "Specifično vprašanje 3 povezano s to sanjijo"
-          ]
-        }
+        system: 'Si strokovnjak za analizo sanj, ki združuje psihološke okvire Freuda, Junga, Gestalt terapije in kognitivne nevroznanosti. Vedno odgovarjaj v slovenščini in vrni samo JSON objekt.',
+        instruction: `Analiziraj te sanje z globokim psihološkim vpogledom:
 
-POSEBNE NAVODILA ZA PRIPOROČILA:
-- Napiši 3-5 konkretnih, podrobnih priporočil
-- Vsako priporočilo naj bo dolg odstavek (3-5 stavkov) z razlago ZAKAJ je pomembno
-- Vključi praktične korake, ki jih lahko oseba naredi
-- Poveži priporočila z elementi iz sanj in njihovim simbolnim pomenom
-- Napiši priporočila kot povezan tekst z odstavki, ne kot oštevilčen seznam
+Naslov: ${dream.title}
+Vsebina: ${dream.content}
+Datum: ${dream.dream_date}
+Razpoloženje: ${dream.mood || 'Ni navedeno'}
+Primarno čustvo: ${dream.primary_emotion || 'Ni navedeno'}
 
-POMEMBNO za reflection_questions:
-- Vprašanja MORAJO biti specifična za te natančne sanje: "${dream.title}" - "${dream.content.substring(0, 100)}..."
-- Vprašanja naj se začnejo z "Razmislite o..."
-- Vprašanja naj neposredno omenjajo elemente iz sanj (osebe, kraje, predmete, situacije)
+ZAHTEVAN JSON OUTPUT:
+{
+  "summary": "Analitični povzetek v 4-6 stavkih, vključno s ključnimi dogodki, glavnimi temami/simboli, čustvenim tonom in osrednjim psihološkim vpogledom",
+  "initial_exploration": {
+    "core_narrative": "2-3 stavki, ki opisujejo osnovno zgodbo, okolje in zaplet",
+    "key_imagery": ["izrazit objekt/oseba 1", "izrazito dejanje 1", "objekt 2", ...],
+    "emotional_tone": "Primarno čustvo z nianso (npr., 'tesnobna odločnost', 'radostna nostalgija')",
+    "characters": ["lik 1: vloga in interakcija", "lik 2: vloga in interakcija", ...]
+  },
+  "psychological_perspectives": {
+    "freudian": {
+      "manifest_content": "Kaj se je dobesedno zgodilo (2-3 stavki)",
+      "latent_content": "Skrita želja ali potisnjena misel (2-3 stavki)",
+      "interpretation": "Psihodinamični pomen v smislu nezavednih želja, konfliktov ali obrambnih mehanizmov (3-4 stavki)"
+    },
+    "jungian": {
+      "archetypes_identified": ["Senca: opis", "Anima/Animus: opis", ...],
+      "individuation_stage": "Kje se sanjalec nahaja na poti k celovitosti (2-3 stavki)",
+      "collective_unconscious": "Univerzalni simboli in njihov pomen (2-3 stavki)"
+    },
+    "gestalt": {
+      "fragmented_parts": ["del 1 sanjalčeve psihe", "del 2...", ...],
+      "integration_message": "Kako sanje kažejo razcepljene vidike, ki iščejo integracijo (3-4 stavki)",
+      "dreamwork_exercise": "Predlagana Gestalt tehnika za integracijo teh delov (2-3 stavki)"
+    },
+    "cognitive": {
+      "problem_being_processed": "Realna življenjska skrb ali spomin, ki se obdeluje (2-3 stavki)",
+      "threat_simulation": "Potencialne grožnje ali izzivi, ki se vadijo (2-3 stavki)",
+      "memory_consolidation": "Nedavne izkušnje ali učenje, ki se integrira (2-3 stavki)"
+    }
+  },
+  "structured_analysis": {
+    "dominant_theme": "Primarna tema, ki temelji na čustveni intenzivnosti in simboliki (1-2 stavka)",
+    "symbolic_breakdown": [
+      {"symbol": "ime", "interpretation": "osebni pomen", "archetypal_meaning": "univerzalni pomen"},
+      {"symbol": "ime2", "interpretation": "osebni pomen", "archetypal_meaning": "univerzalni pomen"},
+      ...
+    ],
+    "waking_life_connections": "Ključna vprašanja, ki povezujejo sanje s trenutnim življenjem (3-4 vprašanja v obliki odstavka)",
+    "emotional_message": "Najprepričljivejše psihološko sporočilo iz čustev sanj (2-3 stavki)"
+  },
+  "themes": ["tema1", "tema2", "tema3", ...],
+  "emotions": ["čustvo1", "čustvo2", ...],
+  "recommendations": "3-5 priporočil, ki temeljijo na analizi (vsako kot odstavek, ločeno z \\n\\n)",
+  "reflection_questions": ["Globoko vprašanje 1, specifično za te sanje?", "Vprašanje 2?", "Vprašanje 3?"]
+}
 
-POMEMBNO: Vrni SAMO čisti JSON objekt brez markdown kod blokov, brez \`\`\`json in brez \`\`\`, brez dodatnega besedila.`
+KRITIČNE ZAHTEVE:
+- Vsa besedilna polja morajo biti premišljena in vsebinska
+- Vsaka psihološka perspektiva mora biti drugačna in vredna
+- Povzetek mora zajeti TAKO kaj se je zgodilo KOT tudi kaj to psihološko pomeni
+- Simbolna analiza mora imeti vsaj 5-8 simbolov z osebnimi in arhetipskimi pomeni
+- Vsi seznami morajo imeti več elementov (min 3-4 za teme/čustva, 5-8 za simbole)
+- Ohranjaj profesionalno psihološko globino
+- Vrni SAMO čist JSON brez markdown blokov ali dodatnega besedila`
       },
       de: {
-        system: 'Sie sind ein erfahrener Traumanalyse-Experte mit tiefem Verständnis für Symbolik und Psychologie. Antworten Sie immer auf Deutsch und geben Sie nur ein JSON-Objekt zurück. Ihre Aufgabe ist es, eine gründliche, detaillierte Analyse mit umfassenden, praktischen Empfehlungen zu liefern, die der Person helfen, Einsichten aus Träumen zu verstehen und im täglichen Leben zu nutzen. Empfehlungen sollten lang, detailliert und nützlich sein - nicht kurz oder allgemein.',
-        instruction: `Analysieren Sie meinen Traum anhand der folgenden Daten:
-        
-        Traumtitel: ${dream.title}
-        Trauminhalt: ${dream.content}
-        Stimmung: ${dream.mood || 'Nicht angegeben'}
-        Tags: ${dream.tags ? dream.tags.join(', ') : 'Keine angegeben'}
-        
-        Geben Sie die Analyse im folgenden JSON-Format auf Deutsch zurück:
-        {
-          "themes": [Liste der Hauptthemen aus dem Traum],
-          "emotions": [Liste der im Traum auftretenden Emotionen],
-          "symbols": [
-            {
-              "symbol": "Symbolname",
-              "meaning": "Symbolbedeutung"
-            }
-          ],
-          "analysis_text": "detaillierte Traumanalyse auf Deutsch",
-          "recommendations": "umfassende und detaillierte Empfehlungen für weitere Reflexion und Handlung (3-5 konkrete Empfehlungen, jede in ihrem eigenen Absatz mit Erklärung und praktischen Ratschlägen)",
-          "reflection_questions": [
-            "Spezifische Frage 1 im Zusammenhang mit diesem Traum",
-            "Spezifische Frage 2 im Zusammenhang mit diesem Traum",
-            "Spezifische Frage 3 im Zusammenhang mit diesem Traum"
-          ]
-        }
+        system: 'Sie sind ein Traumanalyse-Experte, der psychologische Frameworks von Freud, Jung, Gestalttherapie und kognitiver Neurowissenschaft kombiniert. Antworten Sie immer auf Deutsch und geben Sie nur ein JSON-Objekt zurück.',
+        instruction: `Analysieren Sie diesen Traum mit tiefem psychologischem Einblick:
 
-BESONDERE ANWEISUNGEN FÜR EMPFEHLUNGEN:
-- Schreiben Sie 3-5 konkrete, detaillierte Empfehlungen
-- Jede Empfehlung sollte ein langer Absatz (3-5 Sätze) mit Erklärung sein, WARUM sie wichtig ist
-- Fügen Sie praktische Schritte hinzu, die die Person unternehmen kann
-- Verbinden Sie Empfehlungen mit Elementen aus dem Traum und ihrer symbolischen Bedeutung
+Titel: ${dream.title}
+Inhalt: ${dream.content}
+Datum: ${dream.dream_date}
+Stimmung: ${dream.mood || 'Nicht angegeben'}
+Primäre Emotion: ${dream.primary_emotion || 'Nicht angegeben'}
 
-WICHTIG für reflection_questions:
-- Fragen MÜSSEN spezifisch für diese genauen Träume sein: "${dream.title}" - "${dream.content.substring(0, 100)}..."
-- Fragen sollten mit "Denken Sie über..." beginnen
-- Fragen sollten direkt Elemente aus dem Traum erwähnen (Personen, Orte, Objekte, Situationen)
+ERFORDERLICHE JSON-AUSGABE:
+{
+  "summary": "Analytische Zusammenfassung in 4-6 Sätzen einschließlich Schlüsselereignissen, Hauptthemen/Symbolen, emotionalem Ton und zentraler psychologischer Einsicht",
+  "initial_exploration": {
+    "core_narrative": "2-3 Sätze, die die Grundgeschichte, das Setting und den Handlungsverlauf beschreiben",
+    "key_imagery": ["auffälliges Objekt/Person 1", "auffällige Handlung 1", "Objekt 2", ...],
+    "emotional_tone": "Primäres Gefühl mit Nuance (z.B., 'ängstliche Entschlossenheit', 'freudige Nostalgie')",
+    "characters": ["Figur 1: Rolle und Interaktion", "Figur 2: Rolle und Interaktion", ...]
+  },
+  "psychological_perspectives": {
+    "freudian": {
+      "manifest_content": "Was buchstäblich geschah (2-3 Sätze)",
+      "latent_content": "Verborgener Wunsch oder verdrängter Gedanke (2-3 Sätze)",
+      "interpretation": "Psychodynamische Bedeutung im Hinblick auf unbewusste Wünsche, Konflikte oder Abwehrmechanismen (3-4 Sätze)"
+    },
+    "jungian": {
+      "archetypes_identified": ["Der Schatten: Beschreibung", "Die Anima/Animus: Beschreibung", ...],
+      "individuation_stage": "Wo sich der Träumende auf dem Weg zur Ganzheit befindet (2-3 Sätze)",
+      "collective_unconscious": "Universelle Symbole und ihre Bedeutung (2-3 Sätze)"
+    },
+    "gestalt": {
+      "fragmented_parts": ["Teil 1 der Träumerpsyche", "Teil 2...", ...],
+      "integration_message": "Wie der Traum abgespaltene Aspekte zeigt, die Integration suchen (3-4 Sätze)",
+      "dreamwork_exercise": "Vorgeschlagene Gestalt-Technik zur Integration dieser Teile (2-3 Sätze)"
+    },
+    "cognitive": {
+      "problem_being_processed": "Reales Lebensproblem oder Erinnerung, die verarbeitet wird (2-3 Sätze)",
+      "threat_simulation": "Potenzielle Bedrohungen oder Herausforderungen, die geprobt werden (2-3 Sätze)",
+      "memory_consolidation": "Kürzliche Erfahrungen oder Lernen, das integriert wird (2-3 Sätze)"
+    }
+  },
+  "structured_analysis": {
+    "dominant_theme": "Hauptthema basierend auf emotionaler Intensität und Symbolik (1-2 Sätze)",
+    "symbolic_breakdown": [
+      {"symbol": "Name", "interpretation": "persönliche Bedeutung", "archetypal_meaning": "universelle Bedeutung"},
+      {"symbol": "Name2", "interpretation": "persönliche Bedeutung", "archetypal_meaning": "universelle Bedeutung"},
+      ...
+    ],
+    "waking_life_connections": "Schlüsselfragen, die den Traum mit dem aktuellen Leben verbinden (3-4 Fragen in Absatzform)",
+    "emotional_message": "Die sicherste psychologische Botschaft aus den Emotionen des Traums (2-3 Sätze)"
+  },
+  "themes": ["Thema1", "Thema2", "Thema3", ...],
+  "emotions": ["Emotion1", "Emotion2", ...],
+  "recommendations": "3-5 Empfehlungen basierend auf der Analyse (jede als Absatz, getrennt durch \\n\\n)",
+  "reflection_questions": ["Tiefe Frage 1 spezifisch für diesen Traum?", "Frage 2?", "Frage 3?"]
+}
 
-WICHTIG: Geben Sie NUR ein sauberes JSON-Objekt ohne Markdown-Codeblöcke, ohne \`\`\`json und ohne \`\`\`, ohne zusätzlichen Text zurück.`
+KRITISCHE ANFORDERUNGEN:
+- Alle Textfelder müssen durchdacht und substanziell sein
+- Jede psychologische Perspektive muss unterschiedlich und wertvoll sein
+- Zusammenfassung muss SOWOHL was geschah ALS AUCH was es psychologisch bedeutet erfassen
+- Symbolische Analyse muss mindestens 5-8 Symbole mit persönlichen und archetypischen Bedeutungen haben
+- Alle Arrays müssen mehrere Elemente haben (min 3-4 für Themen/Emotionen, 5-8 für Symbole)
+- Professionelle psychologische Tiefe beibehalten
+- Nur sauberes JSON ohne Markdown-Blöcke oder zusätzlichen Text zurückgeben`
       }
     };
 
@@ -438,7 +527,7 @@ WICHTIG: Geben Sie NUR ein sauberes JSON-Objekt ohne Markdown-Codeblöcke, ohne 
           { role: 'system', content: languagePrompts.system },
           { role: 'user', content: languagePrompts.instruction }
         ],
-        max_tokens: 2800,
+        max_tokens: 4500,
       }),
     });
 
@@ -497,8 +586,30 @@ WICHTIG: Geben Sie NUR ein sauberes JSON-Objekt ohne Markdown-Codeblöcke, ohne 
       parsedAnalysis = JSON.parse(cleanedContent);
       
       // Validate required fields
-      if (!parsedAnalysis.themes || !parsedAnalysis.emotions || !parsedAnalysis.symbols || !parsedAnalysis.analysis_text || !parsedAnalysis.recommendations) {
-        throw new Error('Missing required fields in analysis');
+      if (!parsedAnalysis.summary || parsedAnalysis.summary.length < 100) {
+        throw new Error('Summary must be at least 100 characters');
+      }
+      
+      if (!parsedAnalysis.initial_exploration || !parsedAnalysis.psychological_perspectives || !parsedAnalysis.structured_analysis) {
+        throw new Error('Missing required analysis sections');
+      }
+      
+      // Validate psychological perspectives
+      const perspectives = parsedAnalysis.psychological_perspectives;
+      if (!perspectives.freudian || !perspectives.jungian || !perspectives.gestalt || !perspectives.cognitive) {
+        throw new Error('All 4 psychological perspectives are required');
+      }
+      
+      // Validate structured analysis
+      if (!parsedAnalysis.structured_analysis.symbolic_breakdown || 
+          !Array.isArray(parsedAnalysis.structured_analysis.symbolic_breakdown) ||
+          parsedAnalysis.structured_analysis.symbolic_breakdown.length < 5) {
+        throw new Error('Symbolic breakdown must have at least 5 symbols');
+      }
+      
+      // Validate basic fields
+      if (!parsedAnalysis.themes || !parsedAnalysis.emotions || !parsedAnalysis.recommendations) {
+        throw new Error('Missing themes, emotions, or recommendations');
       }
       
     } catch (parseError) {
@@ -631,13 +742,17 @@ Important: Focus on accurately depicting the specific scenes, actions, and setti
       .from('dream_analyses')
       .insert({
         dream_id: dreamId,
+        summary: parsedAnalysis.summary,
+        analysis_data: parsedAnalysis,
+        // Keep legacy fields for backward compatibility
         themes: parsedAnalysis.themes || [],
         emotions: parsedAnalysis.emotions || [],
-        symbols: parsedAnalysis.symbols || [],
-        analysis_text: parsedAnalysis.analysis_text || 'Analiza ni na voljo.',
+        symbols: parsedAnalysis.structured_analysis?.symbolic_breakdown?.map((s: any) => s.symbol) || [],
+        analysis_text: parsedAnalysis.summary || 'Analiza ni na voljo.',
         recommendations: parsedAnalysis.recommendations || 'Priporočila niso na voljo.',
         reflection_questions: parsedAnalysis.reflection_questions || [],
-        image_url: imageUrl
+        image_url: imageUrl,
+        language: detectedLanguage
       })
       .select()
       .single();
