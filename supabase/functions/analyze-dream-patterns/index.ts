@@ -370,21 +370,39 @@ Erstellen Sie eine umfangreiche, mehrseitige Analyse, die sich IMMER direkt an d
 
     console.log('Sending request to Lovable AI for pattern analysis...');
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${lovableApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-pro',
-        messages: [
-          { role: 'system', content: languagePrompt.system },
-          { role: 'user', content: languagePrompt.prompt }
-        ],
-        max_tokens: 16000,
-      }),
-    });
+    // Add timeout to prevent hanging requests
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 180000); // 3 minute timeout
+
+    let response;
+    try {
+      response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${lovableApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.5-pro',
+          messages: [
+            { role: 'system', content: languagePrompt.system },
+            { role: 'user', content: languagePrompt.prompt }
+          ],
+          max_tokens: 16000,
+        }),
+        signal: controller.signal,
+      });
+    } catch (fetchError) {
+      clearTimeout(timeoutId);
+      if (fetchError.name === 'AbortError') {
+        console.error('AI request timed out');
+        throw new Error('AI request timed out. Please try again.');
+      }
+      console.error('Fetch error:', fetchError);
+      throw fetchError;
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
     if (!response.ok) {
       if (response.status === 429) {
@@ -410,7 +428,21 @@ Erstellen Sie eine umfangreiche, mehrseitige Analyse, die sich IMMER direkt an d
       throw new Error(`Lovable AI API error: ${response.status}`);
     }
 
-    const data = await response.json();
+    // Parse JSON response with better error handling
+    let data;
+    try {
+      const responseText = await response.text();
+      console.log('AI response text length:', responseText.length);
+      
+      if (!responseText || responseText.trim() === '') {
+        throw new Error('Empty response from AI');
+      }
+      
+      data = JSON.parse(responseText);
+    } catch (jsonError) {
+      console.error('Failed to parse AI response as JSON:', jsonError);
+      throw new Error('Invalid JSON response from AI service');
+    }
     console.log('Lovable AI response received for pattern analysis');
 
     let analysisContent = data.choices[0].message.content.trim();
