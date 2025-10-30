@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Save, Calendar, Heart, Tag } from 'lucide-react';
+import { Save, Calendar, Heart, Tag, Mic, Square, Loader2 } from 'lucide-react';
 import { EmotionWheel } from '@/components/EmotionWheel';
 import { z } from 'zod';
 import { AppHeader } from "@/components/AppHeader";
@@ -44,6 +44,14 @@ const DreamEntry = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   
+  // Voice recording state
+  const [isRecording, setIsRecording] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const recordingIntervalRef = useRef<number | null>(null);
+  
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -67,6 +75,135 @@ const DreamEntry = () => {
       [field]: value
     }));
   };
+
+  // Voice recording functions
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm',
+      });
+      
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+      
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+      
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        await transcribeAudio(audioBlob);
+        
+        // Stop all tracks to release microphone
+        stream.getTracks().forEach(track => track.stop());
+      };
+      
+      mediaRecorder.start();
+      setIsRecording(true);
+      setRecordingTime(0);
+      
+      // Start timer
+      recordingIntervalRef.current = window.setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
+      
+      toast({
+        title: "Snemanje začeto",
+        description: "Govorite jasno in počasi za najboljše rezultate.",
+      });
+    } catch (error) {
+      console.error('Error starting recording:', error);
+      toast({
+        title: "Napaka pri snemanju",
+        description: "Preverite dovoljenja za mikrofon in poskusite znova.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      
+      // Clear timer
+      if (recordingIntervalRef.current) {
+        clearInterval(recordingIntervalRef.current);
+        recordingIntervalRef.current = null;
+      }
+    }
+  };
+
+  const transcribeAudio = async (audioBlob: Blob) => {
+    setIsTranscribing(true);
+    
+    try {
+      // Convert blob to base64
+      const reader = new FileReader();
+      reader.readAsDataURL(audioBlob);
+      
+      const base64Audio = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => {
+          const base64 = reader.result as string;
+          // Remove data:audio/webm;base64, prefix
+          resolve(base64.split(',')[1]);
+        };
+        reader.onerror = reject;
+      });
+
+      console.log('Sending audio for transcription...');
+
+      const { data, error } = await supabase.functions.invoke('transcribe-audio', {
+        body: { audio: base64Audio }
+      });
+
+      if (error) throw error;
+
+      if (data?.text) {
+        // Append transcribed text to existing content
+        const transcribedText = data.text.trim();
+        const separator = formData.content ? '\n\n' : '';
+        
+        handleInputChange('content', formData.content + separator + transcribedText);
+        
+        toast({
+          title: "Transkripcija uspešna!",
+          description: "Besedilo je bilo dodano v opis sanje. Prosim preverite in uredite po potrebi.",
+        });
+      }
+    } catch (error) {
+      console.error('Error transcribing audio:', error);
+      toast({
+        title: "Napaka pri transkripciji",
+        description: "Poskusite znova ali vnesite besedilo ročno.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsTranscribing(false);
+      setRecordingTime(0);
+    }
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (recordingIntervalRef.current) {
+        clearInterval(recordingIntervalRef.current);
+      }
+      if (mediaRecorderRef.current && isRecording) {
+        mediaRecorderRef.current.stop();
+      }
+    };
+  }, [isRecording]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -190,9 +327,53 @@ const DreamEntry = () => {
 
               {/* Content */}
               <div className="space-y-2">
-                <Label htmlFor="content" className="text-foreground font-medium">
-                  Opis sanje *
-                </Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="content" className="text-foreground font-medium">
+                    Opis sanje *
+                  </Label>
+                  
+                  {/* Voice Recording Button */}
+                  <div className="flex items-center gap-2">
+                    {isRecording && (
+                      <span className="text-sm text-muted-foreground">
+                        {formatTime(recordingTime)}
+                      </span>
+                    )}
+                    
+                    {isTranscribing ? (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        disabled
+                      >
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        Transkribiram...
+                      </Button>
+                    ) : isRecording ? (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="destructive"
+                        onClick={stopRecording}
+                      >
+                        <Square className="h-4 w-4 mr-2 fill-current" />
+                        Ustavi
+                      </Button>
+                    ) : (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={startRecording}
+                      >
+                        <Mic className="h-4 w-4 mr-2" />
+                        Posnemi
+                      </Button>
+                    )}
+                  </div>
+                </div>
+                
                 <Textarea
                   id="content"
                   placeholder="Opišite svojo sanje s čim več podrobnostmi... Kje ste bili? Kdo je bil z vami? Kaj se je dogajalo? Kako ste se počutili?"
@@ -201,6 +382,8 @@ const DreamEntry = () => {
                   maxLength={5000}
                   rows={8}
                   required
+                  disabled={isTranscribing}
+                  className={isTranscribing ? 'opacity-50' : ''}
                 />
                 <div className="flex justify-between text-xs text-muted-foreground">
                   <span>Min. 10 znakov</span>
