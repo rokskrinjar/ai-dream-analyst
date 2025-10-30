@@ -731,7 +731,7 @@ const Dashboard = () => {
                               <span className="text-xs text-white/60">
                                 {new Date(dream.created_at).toLocaleDateString()}
                               </span>
-                              {!analysis || (!analysis.analysis_data && !analysis.analysis_text) && !isAnalyzing && (
+                              {(!analysis || (!analysis.analysis_data && !analysis.analysis_text)) && !isAnalyzing && (
                                 <Button
                                   size="sm"
                                   className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold animate-pulse shadow-lg"
