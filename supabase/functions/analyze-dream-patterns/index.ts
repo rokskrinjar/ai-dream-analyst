@@ -143,7 +143,7 @@ serve(async (req) => {
     }
 
 
-    const CURRENT_ANALYSIS_VERSION = 4; // Version 4 = fixed JSON key structure (English keys, localized values)
+    const CURRENT_ANALYSIS_VERSION = 5; // Version 5 = strict JSON structure validation with explicit examples
 
     // Check for cached analysis unless force refresh is requested
     if (!forceRefresh) {
@@ -272,65 +272,44 @@ serve(async (req) => {
 DREAM DATA AND AI ANALYSES:
 ${JSON.stringify(dreamData, null, 2)}
 
-Create an extensive, multi-page analysis that ALWAYS addresses the user directly with "you", "your", "yours". Include:
+MANDATORY JSON STRUCTURE (CRITICAL - DO NOT DEVIATE):
+{
+  "executive_summary": "STRING - 4-5 paragraphs of text",
+  "theme_patterns": [
+    {"theme": "Theme name", "frequency": 8, "significance": "Why important...", "evolution": "How it develops..."},
+    {"theme": "Second theme", "frequency": 6, "significance": "...", "evolution": "..."},
+    ... 8-12 theme objects
+  ],
+  "emotional_journey": [
+    {"emotion": "Anxiety", "frequency": 12, "trend": "Your anxiety...", "psychological_significance": "This emotion reveals...", "triggers": "Triggered by..."},
+    ... more emotion objects
+  ],
+  "symbol_meanings": [
+    {"symbol": "Running/Marathon", "frequency": 5, "interpretation": "Personal meaning...", "personal_context": "In your life...", "archetypal_meaning": "Universal meaning..."},
+    ... 10-15 symbol objects
+  ],
+  "temporal_patterns": "STRING - 3-4 paragraphs of text",
+  "psychological_insights": "STRING - 4-5 paragraphs of text",
+  "life_stage_analysis": "STRING - 3-4 paragraphs of text",
+  "recommendations": [
+    {"action": "Concrete action FOR YOU", "rationale": "Why RECOMMENDED FOR YOU", "implementation": "How YOU execute it", "expected_outcome": "Expected result FOR YOU"},
+    ... 12-15 recommendation objects
+  ],
+  "personal_growth": "STRING - 5-6 paragraphs of text",
+  "integration_suggestions": [
+    {"exercise": "Exercise name", "description": "How to do it..."},
+    ... 3-4 exercise objects
+  ],
+  "reflection_questions": [
+    "Question 1 for reflection?",
+    "Question 2 for reflection?",
+    ... 5-7 questions
+  ]
+}
 
-1. executive_summary: Summary of key findings (4-5 paragraphs, each 3-4 sentences). Address the user directly: "Your dreams show...", "In your dreams...", "You have tendencies..."
+REPEATING: theme_patterns, emotional_journey, symbol_meanings, recommendations, integration_suggestions, reflection_questions are ARRAYS!
 
-2. theme_patterns: List of most frequent themes (at least 8-12 themes) with:
-   - theme: theme name
-   - frequency: number of occurrences
-   - significance: description of meaning for YOU in second person (3-4 sentences): "This theme reveals to you...", "In your dreams..."
-   - evolution: how the theme develops in YOUR dreams over time
-
-3. emotional_journey: In-depth emotional analysis with:
-   - emotion: emotion name
-   - frequency: number of occurrences
-   - trend: trend description for YOU: "Your emotions show..."
-   - psychological_significance: what the emotion reveals about YOUR mental state
-   - triggers: possible triggers in YOUR dreams
-
-4. symbol_meanings: Detailed symbolic interpretation (at least 10-15 symbols) with:
-   - symbol: symbol name
-   - frequency: occurrences in YOUR dreams
-   - interpretation: interpretation for YOU (4-5 sentences): "This symbol in your dreams represents..."
-   - personal_context: how it connects with YOUR life
-   - archetypal_meaning: universal meaning for YOU
-
-5. temporal_patterns: Extensive time pattern analysis (4-5 paragraphs) directly addressing you:
-   - "Your seasonal patterns show..."
-   - "In your weekly cycle..."
-   - "Evolution of your dreams over time..."
-   - "Connections with your life events..."
-
-6. psychological_insights: In-depth psychological analysis (4-5 paragraphs) with direct addressing:
-   - "Your unconscious fears and desires..."
-   - "Your personality traits..."
-   - "Your conflicts and internal struggles..."
-   - "Your potential for growth..."
-
-7. life_stage_analysis: Life stage analysis (3-4 paragraphs) with direct addressing:
-   - "Your current life challenges..."
-   - "Your developmental tasks..."
-   - "Your transitions and changes..."
-
-8. recommendations: Extensive list of 12-15 specific recommendations with direct addressing:
-   - action: concrete action FOR YOU: "Try...", "Reflect on...", "Include in your..."
-   - rationale: why IT'S RECOMMENDED FOR YOU: "This will help you...", "For you it will be beneficial..."
-   - implementation: how YOU execute it: "You can do this by..."
-   - expected_outcome: expected result FOR YOU: "With this you will achieve..."
-
-9. personal_growth: Comprehensive personal growth analysis (5-6 paragraphs) with direct addressing:
-   - "Your achieved development..."
-   - "Your areas for improvement..."
-   - "Your potential for the future..."
-   - "Connections between your dreams and reality..."
-
-10. integration_suggestions: Suggestions for integrating insights (3-4 paragraphs) directly for you:
-     - "In your daily practices..."
-     - "Your reflection techniques..."
-     - "Ways YOU can use insights..."
-
-CRITICAL: Every sentence must be written in SECOND PERSON. Use "you", "your", "yours" instead of third person. Example: "Your dreams show..." instead of "Dreams show...". Analysis should be worth 2+ credits with at least 3-4 pages of content.`
+Create an extensive, multi-page analysis that ALWAYS addresses the user directly with "you", "your", "yours". CRITICAL: Every sentence must be written in SECOND PERSON. Use "you", "your", "yours" instead of third person. Example: "Your dreams show..." instead of "Dreams show...". Analysis should be worth 2+ credits with at least 3-4 pages of content.`
       },
       hr: {
         system: 'Vi ste vrhunski stručnjak za analizu snova s preko 20 godina iskustva u psihologiji, neuroznanosti i istraživanju snova. Specijalizirani ste za prepoznavanje obrazaca, simboličku interpretaciju i psihološku analizu. KRITIČNO: Uvijek odgovorite s VAŽEĆIM JSON objektom bez dodatnog teksta. Vaše analize su dubinske, stručno utemeljene i psihološki točne. Koristite hrvatski tekst za sve vrijednosti.',
@@ -339,7 +318,44 @@ CRITICAL: Every sentence must be written in SECOND PERSON. Use "you", "your", "y
 PODACI O SNOVIMA I AI ANALIZAMA:
 ${JSON.stringify(dreamData, null, 2)}
 
-Stvorite opsežnu, višestručnu analizu koja se UVIJEK obraća izravno korisniku s "vi", "vaš", "vaše". Koristite ENGLESKE ključeve: executive_summary, theme_patterns, emotional_journey, symbol_meanings, temporal_patterns, psychological_insights, life_stage_analysis, recommendations, personal_growth, integration_suggestions. Sadržaj svih vrijednosti mora biti na hrvatskom jeziku sa 8-12 tema, 10-15 simbola, 12-15 preporuka itd.`
+OBVEZNA STRUKTURA JSON (KRITIČNO - NE ODSTUPAJTE):
+{
+  "executive_summary": "STRING - 4-5 odlomaka teksta",
+  "theme_patterns": [
+    {"theme": "Ime teme", "frequency": 8, "significance": "Zašto važno...", "evolution": "Kako se razvija..."},
+    {"theme": "Druga tema", "frequency": 6, "significance": "...", "evolution": "..."},
+    ... 8-12 objekata tema
+  ],
+  "emotional_journey": [
+    {"emotion": "Anksioznost", "frequency": 12, "trend": "Vaša anksioznost...", "psychological_significance": "Ova emocija otkriva...", "triggers": "Okida se sa..."},
+    ... više objekata emocija
+  ],
+  "symbol_meanings": [
+    {"symbol": "Trčanje/Maraton", "frequency": 5, "interpretation": "Osobno značenje...", "personal_context": "U vašem životu...", "archetypal_meaning": "Univerzalno značenje..."},
+    ... 10-15 objekata simbola
+  ],
+  "temporal_patterns": "STRING - 3-4 odlomka teksta",
+  "psychological_insights": "STRING - 4-5 odlomaka teksta",
+  "life_stage_analysis": "STRING - 3-4 odlomka teksta",
+  "recommendations": [
+    {"action": "Konkretna akcija ZA VAS", "rationale": "Zašto SE PREPORUČUJE ZA VAS", "implementation": "Kako VI to provodite", "expected_outcome": "Očekivani rezultat ZA VAS"},
+    ... 12-15 objekata preporuka
+  ],
+  "personal_growth": "STRING - 5-6 odlomaka teksta",
+  "integration_suggestions": [
+    {"exercise": "Ime vježbe", "description": "Kako raditi..."},
+    ... 3-4 objekta vježbi
+  ],
+  "reflection_questions": [
+    "Pitanje 1 za razmišljanje?",
+    "Pitanje 2 za razmišljanje?",
+    ... 5-7 pitanja
+  ]
+}
+
+PONAVLJAM: theme_patterns, emotional_journey, symbol_meanings, recommendations, integration_suggestions, reflection_questions su NIZOVI!
+
+Stvorite opsežnu, višestransku analizu koja se UVIJEK obraća izravno korisniku s "vi", "vaš", "vaše". Sadržaj svih vrijednosti mora biti na hrvatskom jeziku sa 8-12 tema, 10-15 simbola, 12-15 preporuka itd.`
       },
       sl: {
         system: 'Si vrhunski strokovnjak za analizo sanj s preko 20 let izkušenj na področju psihologije, nevrologije in dream raziskav. Specializiran si za prepoznavanje vzorcev, simbolne interpretacije in psihološko analizo. KRITIČNO: Vedno odgovoriš z VELJAVNIM JSON objektom brez dodatnega besedila. Tvoje analize so poglobljene, strokovno utemeljene in psihološko natančne. Uporabi slovensko besedila za vse vrednosti.',
@@ -348,7 +364,44 @@ Stvorite opsežnu, višestručnu analizu koja se UVIJEK obraća izravno korisnik
 PODATKI O SANJAH IN AI ANALIZAH:
 ${JSON.stringify(dreamData, null, 2)}
 
-Ustvarite obsežno, večstransko analizo, ki se VEDNO obrača direktno na uporabnika z "vi", "vam", "vaš", "vaše", "vaših". Uporabite ANGLEŠKE ključe: executive_summary, theme_patterns, emotional_journey, symbol_meanings, temporal_patterns, psychological_insights, life_stage_analysis, recommendations, personal_growth, integration_suggestions. Vsebina vseh vrednosti mora biti v slovenščini z 8-12 temami, 10-15 simboli, 12-15 priporočili itd.`
+OBVEZNA STRUKTURA JSON (KRITIČNO - NE ODSTOPAJTE):
+{
+  "executive_summary": "STRING - 4-5 odstavkov besedila",
+  "theme_patterns": [
+    {"theme": "Ime teme", "frequency": 8, "significance": "Zakaj pomembno...", "evolution": "Kako se razvija..."},
+    {"theme": "Druga tema", "frequency": 6, "significance": "...", "evolution": "..."},
+    ... 8-12 objektov tem
+  ],
+  "emotional_journey": [
+    {"emotion": "Anksioznost", "frequency": 12, "trend": "Vaša anksioznost...", "psychological_significance": "To čustvo razkriva...", "triggers": "Sproži ga..."},
+    ... več objektov čustev
+  ],
+  "symbol_meanings": [
+    {"symbol": "Tek/Maraton", "frequency": 5, "interpretation": "Osebni pomen...", "personal_context": "V vašem življenju...", "archetypal_meaning": "Univerzalni pomen..."},
+    ... 10-15 objektov simbolov
+  ],
+  "temporal_patterns": "STRING - 3-4 odstavki besedila",
+  "psychological_insights": "STRING - 4-5 odstavkov besedila",
+  "life_stage_analysis": "STRING - 3-4 odstavki besedila",
+  "recommendations": [
+    {"action": "Konkretno dejanje ZA VAS", "rationale": "Zakaj JE PRIPOROČENO ZA VAS", "implementation": "Kako VI izvajate", "expected_outcome": "Pričakovan rezultat ZA VAS"},
+    ... 12-15 objektov priporočil
+  ],
+  "personal_growth": "STRING - 5-6 odstavkov besedila",
+  "integration_suggestions": [
+    {"exercise": "Ime vaje", "description": "Opis kako izvajati..."},
+    ... 3-4 objekti vaj
+  ],
+  "reflection_questions": [
+    "Vprašanje 1 za razmislek?",
+    "Vprašanje 2 za razmislek?",
+    ... 5-7 vprašanj
+  ]
+}
+
+PONAVLJAM: theme_patterns, emotional_journey, symbol_meanings, recommendations, integration_suggestions, reflection_questions so ARRAYS!
+
+Ustvarite obsežno, večstransko analizo, ki se VEDNO obrača direktno na uporabnika z "vi", "vam", "vaš", "vaše", "vaših". Vsebina vseh vrednosti mora biti v slovenščini z 8-12 temami, 10-15 simboli, 12-15 priporočili itd.`
       },
       de: {
         system: 'Sie sind ein Spitzenexperte für Traumanalyse mit über 20 Jahren Erfahrung in Psychologie, Neurowissenschaften und Traumforschung. Sie sind auf Mustererkennung, symbolische Interpretation und psychologische Analyse spezialisiert. KRITISCH: Antworten Sie immer mit einem GÜLTIGEN JSON-Objekt ohne zusätzlichen Text. Ihre Analysen sind tiefgründig, fachlich fundiert und psychologisch präzise. Verwenden Sie deutschen Text für alle Werte.',
@@ -357,7 +410,44 @@ Ustvarite obsežno, večstransko analizo, ki se VEDNO obrača direktno na uporab
 TRAUMDATEN UND KI-ANALYSEN:
 ${JSON.stringify(dreamData, null, 2)}
 
-Erstellen Sie eine umfangreiche, mehrseitige Analyse, die sich IMMER direkt an den Benutzer mit "Sie", "Ihr", "Ihre" wendet. Verwenden Sie ENGLISCHE Schlüssel: executive_summary, theme_patterns, emotional_journey, symbol_meanings, temporal_patterns, psychological_insights, life_stage_analysis, recommendations, personal_growth, integration_suggestions. Der Inhalt aller Werte muss auf Deutsch sein mit 8-12 Themen, 10-15 Symbolen, 12-15 Empfehlungen usw.`
+OBLIGATORISCHE JSON-STRUKTUR (KRITISCH - NICHT ABWEICHEN):
+{
+  "executive_summary": "STRING - 4-5 Absätze Text",
+  "theme_patterns": [
+    {"theme": "Themenname", "frequency": 8, "significance": "Warum wichtig...", "evolution": "Wie es sich entwickelt..."},
+    {"theme": "Zweites Thema", "frequency": 6, "significance": "...", "evolution": "..."},
+    ... 8-12 Themenobjekte
+  ],
+  "emotional_journey": [
+    {"emotion": "Angst", "frequency": 12, "trend": "Ihre Angst...", "psychological_significance": "Diese Emotion offenbart...", "triggers": "Ausgelöst durch..."},
+    ... mehr Emotionsobjekte
+  ],
+  "symbol_meanings": [
+    {"symbol": "Laufen/Marathon", "frequency": 5, "interpretation": "Persönliche Bedeutung...", "personal_context": "In Ihrem Leben...", "archetypal_meaning": "Universelle Bedeutung..."},
+    ... 10-15 Symbolobjekte
+  ],
+  "temporal_patterns": "STRING - 3-4 Absätze Text",
+  "psychological_insights": "STRING - 4-5 Absätze Text",
+  "life_stage_analysis": "STRING - 3-4 Absätze Text",
+  "recommendations": [
+    {"action": "Konkrete Aktion FÜR SIE", "rationale": "Warum EMPFOHLEN FÜR SIE", "implementation": "Wie SIE es umsetzen", "expected_outcome": "Erwartetes Ergebnis FÜR SIE"},
+    ... 12-15 Empfehlungsobjekte
+  ],
+  "personal_growth": "STRING - 5-6 Absätze Text",
+  "integration_suggestions": [
+    {"exercise": "Übungsname", "description": "Wie durchführen..."},
+    ... 3-4 Übungsobjekte
+  ],
+  "reflection_questions": [
+    "Frage 1 zur Reflexion?",
+    "Frage 2 zur Reflexion?",
+    ... 5-7 Fragen
+  ]
+}
+
+WIEDERHOLUNG: theme_patterns, emotional_journey, symbol_meanings, recommendations, integration_suggestions, reflection_questions sind ARRAYS!
+
+Erstellen Sie eine umfangreiche, mehrseitige Analyse, die sich IMMER direkt an den Benutzer mit "Sie", "Ihr", "Ihre" wendet. Der Inhalt aller Werte muss auf Deutsch sein mit 8-12 Themen, 10-15 Symbolen, 12-15 Empfehlungen usw.`
       }
     };
 
@@ -466,26 +556,47 @@ Erstellen Sie eine umfangreiche, mehrseitige Analyse, die sich IMMER direkt an d
       
       parsedAnalysis = JSON.parse(analysisContent);
       
-      // Validate required fields
-      const requiredFields = ['executive_summary', 'theme_patterns', 'emotional_journey', 'symbol_meanings'];
-      for (const field of requiredFields) {
-        if (!parsedAnalysis[field]) {
-          throw new Error(`Missing required field: ${field}`);
+      // Strict validation of required array fields with structure checks
+      const requiredArrayFields = {
+        theme_patterns: { min: 8, requiredKeys: ['theme', 'frequency', 'significance', 'evolution'] },
+        emotional_journey: { min: 5, requiredKeys: ['emotion', 'frequency', 'trend', 'psychological_significance'] },
+        symbol_meanings: { min: 10, requiredKeys: ['symbol', 'frequency', 'interpretation'] },
+        recommendations: { min: 12, requiredKeys: ['action', 'rationale'] },
+        integration_suggestions: { min: 3, requiredKeys: ['exercise', 'description'] },
+        reflection_questions: { min: 5, requiredKeys: [] }  // array of strings
+      };
+
+      for (const [field, config] of Object.entries(requiredArrayFields)) {
+        if (!Array.isArray(parsedAnalysis[field])) {
+          throw new Error(`Field "${field}" must be an array, got ${typeof parsedAnalysis[field]}. AI returned invalid format.`);
+        }
+        if (parsedAnalysis[field].length < config.min) {
+          throw new Error(`Field "${field}" must have at least ${config.min} items, got ${parsedAnalysis[field].length}`);
+        }
+        // Validate object structure (except reflection_questions which are strings)
+        if (config.requiredKeys.length > 0) {
+          for (const item of parsedAnalysis[field]) {
+            if (typeof item !== 'object') {
+              throw new Error(`Items in "${field}" must be objects, got ${typeof item}`);
+            }
+            for (const key of config.requiredKeys) {
+              if (!item[key]) {
+                throw new Error(`Each item in "${field}" must have a "${key}" field`);
+              }
+            }
+          }
+        }
+      }
+
+      // Validate required string fields
+      const requiredStringFields = ['executive_summary', 'temporal_patterns', 'psychological_insights', 'life_stage_analysis', 'personal_growth'];
+      for (const field of requiredStringFields) {
+        if (typeof parsedAnalysis[field] !== 'string' || parsedAnalysis[field].length < 500) {
+          throw new Error(`Field "${field}" must be a string with at least 500 characters`);
         }
       }
       
-      // Validate minimum content requirements
-      if (parsedAnalysis.theme_patterns.length < 6) {
-        throw new Error('Insufficient theme patterns (minimum 6 required)');
-      }
-      if (parsedAnalysis.emotional_journey.length < 4) {
-        throw new Error('Insufficient emotional journey entries (minimum 4 required)');
-      }
-      if (parsedAnalysis.symbol_meanings.length < 8) {
-        throw new Error('Insufficient symbol meanings (minimum 8 required)');
-      }
-      
-      console.log('AI analysis validated successfully');
+      console.log('AI analysis validated successfully with strict structure checks');
     } catch (parseError) {
       console.error('Failed to parse or validate AI response:', parseError);
       console.error('Response content:', analysisContent.substring(0, 500) + '...');

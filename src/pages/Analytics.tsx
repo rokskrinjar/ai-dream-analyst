@@ -71,7 +71,11 @@ interface PatternAnalysis {
     expected_outcome?: string;
   }> | string[]; // Support both formats
   personal_growth: string;
-  integration_suggestions?: string;
+  integration_suggestions?: Array<{
+    exercise?: string;
+    description?: string;
+  }> | string; // Support array of objects or string format
+  reflection_questions?: string[];
 }
 
 const EMOTION_COLORS = [
@@ -81,6 +85,28 @@ const EMOTION_COLORS = [
   '#10b981', // Green - Fourth emotion
   '#e5e7eb'  // Light Gray - "Other" category
 ];
+
+// Helper function to ensure arrays are properly formatted
+const ensureArray = (data: any, fieldName: string): any[] => {
+  if (Array.isArray(data)) {
+    return data;
+  }
+  
+  console.warn(`⚠️ ${fieldName} is ${typeof data}, converting to array`);
+  
+  if (typeof data === 'string') {
+    // String returned - wrap in array (emergency fallback)
+    return data ? [{ text: data }] : [];
+  }
+  
+  if (typeof data === 'object' && data !== null) {
+    // Single object returned - wrap in array
+    return [data];
+  }
+  
+  console.error(`❌ ${fieldName} has unexpected type: ${typeof data}`);
+  return [];
+};
 
 // Helper function to safely render text content from various formats
 const renderTextContent = (content: any): React.ReactNode => {
@@ -173,8 +199,6 @@ const Analytics = () => {
     try {
       setIsLoading(true);
       
-      console.log('🔍 Fetching analytics data for user:', user!.id);
-      
       // Fetch dreams
     const { data: dreamsData, error: dreamsError } = await supabase
       .from('dreams')
@@ -184,7 +208,6 @@ const Analytics = () => {
       .order('created_at', { ascending: false });
 
       if (dreamsError) throw dreamsError;
-      console.log('📚 Fetched dreams:', dreamsData?.length || 0, dreamsData);
 
       // Fetch analyses
       const dreamIds = dreamsData?.map(d => d.id) || [];
@@ -200,8 +223,6 @@ const Analytics = () => {
         analysesData = data || [];
       }
 
-      console.log('🧠 Fetched analyses:', analysesData?.length || 0, analysesData);
-
       setDreams(dreamsData || []);
       setAnalyses(analysesData);
       
@@ -210,13 +231,7 @@ const Analytics = () => {
         analysesData.some(analysis => analysis.dream_id === dream.id)
       ).length || 0;
       
-      console.log('✅ Analyzed dream count calculation:');
-      console.log('  - Total dreams:', dreamsData?.length || 0);
-      console.log('  - Total analyses:', analysesData?.length || 0);  
-      console.log('  - Dreams with analyses:', analyzedDreamCount);
-      
       const canAnalyze = analyzedDreamCount >= 10;
-      console.log('🎯 Can analyze patterns:', canAnalyze, '(need 10+, have', analyzedDreamCount, ')');
       
       setAnalysisRequirements({
         analyzedDreams: analyzedDreamCount,
@@ -235,7 +250,6 @@ const Analytics = () => {
         
       // Check if there's an existing analysis
       const existingAnalysisInfo = await checkExistingPatternAnalysis();
-      console.log('📊 Existing pattern analysis check:', existingAnalysisInfo);
       
       if (existingAnalysisInfo.exists) {
         setHasExistingAnalysis(true);
@@ -246,10 +260,8 @@ const Analytics = () => {
       
       // Show choice screen if user has enough analyzed dreams
       if (canAnalyze) {
-        console.log('🎉 Showing choice screen - user meets requirements');
         setShowChoiceScreen(true);
       } else {
-        console.log('⏳ Not showing choice screen - insufficient analyzed dreams');
         setShowChoiceScreen(false);
       }
       
@@ -764,7 +776,6 @@ const Analytics = () => {
             }}
           >
             <>
-            {console.log('🎨 Rendering pattern analysis UI', patternAnalysis)}
             {/* Overall Insights */}
             <Card className="mb-8">
               <CardHeader>
@@ -814,6 +825,24 @@ const Analytics = () => {
               </CardContent>
             </Card>
 
+            {/* Prepare chart data with defensive array handling */}
+            {(() => {
+              const themeData = ensureArray(patternAnalysis?.theme_patterns, 'theme_patterns')
+                .slice(0, 10)
+                .map(item => ({
+                  name: item.theme || 'Unknown',
+                  value: item.frequency || 0
+                }));
+
+              const emotionData = ensureArray(patternAnalysis?.emotional_journey, 'emotional_journey')
+                .slice(0, 5)
+                .map(item => ({
+                  name: item.emotion || 'Unknown',
+                  value: item.frequency || 0
+                }));
+
+              return (
+                <>
             {/* Charts Section */}
             {(themeData.length > 0 || emotionData.length > 0) && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -886,6 +915,10 @@ const Analytics = () => {
               </div>
             )}
 
+                </>
+              );
+            })()}
+
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               {/* Milestones */}
@@ -935,50 +968,39 @@ const Analytics = () => {
                 <CardHeader>
                   <CardTitle>Priporočila in rast</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  {(() => {
-                    const recommendations = patternAnalysis?.recommendations;
-                    if (!recommendations) return null;
-                    
-                    // Handle recommendations that might not be an array (e.g., from old cached data)
-                    const recommendationsArray = Array.isArray(recommendations) 
-                      ? recommendations 
-                      : typeof recommendations === 'string'
-                      ? [recommendations]
-                      : [];
-                    
-                    if (recommendationsArray.length === 0) {
-                      console.warn('recommendations is not in expected format:', recommendations);
-                      return null;
-                    }
-                    
-                    return (
-                      <div>
-                        <h4 className="font-semibold mb-2 flex items-center">
-                          💡 Ključna priporočila
-                        </h4>
-                        <div className="space-y-2">
-                          {recommendationsArray.slice(0, 3).map((rec, index) => {
-                            const text = typeof rec === 'string' ? rec : (rec.action || rec.text || JSON.stringify(rec));
-                            const rationale = typeof rec === 'object' ? rec.rationale : null;
-                            
-                            return (
-                              <div key={index} className="p-3 rounded-lg bg-muted/30">
-                                <h4 className="font-medium flex items-center space-x-1">
-                                  <span>• {text}</span>
-                                </h4>
-                                {rationale && (
-                                  <p className="text-sm text-muted-foreground mt-1">{rationale}</p>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })()}
+                 <CardContent className="space-y-4">
+                   {(() => {
+                     const recommendations = ensureArray(patternAnalysis?.recommendations, 'recommendations');
+                     
+                     if (recommendations.length === 0) return null;
+                     
+                     return (
+                       <div>
+                         <h4 className="font-semibold mb-2 flex items-center">
+                           💡 Ključna priporočila
+                         </h4>
+                         <div className="space-y-2">
+                           {recommendations.slice(0, 3).map((rec, index) => {
+                             const text = typeof rec === 'string' ? rec : (rec.action || rec.text || JSON.stringify(rec));
+                             const rationale = typeof rec === 'object' ? rec.rationale : null;
+                             
+                             return (
+                               <div key={index} className="p-3 rounded-lg bg-muted/30">
+                                 <h4 className="font-medium flex items-center space-x-1">
+                                   <span>• {text}</span>
+                                 </h4>
+                                 {rationale && (
+                                   <p className="text-sm text-muted-foreground mt-1">{rationale}</p>
+                                 )}
+                               </div>
+                             );
+                           })}
+                         </div>
+                       </div>
+                     );
+                   })()}
                   
-                  {patternAnalysis.personal_growth && (
+                   {patternAnalysis.personal_growth && (
                     <div>
                       <h4 className="font-semibold mb-2 flex items-center">
                         🌱 Osebna rast
@@ -989,16 +1011,51 @@ const Analytics = () => {
                     </div>
                   )}
 
-                   {patternAnalysis.integration_suggestions && (
-                    <div>
-                      <h4 className="font-semibold mb-2 flex items-center">
-                        🔄 Predlogi za integracijo
-                      </h4>
-                      <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
-                        {renderTextContent(patternAnalysis.integration_suggestions)}
-                      </div>
-                    </div>
-                  )}
+                   {(() => {
+                     const integrationSuggestions = patternAnalysis.integration_suggestions;
+                     if (!integrationSuggestions) return null;
+                     
+                     // If it's a string, render as text
+                     if (typeof integrationSuggestions === 'string') {
+                       return (
+                         <div>
+                           <h4 className="font-semibold mb-2 flex items-center">
+                             🔄 Predlogi za integracijo
+                           </h4>
+                           <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
+                             {renderTextContent(integrationSuggestions)}
+                           </div>
+                         </div>
+                       );
+                     }
+                     
+                     // If it's an array, render as list
+                     const suggestionsArray = ensureArray(integrationSuggestions, 'integration_suggestions');
+                     if (suggestionsArray.length === 0) return null;
+                     
+                     return (
+                       <div>
+                         <h4 className="font-semibold mb-2 flex items-center">
+                           🔄 Predlogi za integracijo
+                         </h4>
+                         <div className="space-y-2">
+                           {suggestionsArray.map((item, index) => {
+                             const exercise = typeof item === 'object' ? item.exercise : item;
+                             const description = typeof item === 'object' ? item.description : '';
+                             
+                             return (
+                               <div key={index} className="p-3 rounded-lg bg-muted/30">
+                                 <h5 className="font-medium">{exercise}</h5>
+                                 {description && (
+                                   <p className="text-sm text-muted-foreground mt-1">{description}</p>
+                                 )}
+                               </div>
+                             );
+                           })}
+                         </div>
+                       </div>
+                     );
+                   })()}
                 </CardContent>
               </Card>
             </div>
@@ -1057,15 +1114,19 @@ const Analytics = () => {
             )}
 
             {/* Symbol Meanings */}
-            {patternAnalysis.symbol_meanings && patternAnalysis.symbol_meanings.length > 0 && (
-              <Card className="mb-8">
-                <CardHeader>
-                  <CardTitle>Simboli in njihovi pomeni</CardTitle>
-                  <CardDescription>Najpomembnejši simboli v vaših sanjah</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {patternAnalysis.symbol_meanings.map((symbol, index) => (
+            {(() => {
+              const symbolMeanings = ensureArray(patternAnalysis?.symbol_meanings, 'symbol_meanings');
+              if (symbolMeanings.length === 0) return null;
+              
+              return (
+                <Card className="mb-8">
+                  <CardHeader>
+                    <CardTitle>Simboli in njihovi pomeni</CardTitle>
+                    <CardDescription>Najpomembnejši simboli v vaših sanjah</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {symbolMeanings.map((symbol, index) => (
                       <div key={index} className="p-4 rounded-lg border border-border">
                         <div className="flex items-center justify-between mb-2">
                           <h4 className="font-medium text-foreground">{symbol.symbol}</h4>
@@ -1082,12 +1143,13 @@ const Analytics = () => {
                             🌍 {symbol.archetypal_meaning}
                           </p>
                         )}
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })()}
             </>
           </ErrorBoundary>
         ) : null}
