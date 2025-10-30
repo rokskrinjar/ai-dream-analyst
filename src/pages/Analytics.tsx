@@ -936,30 +936,47 @@ const Analytics = () => {
                   <CardTitle>Priporočila in rast</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {patternAnalysis.recommendations && (
-                    <div>
-                      <h4 className="font-semibold mb-2 flex items-center">
-                        💡 Ključna priporočila
-                      </h4>
-                      <div className="space-y-2">
-                        {patternAnalysis.recommendations.slice(0, 3).map((rec, index) => {
-                          const text = typeof rec === 'string' ? rec : (rec.action || rec.text || JSON.stringify(rec));
-                          const rationale = typeof rec === 'object' ? rec.rationale : null;
-                          
-                          return (
-                            <div key={index} className="p-3 rounded-lg bg-muted/30">
-                              <h4 className="font-medium flex items-center space-x-1">
-                                <span>• {text}</span>
-                              </h4>
-                              {rationale && (
-                                <p className="text-sm text-muted-foreground mt-1">{rationale}</p>
-                              )}
-                            </div>
-                          );
-                        })}
+                  {(() => {
+                    const recommendations = patternAnalysis?.recommendations;
+                    if (!recommendations) return null;
+                    
+                    // Handle recommendations that might not be an array (e.g., from old cached data)
+                    const recommendationsArray = Array.isArray(recommendations) 
+                      ? recommendations 
+                      : typeof recommendations === 'string'
+                      ? [recommendations]
+                      : [];
+                    
+                    if (recommendationsArray.length === 0) {
+                      console.warn('recommendations is not in expected format:', recommendations);
+                      return null;
+                    }
+                    
+                    return (
+                      <div>
+                        <h4 className="font-semibold mb-2 flex items-center">
+                          💡 Ključna priporočila
+                        </h4>
+                        <div className="space-y-2">
+                          {recommendationsArray.slice(0, 3).map((rec, index) => {
+                            const text = typeof rec === 'string' ? rec : (rec.action || rec.text || JSON.stringify(rec));
+                            const rationale = typeof rec === 'object' ? rec.rationale : null;
+                            
+                            return (
+                              <div key={index} className="p-3 rounded-lg bg-muted/30">
+                                <h4 className="font-medium flex items-center space-x-1">
+                                  <span>• {text}</span>
+                                </h4>
+                                {rationale && (
+                                  <p className="text-sm text-muted-foreground mt-1">{rationale}</p>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    );
+                  })()}
                   
                   {patternAnalysis.personal_growth && (
                     <div>
