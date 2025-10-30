@@ -334,30 +334,30 @@ CRITICAL: Every sentence must be written in SECOND PERSON. Use "you", "your", "y
       },
       hr: {
         system: 'Vi ste vrhunski stručnjak za analizu snova s preko 20 godina iskustva u psihologiji, neuroznanosti i istraživanju snova. Specijalizirani ste za prepoznavanje obrazaca, simboličku interpretaciju i psihološku analizu. KRITIČNO: Uvijek odgovorite s VAŽEĆIM JSON objektom bez dodatnog teksta. Vaše analize su dubinske, stručno utemeljene i psihološki točne. Koristite hrvatski tekst za sve vrijednosti.',
-        prompt: `Kao stručnjak za analizu snova analizirajte sljedeće podatke iz ${dreamData.length} korisničkih snova i stvorite sveobuhvatnu, dubinsku analizu obrazaca. KRITIČNO: UVIJEK se obraćajte korisniku u DRUGOM LICU (vi, vaš, vaše). Odgovorite u JSON formatu s hrvatskim riječima.
+        prompt: `Kao stručnjak za analizu snova analizirajte sljedeće podatke iz ${dreamData.length} korisničkih snova i stvorite sveobuhvatnu, dubinsku analizu obrazaca. KRITIČNO: UVIJEK se obraćajte korisniku u DRUGOM LICU (vi, vaš, vaše). Odgovorite u JSON formatu gdje su KLJUČEVI (field names) na ENGLESKOM jeziku, a VRIJEDNOSTI (content) na hrvatskom.
 
 PODACI O SNOVIMA I AI ANALIZAMA:
 ${JSON.stringify(dreamData, null, 2)}
 
-Stvorite opsežnu, višestručnu analizu koja se UVIJEK obraća izravno korisniku s "vi", "vaš", "vaše". Uključite slične kategorije kao gore sa 8-12 tema, 10-15 simbola, 12-15 preporuka itd.`
+Stvorite opsežnu, višestručnu analizu koja se UVIJEK obraća izravno korisniku s "vi", "vaš", "vaše". Koristite ENGLESKE ključeve: executive_summary, theme_patterns, emotional_journey, symbol_meanings, temporal_patterns, psychological_insights, life_stage_analysis, recommendations, personal_growth, integration_suggestions. Sadržaj svih vrijednosti mora biti na hrvatskom jeziku sa 8-12 tema, 10-15 simbola, 12-15 preporuka itd.`
       },
       sl: {
         system: 'Si vrhunski strokovnjak za analizo sanj s preko 20 let izkušenj na področju psihologije, nevrologije in dream raziskav. Specializiran si za prepoznavanje vzorcev, simbolne interpretacije in psihološko analizo. KRITIČNO: Vedno odgovoriš z VELJAVNIM JSON objektom brez dodatnega besedila. Tvoje analize so poglobljene, strokovno utemeljene in psihološko natančne. Uporabi slovensko besedila za vse vrednosti.',
-        prompt: `Kot strokovnjak za analizo sanj analizirajte naslednje podatke ${dreamData.length} sanj uporabnika in ustvarite celovito, poglobljeno analizo vzorcev. KRITIČNO: VEDNO se obračajte na uporabnika v DRUGI OSEBI (vi, vam, vaš, vaše, vaših). Odzovite se v JSON formatu s slovenskimi besedami.
+        prompt: `Kot strokovnjak za analizo sanj analizirajte naslednje podatke ${dreamData.length} sanj uporabnika in ustvarite celovito, poglobljeno analizo vzorcev. KRITIČNO: VEDNO se obračajte na uporabnika v DRUGI OSEBI (vi, vam, vaš, vaše, vaših). Odzovite se v JSON formatu kjer so KLJUČI (field names) v ANGLEŠČINI, VREDNOSTI (content) pa v slovenščini.
 
 PODATKI O SANJAH IN AI ANALIZAH:
 ${JSON.stringify(dreamData, null, 2)}
 
-Ustvarite obsežno, večstransko analizo, ki se VEDNO obrača direktno na uporabnika z "vi", "vam", "vaš", "vaše", "vaših". Vključuje slične kategorije kot zgoraj z 8-12 temami, 10-15 simboli, 12-15 priporočili itd.`
+Ustvarite obsežno, večstransko analizo, ki se VEDNO obrača direktno na uporabnika z "vi", "vam", "vaš", "vaše", "vaših". Uporabite ANGLEŠKE ključe: executive_summary, theme_patterns, emotional_journey, symbol_meanings, temporal_patterns, psychological_insights, life_stage_analysis, recommendations, personal_growth, integration_suggestions. Vsebina vseh vrednosti mora biti v slovenščini z 8-12 temami, 10-15 simboli, 12-15 priporočili itd.`
       },
       de: {
         system: 'Sie sind ein Spitzenexperte für Traumanalyse mit über 20 Jahren Erfahrung in Psychologie, Neurowissenschaften und Traumforschung. Sie sind auf Mustererkennung, symbolische Interpretation und psychologische Analyse spezialisiert. KRITISCH: Antworten Sie immer mit einem GÜLTIGEN JSON-Objekt ohne zusätzlichen Text. Ihre Analysen sind tiefgründig, fachlich fundiert und psychologisch präzise. Verwenden Sie deutschen Text für alle Werte.',
-        prompt: `Als Traumanalyse-Experte analysieren Sie die folgenden Daten aus ${dreamData.length} Benutzerträumen und erstellen Sie eine umfassende, tiefgehende Musteranalyse. KRITISCH: Sprechen Sie den Benutzer IMMER in der ZWEITEN PERSON an (Sie, Ihr, Ihre). Antworten Sie im JSON-Format mit deutschen Wörtern.
+        prompt: `Als Traumanalyse-Experte analysieren Sie die folgenden Daten aus ${dreamData.length} Benutzerträumen und erstellen Sie eine umfassende, tiefgehende Musteranalyse. KRITISCH: Sprechen Sie den Benutzer IMMER in der ZWEITEN PERSON an (Sie, Ihr, Ihre). Antworten Sie im JSON-Format wo die SCHLÜSSEL (field names) auf ENGLISCH sind, aber die WERTE (content) auf Deutsch.
 
 TRAUMDATEN UND KI-ANALYSEN:
 ${JSON.stringify(dreamData, null, 2)}
 
-Erstellen Sie eine umfangreiche, mehrseitige Analyse, die sich IMMER direkt an den Benutzer mit "Sie", "Ihr", "Ihre" wendet. Schließen Sie ähnliche Kategorien wie oben mit 8-12 Themen, 10-15 Symbolen, 12-15 Empfehlungen usw. ein.`
+Erstellen Sie eine umfangreiche, mehrseitige Analyse, die sich IMMER direkt an den Benutzer mit "Sie", "Ihr", "Ihre" wendet. Verwenden Sie ENGLISCHE Schlüssel: executive_summary, theme_patterns, emotional_journey, symbol_meanings, temporal_patterns, psychological_insights, life_stage_analysis, recommendations, personal_growth, integration_suggestions. Der Inhalt aller Werte muss auf Deutsch sein mit 8-12 Themen, 10-15 Symbolen, 12-15 Empfehlungen usw.`
       }
     };
 
