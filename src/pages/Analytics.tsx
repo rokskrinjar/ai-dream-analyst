@@ -176,11 +176,12 @@ const Analytics = () => {
       console.log('🔍 Fetching analytics data for user:', user!.id);
       
       // Fetch dreams
-      const { data: dreamsData, error: dreamsError } = await supabase
-        .from('dreams')
-        .select('*')
-        .eq('user_id', user!.id)
-        .order('created_at', { ascending: false });
+    const { data: dreamsData, error: dreamsError } = await supabase
+      .from('dreams')
+      .select('*')
+      .eq('user_id', user!.id)
+      .eq('is_deleted', false)
+      .order('created_at', { ascending: false });
 
       if (dreamsError) throw dreamsError;
       console.log('📚 Fetched dreams:', dreamsData?.length || 0, dreamsData);

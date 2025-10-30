@@ -61,7 +61,7 @@ const Admin = () => {
         { data: creditData }
       ] = await Promise.all([
         supabase.from('profiles').select('*', { count: 'exact', head: true }),
-        supabase.from('dreams').select('*', { count: 'exact', head: true }),
+        supabase.from('dreams').select('*', { count: 'exact', head: true }).eq('is_deleted', false),
         supabase.from('dream_analyses').select('*', { count: 'exact', head: true }),
         supabase.from('user_credits').select('credits_used_this_month')
       ]);
@@ -75,7 +75,7 @@ const Admin = () => {
         { count: dreamsToday }
       ] = await Promise.all([
         supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', today),
-        supabase.from('dreams').select('*', { count: 'exact', head: true }).gte('created_at', today)
+        supabase.from('dreams').select('*', { count: 'exact', head: true }).eq('is_deleted', false).gte('created_at', today)
       ]);
 
       setStats({

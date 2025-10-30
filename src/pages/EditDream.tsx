@@ -67,12 +67,13 @@ const EditDream = () => {
 
     const fetchDream = async () => {
       try {
-        const { data, error } = await supabase
-          .from('dreams')
-          .select('*')
-          .eq('id', id)
-          .eq('user_id', user.id)
-          .single();
+      const { data, error } = await supabase
+        .from('dreams')
+        .select('*')
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .eq('is_deleted', false)
+        .single();
 
         if (error) throw error;
 

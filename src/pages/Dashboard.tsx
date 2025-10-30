@@ -160,6 +160,7 @@ const Dashboard = () => {
       const query = supabase
         .from('dreams')
         .select('*')
+        .eq('is_deleted', false)
         .order('created_at', { ascending: false });
       
       if (!showAllDreams) {
@@ -230,10 +231,11 @@ const Dashboard = () => {
   const fetchAllDreamsForStats = async () => {
     try {
       // Fetch all dreams for statistics
-      const { data: allDreamsData, error: dreamsError } = await supabase
-        .from('dreams')
-        .select('*')
-        .order('created_at', { ascending: false });
+    const { data: allDreamsData, error: dreamsError } = await supabase
+      .from('dreams')
+      .select('*')
+      .eq('is_deleted', false)
+      .order('created_at', { ascending: false });
 
       if (dreamsError) throw dreamsError;
       setAllDreams(allDreamsData || []);
@@ -363,7 +365,10 @@ const Dashboard = () => {
     try {
       const { error } = await supabase
         .from('dreams')
-        .delete()
+        .update({
+          is_deleted: true,
+          deleted_at: new Date().toISOString()
+        })
         .eq('id', dreamId)
         .eq('user_id', user?.id);
 

@@ -65,10 +65,12 @@ serve(async (req) => {
       );
     }
 
-    // Check minimum requirements first
-    const analyzedDreamCount = dreams.filter((dream: any) => 
-      analyses.some((a: any) => a.dream_id === dream.id)
-    ).length;
+    // Check minimum requirements first - exclude deleted dreams
+    const analyzedDreamCount = dreams
+      .filter((dream: any) => !dream.is_deleted)
+      .filter((dream: any) => 
+        analyses.some((a: any) => a.dream_id === dream.id)
+      ).length;
     
     if (analyzedDreamCount < 10) {
       return new Response(JSON.stringify({ 
@@ -83,10 +85,12 @@ serve(async (req) => {
       });
     }
 
-    // Prepare dream data early for cost calculations
-    const analyzedDreams = dreams.filter((dream: any) => 
-      analyses.some((a: any) => a.dream_id === dream.id)
-    );
+    // Prepare dream data early for cost calculations - filter out deleted dreams
+    const analyzedDreams = dreams
+      .filter((dream: any) => !dream.is_deleted)
+      .filter((dream: any) => 
+        analyses.some((a: any) => a.dream_id === dream.id)
+      );
     
     // Use the latest 30 analyzed dreams for analysis
     const recentAnalyzedDreams = analyzedDreams

@@ -61,11 +61,12 @@ export default function Dreams() {
   const fetchDreams = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('dreams')
-        .select('*, analysis:dream_analyses(analysis_text)')
-        .eq('user_id', user?.id)
-        .order('dream_date', { ascending: false });
+    const { data, error } = await supabase
+      .from('dreams')
+      .select('*, analysis:dream_analyses(analysis_text)')
+      .eq('user_id', user?.id)
+      .eq('is_deleted', false)
+      .order('dream_date', { ascending: false });
 
       if (error) throw error;
       setDreams(data || []);
@@ -134,7 +135,10 @@ export default function Dreams() {
     try {
       const { error } = await supabase
         .from('dreams')
-        .delete()
+        .update({
+          is_deleted: true,
+          deleted_at: new Date().toISOString()
+        })
         .eq('id', dreamId);
 
       if (error) throw error;
@@ -156,7 +160,10 @@ export default function Dreams() {
     try {
       const { error } = await supabase
         .from('dreams')
-        .delete()
+        .update({
+          is_deleted: true,
+          deleted_at: new Date().toISOString()
+        })
         .in('id', Array.from(selectedDreams));
 
       if (error) throw error;

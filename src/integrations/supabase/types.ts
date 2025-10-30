@@ -95,8 +95,10 @@ export type Database = {
         Row: {
           content: string
           created_at: string
+          deleted_at: string | null
           dream_date: string
           id: string
+          is_deleted: boolean
           mood: string | null
           primary_emotion: string | null
           secondary_emotion: string | null
@@ -108,8 +110,10 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string
+          deleted_at?: string | null
           dream_date?: string
           id?: string
+          is_deleted?: boolean
           mood?: string | null
           primary_emotion?: string | null
           secondary_emotion?: string | null
@@ -121,8 +125,10 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string
+          deleted_at?: string | null
           dream_date?: string
           id?: string
+          is_deleted?: boolean
           mood?: string | null
           primary_emotion?: string | null
           secondary_emotion?: string | null
