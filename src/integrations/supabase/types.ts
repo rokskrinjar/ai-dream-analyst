@@ -43,6 +43,7 @@ export type Database = {
       }
       dream_analyses: {
         Row: {
+          analysis_data: Json | null
           analysis_text: string
           created_at: string
           dream_id: string
@@ -52,10 +53,12 @@ export type Database = {
           language: string
           recommendations: string | null
           reflection_questions: string[] | null
+          summary: string | null
           symbols: string[] | null
           themes: string[] | null
         }
         Insert: {
+          analysis_data?: Json | null
           analysis_text: string
           created_at?: string
           dream_id: string
@@ -65,10 +68,12 @@ export type Database = {
           language?: string
           recommendations?: string | null
           reflection_questions?: string[] | null
+          summary?: string | null
           symbols?: string[] | null
           themes?: string[] | null
         }
         Update: {
+          analysis_data?: Json | null
           analysis_text?: string
           created_at?: string
           dream_id?: string
@@ -78,6 +83,7 @@ export type Database = {
           language?: string
           recommendations?: string | null
           reflection_questions?: string[] | null
+          summary?: string | null
           symbols?: string[] | null
           themes?: string[] | null
         }
