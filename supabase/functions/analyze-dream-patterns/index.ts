@@ -377,7 +377,7 @@ Erstellen Sie eine umfangreiche, mehrseitige Analyse, die sich IMMER direkt an d
           { role: 'system', content: languagePrompt.system },
           { role: 'user', content: languagePrompt.prompt }
         ],
-        max_tokens: 8000,
+        max_tokens: 16000,
       }),
     });
 
