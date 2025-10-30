@@ -187,16 +187,21 @@ const Dashboard = () => {
   };
 
   const fetchAnalyses = async (dreamsList: Dream[]) => {
-    if (dreamsList.length === 0) return;
+    if (dreamsList.length === 0) {
+      console.log('🔍 fetchAnalyses: No dreams to fetch analyses for');
+      return;
+    }
     
     try {
       const dreamIds = dreamsList.map(dream => dream.id);
+      console.log('🔍 fetchAnalyses: Fetching analyses for dream IDs:', dreamIds);
       const analysesMap: { [key: string]: DreamAnalysis } = {};
       
       // Batch queries to prevent timeout (5 IDs at a time)
       const batchSize = 5;
       for (let i = 0; i < dreamIds.length; i += batchSize) {
         const batch = dreamIds.slice(i, i + batchSize);
+        console.log('🔍 fetchAnalyses: Fetching batch:', batch);
         
         // Add timeout to each batch query
         const timeoutPromise = new Promise((_, reject) => 
@@ -211,20 +216,28 @@ const Dashboard = () => {
         try {
           const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any;
           
-          if (error) throw error;
+          if (error) {
+            console.error('🔍 fetchAnalyses: Batch query error:', error);
+            throw error;
+          }
+          
+          console.log('🔍 fetchAnalyses: Batch data received:', data?.length, 'analyses');
           
           (data || []).forEach((analysis: DreamAnalysis) => {
+            console.log('🔍 fetchAnalyses: Adding analysis for dream_id:', analysis.dream_id);
             analysesMap[analysis.dream_id] = analysis;
           });
         } catch (batchError) {
-          console.error('Error fetching batch:', batchError);
+          console.error('🔍 fetchAnalyses: Error fetching batch:', batchError);
           // Continue with next batch even if this one fails
         }
       }
       
+      console.log('🔍 fetchAnalyses: Final analysesMap keys:', Object.keys(analysesMap));
+      console.log('🔍 fetchAnalyses: Total analyses found:', Object.keys(analysesMap).length);
       setAnalyses(analysesMap);
     } catch (error) {
-      console.error('Error fetching analyses:', error);
+      console.error('🔍 fetchAnalyses: Error fetching analyses:', error);
     }
   };
 
@@ -573,6 +586,12 @@ const Dashboard = () => {
                   {dreams.slice(0, 4).map((dream, index) => {
                     const analysis = analyses[dream.id];
                     const isAnalyzing = analyzingDreams.has(dream.id);
+                    
+                    // Debug logging
+                    console.log('🎨 Rendering dream:', dream.id, 'title:', dream.title);
+                    console.log('🎨 Has analysis?', !!analysis, 'Analysis:', analysis ? 'exists' : 'missing');
+                    console.log('🎨 Available analyses keys:', Object.keys(analyses));
+                    
                     // Use AI-generated image if analyzed, otherwise use the "Analyze Now" placeholder
                     const bgImage = analysis?.image_url || analyzeNowPlaceholder;
                     const isExpanded = expandedDreamId === dream.id;
