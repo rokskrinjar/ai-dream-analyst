@@ -363,6 +363,11 @@ Erstellen Sie eine umfangreiche, mehrseitige Analyse, die sich IMMER direkt an d
 
     const languagePrompt = promptTemplates[detectedLanguage] || promptTemplates['en'];
 
+    // Calculate final estimated cost based on actual input data being sent to AI
+    const finalInputText = JSON.stringify(dreamData);
+    const finalEstimatedTokens = Math.ceil(finalInputText.length / 4);
+    const finalEstimatedCost = Math.max(2, Math.ceil(finalEstimatedTokens / 15000));
+
     console.log('Sending request to Lovable AI for pattern analysis...');
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
