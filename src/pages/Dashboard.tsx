@@ -10,6 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { AppHeader } from '@/components/AppHeader';
 import {
   DropdownMenu,
@@ -68,11 +70,58 @@ interface Dream {
 interface DreamAnalysis {
   id: string;
   dream_id: string;
-  themes: string[];
-  emotions: string[];
-  symbols: string[];
-  analysis_text: string;
-  recommendations: string;
+  summary?: string;
+  analysis_data?: {
+    summary: string;
+    initial_exploration: {
+      core_narrative: string;
+      key_imagery: string[];
+      emotional_tone: string;
+      characters: string[];
+    };
+    psychological_perspectives: {
+      freudian: {
+        manifest_content: string;
+        latent_content: string;
+        interpretation: string;
+      };
+      jungian: {
+        archetypes_identified: string[];
+        individuation_stage: string;
+        collective_unconscious: string;
+      };
+      gestalt: {
+        fragmented_parts: string[];
+        integration_message: string;
+        dreamwork_exercise: string;
+      };
+      cognitive: {
+        problem_being_processed: string;
+        threat_simulation: string;
+        memory_consolidation: string;
+      };
+    };
+    structured_analysis: {
+      dominant_theme: string;
+      symbolic_breakdown: Array<{
+        symbol: string;
+        interpretation: string;
+        archetypal_meaning?: string;
+      }>;
+      waking_life_connections: string;
+      emotional_message: string;
+    };
+    themes: string[];
+    emotions: string[];
+    recommendations: string;
+    reflection_questions: string[];
+  };
+  // Legacy fields (for backward compatibility)
+  themes?: string[];
+  emotions?: string[];
+  symbols?: string[];
+  analysis_text?: string;
+  recommendations?: string;
   reflection_questions?: string[];
   image_url?: string;
   created_at: string;
@@ -682,7 +731,7 @@ const Dashboard = () => {
                               <span className="text-xs text-white/60">
                                 {new Date(dream.created_at).toLocaleDateString()}
                               </span>
-                              {!analysis && !isAnalyzing && (
+                              {!analysis || (!analysis.analysis_data && !analysis.analysis_text) && !isAnalyzing && (
                                 <Button
                                   size="sm"
                                   className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold animate-pulse shadow-lg"
@@ -764,92 +813,378 @@ const Dashboard = () => {
 
                         <Separator />
 
-                        {/* Themes */}
-                        {analysis.themes && analysis.themes.length > 0 && (
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <Heart className="h-4 w-4 text-primary" />
-                              <h4 className="font-semibold text-foreground">
-                                Themes
-                              </h4>
+                        {/* NEW STRUCTURED ANALYSIS DISPLAY */}
+                        {analysis.analysis_data ? (
+                          // Display new structured analysis
+                          <div className="space-y-6">
+                            {/* Summary */}
+                            <div className="space-y-3 bg-primary/5 rounded-lg p-4 border-l-4 border-primary">
+                              <div className="flex items-center gap-2">
+                                <Sparkles className="h-4 w-4 text-primary" />
+                                <h4 className="font-semibold text-foreground">Summary</h4>
+                              </div>
+                              <p className="text-sm text-foreground leading-relaxed">
+                                {analysis.analysis_data.summary}
+                              </p>
                             </div>
-                            <div className="flex flex-wrap gap-2">
-                              {analysis.themes.map((theme, idx) => (
-                                <Badge key={idx} variant="secondary">
-                                  {theme}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        )}
 
-                        {/* Symbols */}
-                        {analysis.symbols && analysis.symbols.length > 0 && (
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <Sparkles className="h-4 w-4 text-primary" />
-                              <h4 className="font-semibold text-foreground">
-                                Symbols
-                              </h4>
-                            </div>
-                            <ul className="space-y-2">
-                              {analysis.symbols.map((symbol, idx) => (
-                                <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
-                                  <span className="text-primary mt-0.5">•</span>
-                                  <span>{formatSymbol(symbol)}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
+                            <Separator />
 
-                        {/* Analysis Text */}
-                        {analysis.analysis_text && (
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <Brain className="h-4 w-4 text-primary" />
-                              <h4 className="font-semibold text-foreground">
-                                Analysis
-                              </h4>
-                            </div>
-                            <p className="text-sm text-muted-foreground leading-relaxed">
-                              {analysis.analysis_text}
-                            </p>
-                          </div>
-                        )}
+                            {/* Initial Exploration */}
+                            {analysis.analysis_data.initial_exploration && (
+                              <>
+                                <div className="space-y-4">
+                                  <div className="flex items-center gap-2">
+                                    <Eye className="h-4 w-4 text-primary" />
+                                    <h4 className="font-semibold text-foreground">Initial Exploration</h4>
+                                  </div>
+                                  <div className="grid gap-3 text-sm">
+                                    <div>
+                                      <span className="font-medium">Core Narrative:</span>{' '}
+                                      <span className="text-muted-foreground">
+                                        {analysis.analysis_data.initial_exploration.core_narrative}
+                                      </span>
+                                    </div>
+                                    <div>
+                                      <span className="font-medium">Emotional Tone:</span>{' '}
+                                      <Badge variant="secondary">
+                                        {analysis.analysis_data.initial_exploration.emotional_tone}
+                                      </Badge>
+                                    </div>
+                                    {analysis.analysis_data.initial_exploration.key_imagery && (
+                                      <div>
+                                        <span className="font-medium">Key Imagery:</span>
+                                        <div className="flex flex-wrap gap-2 mt-2">
+                                          {analysis.analysis_data.initial_exploration.key_imagery.map((img, i) => (
+                                            <Badge key={i} variant="outline">{img}</Badge>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                <Separator />
+                              </>
+                            )}
 
-                        {/* Recommendations */}
-                        {analysis.recommendations && (
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <Lightbulb className="h-4 w-4 text-primary" />
-                              <h4 className="font-semibold text-foreground">
-                                Recommendations
-                              </h4>
-                            </div>
-                            <p className="text-sm text-muted-foreground leading-relaxed">
-                              {analysis.recommendations}
-                            </p>
-                          </div>
-                        )}
+                            {/* Psychological Perspectives - Tabbed Interface */}
+                            {analysis.analysis_data.psychological_perspectives && (
+                              <>
+                                <div className="space-y-3">
+                                  <div className="flex items-center gap-2">
+                                    <Brain className="h-4 w-4 text-primary" />
+                                    <h4 className="font-semibold text-foreground">Psychological Perspectives</h4>
+                                  </div>
+                                  <Tabs defaultValue="freudian" className="w-full">
+                                    <TabsList className="grid w-full grid-cols-4">
+                                      <TabsTrigger value="freudian">🛋️ Freudian</TabsTrigger>
+                                      <TabsTrigger value="jungian">🌟 Jungian</TabsTrigger>
+                                      <TabsTrigger value="gestalt">🧩 Gestalt</TabsTrigger>
+                                      <TabsTrigger value="cognitive">💭 Cognitive</TabsTrigger>
+                                    </TabsList>
+                                    
+                                    <TabsContent value="freudian" className="space-y-3 mt-4">
+                                      <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                                        <div>
+                                          <h5 className="font-medium text-sm mb-2">Manifest Content</h5>
+                                          <p className="text-sm text-muted-foreground">
+                                            {analysis.analysis_data.psychological_perspectives.freudian.manifest_content}
+                                          </p>
+                                        </div>
+                                        <div>
+                                          <h5 className="font-medium text-sm mb-2">Latent Content</h5>
+                                          <p className="text-sm text-muted-foreground">
+                                            {analysis.analysis_data.psychological_perspectives.freudian.latent_content}
+                                          </p>
+                                        </div>
+                                        <div>
+                                          <h5 className="font-medium text-sm mb-2">Interpretation</h5>
+                                          <p className="text-sm text-muted-foreground">
+                                            {analysis.analysis_data.psychological_perspectives.freudian.interpretation}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </TabsContent>
+                                    
+                                    <TabsContent value="jungian" className="space-y-3 mt-4">
+                                      <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                                        {analysis.analysis_data.psychological_perspectives.jungian.archetypes_identified && (
+                                          <div>
+                                            <h5 className="font-medium text-sm mb-2">Archetypes Identified</h5>
+                                            <ul className="space-y-2">
+                                              {analysis.analysis_data.psychological_perspectives.jungian.archetypes_identified.map((arch, i) => (
+                                                <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+                                                  <span className="text-primary">•</span>
+                                                  {arch}
+                                                </li>
+                                              ))}
+                                            </ul>
+                                          </div>
+                                        )}
+                                        <div>
+                                          <h5 className="font-medium text-sm mb-2">Individuation Stage</h5>
+                                          <p className="text-sm text-muted-foreground">
+                                            {analysis.analysis_data.psychological_perspectives.jungian.individuation_stage}
+                                          </p>
+                                        </div>
+                                        <div>
+                                          <h5 className="font-medium text-sm mb-2">Collective Unconscious</h5>
+                                          <p className="text-sm text-muted-foreground">
+                                            {analysis.analysis_data.psychological_perspectives.jungian.collective_unconscious}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </TabsContent>
+                                    
+                                    <TabsContent value="gestalt" className="space-y-3 mt-4">
+                                      <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                                        {analysis.analysis_data.psychological_perspectives.gestalt.fragmented_parts && (
+                                          <div>
+                                            <h5 className="font-medium text-sm mb-2">Fragmented Parts</h5>
+                                            <div className="flex flex-wrap gap-2">
+                                              {analysis.analysis_data.psychological_perspectives.gestalt.fragmented_parts.map((part, i) => (
+                                                <Badge key={i} variant="secondary">{part}</Badge>
+                                              ))}
+                                            </div>
+                                          </div>
+                                        )}
+                                        <div>
+                                          <h5 className="font-medium text-sm mb-2">Integration Message</h5>
+                                          <p className="text-sm text-muted-foreground">
+                                            {analysis.analysis_data.psychological_perspectives.gestalt.integration_message}
+                                          </p>
+                                        </div>
+                                        <div>
+                                          <h5 className="font-medium text-sm mb-2">Dreamwork Exercise</h5>
+                                          <p className="text-sm text-muted-foreground italic">
+                                            {analysis.analysis_data.psychological_perspectives.gestalt.dreamwork_exercise}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </TabsContent>
+                                    
+                                    <TabsContent value="cognitive" className="space-y-3 mt-4">
+                                      <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                                        <div>
+                                          <h5 className="font-medium text-sm mb-2">Problem Being Processed</h5>
+                                          <p className="text-sm text-muted-foreground">
+                                            {analysis.analysis_data.psychological_perspectives.cognitive.problem_being_processed}
+                                          </p>
+                                        </div>
+                                        <div>
+                                          <h5 className="font-medium text-sm mb-2">Threat Simulation</h5>
+                                          <p className="text-sm text-muted-foreground">
+                                            {analysis.analysis_data.psychological_perspectives.cognitive.threat_simulation}
+                                          </p>
+                                        </div>
+                                        <div>
+                                          <h5 className="font-medium text-sm mb-2">Memory Consolidation</h5>
+                                          <p className="text-sm text-muted-foreground">
+                                            {analysis.analysis_data.psychological_perspectives.cognitive.memory_consolidation}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </TabsContent>
+                                  </Tabs>
+                                </div>
+                                <Separator />
+                              </>
+                            )}
 
-                        {/* Reflection Questions */}
-                        {analysis.reflection_questions && analysis.reflection_questions.length > 0 && (
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <MessageCircle className="h-4 w-4 text-primary" />
-                              <h4 className="font-semibold text-foreground">
-                                Reflection Questions
-                              </h4>
+                            {/* Structured Analysis - Key Insights */}
+                            {analysis.analysis_data.structured_analysis && (
+                              <>
+                                <div className="space-y-4">
+                                  <div className="flex items-center gap-2">
+                                    <Sparkles className="h-4 w-4 text-primary" />
+                                    <h4 className="font-semibold text-foreground">Key Insights</h4>
+                                  </div>
+                                  
+                                  <div className="space-y-3">
+                                    <div className="bg-primary/5 rounded-lg p-4">
+                                      <h5 className="font-medium text-sm mb-2">Dominant Theme</h5>
+                                      <p className="text-sm text-foreground">
+                                        {analysis.analysis_data.structured_analysis.dominant_theme}
+                                      </p>
+                                    </div>
+                                    
+                                    {analysis.analysis_data.structured_analysis.symbolic_breakdown && (
+                                      <div>
+                                        <h5 className="font-medium text-sm mb-3">Symbolic Breakdown</h5>
+                                        <div className="space-y-3">
+                                          {analysis.analysis_data.structured_analysis.symbolic_breakdown.map((sym, i) => (
+                                            <div key={i} className="bg-muted/50 rounded-lg p-3 space-y-1">
+                                              <div className="font-medium text-sm text-primary">{sym.symbol}</div>
+                                              <div className="text-xs text-muted-foreground">
+                                                <span className="font-medium">Personal:</span> {sym.interpretation}
+                                              </div>
+                                              {sym.archetypal_meaning && (
+                                                <div className="text-xs text-muted-foreground">
+                                                  <span className="font-medium">Archetypal:</span> {sym.archetypal_meaning}
+                                                </div>
+                                              )}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+                                    
+                                    <div>
+                                      <h5 className="font-medium text-sm mb-2">Waking Life Connections</h5>
+                                      <p className="text-sm text-muted-foreground italic">
+                                        {analysis.analysis_data.structured_analysis.waking_life_connections}
+                                      </p>
+                                    </div>
+                                    
+                                    <div className="bg-amber-500/10 border-l-4 border-amber-500 rounded-r-lg p-4">
+                                      <h5 className="font-medium text-sm mb-2 flex items-center gap-2">
+                                        <Heart className="h-4 w-4 text-amber-600" />
+                                        Emotional Message
+                                      </h5>
+                                      <p className="text-sm text-foreground">
+                                        {analysis.analysis_data.structured_analysis.emotional_message}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                                <Separator />
+                              </>
+                            )}
+
+                            {/* Recommendations */}
+                            {analysis.analysis_data.recommendations && (
+                              <>
+                                <div className="space-y-3">
+                                  <div className="flex items-center gap-2">
+                                    <Lightbulb className="h-4 w-4 text-primary" />
+                                    <h4 className="font-semibold text-foreground">Recommendations</h4>
+                                  </div>
+                                  <p className="text-sm text-muted-foreground leading-relaxed">
+                                    {analysis.analysis_data.recommendations}
+                                  </p>
+                                </div>
+                                <Separator />
+                              </>
+                            )}
+
+                            {/* Reflection Questions */}
+                            {analysis.analysis_data.reflection_questions && analysis.analysis_data.reflection_questions.length > 0 && (
+                              <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                  <MessageCircle className="h-4 w-4 text-primary" />
+                                  <h4 className="font-semibold text-foreground">Reflection Questions</h4>
+                                </div>
+                                <ul className="space-y-2">
+                                  {analysis.analysis_data.reflection_questions.map((question, idx) => (
+                                    <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
+                                      <span className="text-primary mt-0.5">•</span>
+                                      <span>{question}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          // Display old legacy analysis with upgrade prompt
+                          <div className="space-y-4">
+                            <Badge variant="outline" className="mb-2">
+                              Legacy Analysis
+                            </Badge>
+
+                            {/* Keep existing old format display */}
+                            {analysis.themes && analysis.themes.length > 0 && (
+                              <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                  <Heart className="h-4 w-4 text-primary" />
+                                  <h4 className="font-semibold text-foreground">Themes</h4>
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                  {analysis.themes.map((theme, idx) => (
+                                    <Badge key={idx} variant="secondary">{theme}</Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {analysis.symbols && analysis.symbols.length > 0 && (
+                              <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                  <Sparkles className="h-4 w-4 text-primary" />
+                                  <h4 className="font-semibold text-foreground">Symbols</h4>
+                                </div>
+                                <ul className="space-y-2">
+                                  {analysis.symbols.map((symbol, idx) => (
+                                    <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
+                                      <span className="text-primary mt-0.5">•</span>
+                                      <span>{formatSymbol(symbol)}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {analysis.analysis_text && (
+                              <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                  <Brain className="h-4 w-4 text-primary" />
+                                  <h4 className="font-semibold text-foreground">Analysis</h4>
+                                </div>
+                                <p className="text-sm text-muted-foreground leading-relaxed">
+                                  {analysis.analysis_text}
+                                </p>
+                              </div>
+                            )}
+
+                            {analysis.recommendations && (
+                              <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                  <Lightbulb className="h-4 w-4 text-primary" />
+                                  <h4 className="font-semibold text-foreground">Recommendations</h4>
+                                </div>
+                                <p className="text-sm text-muted-foreground leading-relaxed">
+                                  {analysis.recommendations}
+                                </p>
+                              </div>
+                            )}
+
+                            {analysis.reflection_questions && analysis.reflection_questions.length > 0 && (
+                              <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                  <MessageCircle className="h-4 w-4 text-primary" />
+                                  <h4 className="font-semibold text-foreground">Reflection Questions</h4>
+                                </div>
+                                <ul className="space-y-2">
+                                  {analysis.reflection_questions.map((question, idx) => (
+                                    <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
+                                      <span className="text-primary mt-0.5">•</span>
+                                      <span>{question}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {/* Upgrade prompt */}
+                            <div className="mt-6 pt-4 border-t">
+                              <div className="bg-primary/5 rounded-lg p-4 flex items-center justify-between">
+                                <div>
+                                  <p className="text-sm font-medium">Get Enhanced Analysis</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    Upgrade to our new psychological framework with Freudian, Jungian, Gestalt, and Cognitive perspectives
+                                  </p>
+                                </div>
+                                <Button 
+                                  size="sm" 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    analyzeDream(dream.id);
+                                  }}
+                                >
+                                  Re-analyze (1 credit)
+                                </Button>
+                              </div>
                             </div>
-                            <ul className="space-y-2">
-                              {analysis.reflection_questions.map((question, idx) => (
-                                <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
-                                  <span className="text-primary mt-0.5">•</span>
-                                  <span>{question}</span>
-                                </li>
-                              ))}
-                            </ul>
                           </div>
                         )}
                       </CardContent>
